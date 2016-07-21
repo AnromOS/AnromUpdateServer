@@ -1,0 +1,40 @@
+﻿$def with (page)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    $if 'title' in page and page.title:
+        <title>$page.title - RomPublishManager</title>
+    $else:
+        <title>ROM 后台发布管理</title>
+
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+    <script src="/static/jquery-1.9.1.min.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    
+</head>
+<body>    
+   
+<!-- Home -->
+<div>
+    <div class="container" >
+        <ul class="nav nav-tabs nav-justified ">
+            <li><a href="/"> 网站首页 </a></li>
+            <li><a href="/publish"> 后台首页 </a></li>
+            <li><a href="/publish/device"> 添加新机型</a></li>
+            <li><a href="/publish/userreport"> 用户反馈</a></li>
+            <li><a href="/publish/quit"> 退出</a></li>
+        </ul><!-- /navbar -->
+    </div>
+
+    <div class="container" data-ajax="false">
+    <!-- page -->
+    $:page
+    </div>
+</div>
+</body>
+</html>

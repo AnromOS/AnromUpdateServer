@@ -1,0 +1,47 @@
+﻿$def with (models, roms, ptitle=None)
+$var title: $ptitle
+
+<!-- Home -->
+<div class="row">
+    <div class="container" >
+    <ul class="nav nav-tabs ">
+    $for post in models:
+        <li><a name="devices" href="/allroms/$post['m_device']">$post['m_modname']<img height=50px src="/static/images/$post['m_device']_large.png"/></a></li>
+        
+    </ul><!-- /navbar -->
+    </div>
+    
+    <div class ="col-sm-12 col-xs-12 col-md-12">
+        <div class="panel panel-info">
+        <div class="panel-heading"><a name="$roms['m_device']" href="#devices">机型: $roms['m_modname']</a></div>
+            <table id="movie-table" class="table table-striped">
+                <thead>
+                <tr>
+                  <th> </th>
+                  <th> 机型</th>
+                  <th> </th>
+                  <th> md5</th>
+                  <th> 发布时间 </th>
+                </tr>
+                </thead>
+                <tbody>
+                 <tr>
+                  <td width=220px rowspan=30 ><img height=200px src="/static/images/$roms['m_device']_large.png"/></td>
+                  <td><strong>$roms['m_device']</strong></td>
+                  <td></td>
+                  <td></td>
+                  <td> $strdate(roms['m_time'])</td>
+                 </tr>
+                 $for det in roms['m_detail']:
+                     <tr>
+                        <td>$det['changelog']</td>
+                        <td><a href ="$abs2rev(det['url'])" class="btn btn-link" >$det['filename']</a></td>
+                        <td>$det['md5sum']</td>
+                        <td>$strdate(det['issuetime'])</td>
+                     </tr>
+                     
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

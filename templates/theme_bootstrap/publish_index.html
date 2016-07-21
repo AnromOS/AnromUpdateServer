@@ -1,0 +1,102 @@
+$def with (models, prefs, netpref, usrrpt, ptitle=None)
+$var title: $ptitle
+
+<div class="row">
+    <div class="col-sm-8 col-xs-8 col-md-8">
+    <div class="jumbotron">
+        <h1>欢迎回来!</h1>
+        <p>用户反馈区有 <bold>$usrrpt</bold> 条消息</p>
+    </div>
+    
+    <div class="panel panel-primary">
+        <div class="panel-heading">网站当前配置</div>
+        <div class="panel-body" data-toggle="collapse">
+            <table id="movie-table" class="table table-striped">
+               <thead>
+                <tr>
+                  <th> 名</th>
+                  <th> 值</th>
+                </tr>
+               </thead>
+               <tbody>
+               $for pref in prefs:
+                   <tr>
+                    <td>$pref['key']</td>
+                    <td>$pref['value']</td>
+                   </tr>
+                   
+               </tbody>
+            </table>
+            <strong>更改管理员密码</strong>
+            <form action="/publish/changepwd" method="post" class="form-inline" role="form">
+                <div  class="form-group">
+                    <label for="username" class="sr-only">管理员用户名</label>
+                    <input name="username" id="username" placeholder="管理员用户名" value="" type="text" class="form-control">
+                </div>
+                <div  class="form-group">
+                    <label for="password" class="sr-only">管理员密码</label>
+                    <input name="password" id="password" placeholder="管理员密码" value="" type="password" class="form-control">
+                </div>
+                <div  class="form-group">
+                    <label for="password2" class="sr-only">再次输入密码</label>
+                    <input name="password2" id="password2" placeholder="再次输入密码" value="" type="password" class="form-control">
+                </div>
+                <input class="btn btn-primary" value="更改" type="submit">
+            </form> 
+        </div>
+    </div>
+    </div>
+    
+    <div class="col-sm-4 col-xs-4 col-md-4">
+    <div class="panel panel-primary">
+        <div class="panel-heading">服务器配置</div>
+        <div class="panel-body" >
+            <table id="movie-table" class="table table-striped">
+               <tbody>
+                   <tr>
+                    <td>web服务器</td>
+                    <td>$netpref['SERVER_HOST']</td>
+                   </tr>
+                    <tr>
+                    <td>web端口</td>
+                    <td>$netpref['SERVER_PORT']</td>
+                   </tr>
+               </tbody>
+             </table>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class ="col-sm-8 col-xs-8 col-md-8">
+    $for post in models:
+        <div class="panel panel-primary">
+        <div class="panel-heading">支持的机型: $post['m_device']</div>
+        <div class="panel-body">
+            <table id="movie-table" class="table table-striped">
+                <thead>
+                <tr>
+                  <th> 机型</th>
+                  <th> 添加时间</th>
+                  <th> 已发布rom数</th>
+                  <th> 操作</th>
+                  <th> </th>
+                </tr>
+                </thead>
+                <tbody>
+                 <tr>
+                  <td><strong>$post['m_modname']</strong></td>
+                  <td> $strdate(post['m_time'])</td>
+                  <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 </a> </td>
+                  <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新rom升级</a></td>
+                  <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该机型</a></td>
+                 </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+
+    </div>
+    
+</div>

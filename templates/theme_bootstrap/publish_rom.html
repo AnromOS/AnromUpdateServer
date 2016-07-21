@@ -1,0 +1,112 @@
+﻿$def with (pdelta =None, pupgrade =None, ptitle=None)
+$var title: $ptitle
+
+<strong>$ptitle</strong>
+<p>这个表单只是发布一个下载链接。升级文件请一律用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
+<div class="row">
+<div class ="col-sm-6 col-xs-6 col-md-6">
+    <div class="panel panel-primary">
+    <div class="panel-heading">发布完整升级包</div>
+    <div class="panel-body">
+        <form action="?a=add&t=full" method="post" class="form" role="form" >
+          <div class="form-group">
+            <input class="hidden" name="wid" id="incremental" 
+            $if(pupgrade!=None):
+                value="$pupgrade.id" 
+            $else:
+                value="" 
+            >
+            <label for="incremental">incremental</label>
+            <input type="text" name="incremental" id="incremental" 
+            $if(pupgrade!=None):
+                value="$pupgrade.incremental" 
+            $else:
+                value="" 
+            class="form-control" placeholder="增量升级的标识">
+          </div>
+          <div class="form-group">
+            <label for="changelog">changelog</label>
+            <textarea type="text" name="changelog" id="changelog"  class="form-control" rows="3" placeholder="发布的日志" >
+$if(pupgrade!=None):
+    $pupgrade.changelog
+$else:
+    $None
+</textarea>
+          </div>
+          <div class="form-group">
+            <label for="url">url</label>
+            <input type="text" name="url" id="url" 
+            $if(pupgrade!=None):
+                value="$pupgrade.url"
+            $else:
+                value="" 
+            class="form-control" placeholder="升级文件的下载地址" >
+          </div>
+          <div class="form-group">
+            <label for="md5sum">md5sum</label>
+            <input type="text" name="md5sum" id="md5sum" 
+            $if(pupgrade!=None):
+                value="$pupgrade.md5sum"
+            $else:
+                value="" 
+            class="form-control" placeholder="升级文件的md5sum值">
+          </div>
+        <input  class="btn btn-primary" type="submit" value="完成"/>
+      </form>
+    </div>
+    </div>
+</div>
+
+<div class="col-sm-6 col-xs-6 col-md-6">
+    <div class="panel panel-primary">
+    <div class="panel-heading">发布增量升级包</div>
+    <div class="panel-body">
+      <form action="?a=add&t=delta" method="post" class="form" role="form" >
+          <div class="form-group">
+            <input class="hidden" name="wid" id="incremental" 
+            $if(pdelta!=None):
+                value="$pdelta.id" 
+            $else:
+                value="" 
+            >
+            <label for="source_incremental">source_incremental </label>
+            <input type="text" name="source_incremental" id="source_incremental" 
+            $if(pdelta!=None):
+                value="$pdelta.source_incremental" 
+            $else: 
+                value=""
+            class="form-control" placeholder="源版本增量标识">
+          </div>
+          <div class="form-group">
+            <label for="target_incremental">target_incremental </label>
+            <input type="text" name="target_incremental" id="target_incremental" 
+            $if(pdelta!=None):
+                value="$pdelta.target_incremental" 
+            $else: 
+                value=""
+            class="form-control" placeholder="目的版本增量标识">
+          </div>
+          <div class="form-group">
+            <label for="url">url</label>
+            <input type="text" name="url" id="url"
+            $if(pdelta!=None):
+                value="$pdelta.url" 
+            $else: 
+                value=""
+            class="form-control" placeholder="升级文件的下载地址">
+          </div>
+          <div class="form-group">
+            <label for="md5sum">md5sum</label>
+            <input type="text" name="md5sum" id="md5sum" 
+            $if(pdelta!=None):
+                value="$pdelta.md5sum" 
+            $else: 
+                value=""
+            class="form-control" placeholder="升级文件的md5sum值">
+          </div>
+        <input  class="btn btn-primary" type="submit" value="完成"/>
+        </form>
+      </div>
+    </div>
+</div>
+</div>
