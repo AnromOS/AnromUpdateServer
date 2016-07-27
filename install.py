@@ -9,7 +9,7 @@ def main():
         print '''useage: run "install.py install" to initiate the databases \r\n After that, run "python server.py 18080" to start web server \r\n 
         '''
         model.installmain()
-        model.installdics('databases/db_publish.db')
+        model.installdics()
         exit()
 
 if __name__ =='__main__':
