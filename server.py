@@ -78,7 +78,7 @@ def notfound(errno=404):
 
 def countPrivilege():
     '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
-    secret = "a9da4e7e26722c6bfb1c3742c18aabe679ce24aa67e7bcdea38fff5ebf6df0b2"
+    secret = config.AUTOPUB_SECRET
     salt = time.strftime("%Y-%m-%d %H:%M",time.localtime(time.time()))
     ptoken = hashlib.sha256(secret+salt).hexdigest()
     print("hasPrivilege: ptoken is:",ptoken)

@@ -5,8 +5,8 @@ import config
 
 #dbmain: 网站的数据和设置信息
 #dba 发布的rom保存的位置
-dbmain = web.database(dbn='sqlite', db='databases/dbmain.db')
-dba = web.database(dbn='sqlite', db='databases/db_publish.db')
+dbmain = web.database(dbn='sqlite', db=config.DB_PATH_MAIN)
+dba = web.database(dbn='sqlite', db=config.DB_PATH_PUBLISH)
 
 #### for Client API
 def get_devices_byname(device):
@@ -157,7 +157,7 @@ def get_pref(name):
 
 def installmain():
     '''安装网站所需要的主数据库'''
-    conn = sqlite3.connect('databases/dbmain.db')
+    conn = sqlite3.connect(config.DB_PATH_MAIN)
     c= conn.cursor()
     try:
         installsql=""" 
@@ -181,11 +181,11 @@ def installmain():
         c.executescript(installsql)
     finally:
         c.close()
-        print 'databases/dbmain.db install db ok'
+        print config.DB_PATH_MAIN,' install db ok'
 
-def installdics(dbname='databases/db_publish.db'):
+def installdics():
     '''安装发布版本的数据库'''
-    conn = sqlite3.connect(dbname)
+    conn = sqlite3.connect(config.DB_PATH_PUBLISH)
     c= conn.cursor()
     try:
         installsql=""" 
@@ -234,7 +234,7 @@ def installdics(dbname='databases/db_publish.db'):
         c.executescript(installsql)
     finally:
         c.close()
-        print dbname,' install db ok'
+        print config.DB_PATH_PUBLISH,' install db ok'
         
         
 class MemStore(web.session.Store):
