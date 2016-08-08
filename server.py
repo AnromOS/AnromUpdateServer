@@ -377,7 +377,7 @@ class PublishRomList:
             render = createRender()
             romlists = model.get_all_roms_by_modelid(modid)
             deltaromlists =model.get_romdelta_bymodid(modid)
-            return render.publish_romlist(model.netpref, modname,romlists,deltaromlists,"已经发布的rom列表")
+            return render.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的rom列表")
         else:
             return notfound(" operation not authorized.")
             
