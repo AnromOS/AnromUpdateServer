@@ -149,7 +149,7 @@ class API:
             device = req['params']['device']
             channels = req['params']['channels']
             source_incremental = req['params']['source_incremental']
-            if (method == 'get_all_builds' and device != '' and len[channels]>0 and source_incremental != ''):
+            if (method == 'get_all_builds' and device != '' and len(channels)>0 and source_incremental != ''):
                 print 'recieve a valid Client request :',method,device,channels,source_incremental
                 mods =model.get_devices_byname(device)
                 for x in mods: 
@@ -314,7 +314,7 @@ class PublishRom:
             return notfound(" operation not authorized.")
     
     def POST(self,modid,modname):
-        x=web.input(a='',t='',api_level=23,channels="RC", ptoken="")
+        x=web.input(a='',t='',api_level=23,channels="nightly", ptoken="")
         ptoken = x['ptoken']
         privileged = hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
