@@ -28,7 +28,7 @@ urls = (
     '/(.*)/', 'redirect', 
 )
 web.config.debug = False
-purl = re.compile('''http://.*?/(.*?.zip)''')
+purl = re.compile('''http://.*?/(.*?)$''')
 
 ## trans time like 1333316413.0 into '2012-04-02 05:40:13'
 def strtime(time_var):
