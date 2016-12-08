@@ -8,9 +8,9 @@ netpref['SERVER_HOST']='127.0.0.1'
 netpref['SERVER_PORT']='80'
 
 #登陆后台设置
-ADMIN_LOGIN="/ss"
-ADMIN_USERNAME="nimda"
-ADMIN_PWD="admin@nimda"
+ADMIN_LOGIN="/yourloginpath"
+ADMIN_USERNAME="youradminname"
+ADMIN_PWD="youradminpwd"
 ADMIN_HASHPWD=hashlib.sha256(ADMIN_PWD).hexdigest()
 
 #自动发布设置

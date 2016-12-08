@@ -6,55 +6,61 @@ written with python, need support of webpy framework.
 ## 如何使用：
 1. 在config.py中设置文件下载服务器的域名和端口， 自动发布的API key 管理员用户名、密码
 2. 安装服务器:
-'''
+
+```
 $python install.py
-'''
+```
+
 3. 启动服务器:
-'''
+
+```
 $python server.py 10240
-'''
+```
+
 或者
-'''
+
+```
 $run.sh
-'''
+```
+
 4. 确保服务器文件系统的写权限:网站目录的/static/images 和/static/downloads/ 需要有写权限
 5. 部署nginx:
 修改nginx中的配置文件，填写root dir的路径为程序的绝对路径，然后部署到nginx中即可，详情见下面
 
-### nginx服务器的配置：
+## nginx服务器的配置：
 
 1. 服务器配置使用nginx的反向代理功能，把web管理后台和API服务器连接起来。
 2. 静态文件直接使用nginx配置文件目录作负载均衡，不用转给webpy搭建的web服务器。这样做是因为webpy性能较弱，并且不支持断点续传，不适合作为文件下载服务器。
 
 以下是 Nginx 的一种可用配置:
-'''
+
+
+```
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server ipv6only=on;
-
-        root /path/to/AnromUpdateServer;
-
+	root /path/to/AnromUpdateServer;
 	# Make site accessible from http://localhost/
 	server_name localhost;
 	charset utf-8;
-    access_log  /var/log/nginx/anromupdate.access.log;
+	access_log  /var/log/nginx/anromupdate.access.log;
 	location / {
-	    proxy_pass http://127.0.0.1:10240/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_pass http://127.0.0.1:10240/;
+	proxy_set_header Host $host;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	}
-    location /static {
-        root /path/to/cmUpdaterServer;
-        autoindex on;
-        autoindex_exact_size off;
-        autoindex_localtime on;
-        charset utf-8;
-        if (-f $request_filename) {
-          rewrite ^/static/(.*)$  /static/$1 break;
-        }
+	location /static {
+	root /path/to/cmUpdaterServer;
+	autoindex on;
+	autoindex_exact_size off;
+	autoindex_localtime on;
+	charset utf-8;
+	if (-f $request_filename) {
+		rewrite ^/static/(.*)$  /static/$1 break;
+	}
     }
 }
-'''
+```
 
 ===================================================================================================
 ##设置开机自动启动的方法[可选]：
@@ -75,6 +81,7 @@ server {
 2. mtk的recovery的命令大致和cm recovery的差不多，recovery开机自动执行的命令格式定义在 /bootable/recovery/recovery.cpp 里面。(验证通过)
 3. 用于升级的apk项目叫CMUpdater，该app需要root权限向手机目录下写入数据 (已经解决)
 4. MTK自带的升级软件在这个地方 mediatek/packages/apps/AdupsFotaApp 没有源代码(已经去掉)
+
 =====================================================================================================
 
 ##附录II： ROM的发布和文件上传
