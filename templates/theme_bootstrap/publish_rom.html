@@ -3,12 +3,12 @@ $var title: $ptitle
 
 <strong>$ptitle</strong>
 <p>这个表单只是发布一个下载链接。升级文件请一律用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
-<div class="row">
-<div class ="col-sm-6 col-xs-6 col-md-6">
+<div class="column">
+<div class ="col-sm-10 col-xs-10 col-md-10">
     <div class="panel panel-primary">
     <div class="panel-heading">发布完整升级包</div>
     <div class="panel-body">
-        <form action="?a=add&t=full" method="post" class="form" role="form" >
+        <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
           <div class="form-group">
             <input class="hidden" name="wid" id="incremental" 
             $if(pupgrade!=None):
@@ -41,6 +41,7 @@ $else:
             $else:
                 value="" 
             class="form-control" placeholder="升级文件的下载地址" >
+            <label for="muploadedfile">或者上传文件到本站所在服务器<input type="file" name="muploadedfile" id="muploadedfile"></input> </label>
           </div>
           <div class="form-group">
             <label for="md5sum">md5sum</label>
@@ -51,13 +52,23 @@ $else:
                 value="" 
             class="form-control" placeholder="升级文件的md5sum值">
           </div>
+          <div class="form-group">
+            <label for="channels">版本通道:  </label>
+            <div class="radio-inline">
+              <label><input type="radio" name="channels" id="nightly" value="nightly">内部版（nightly）  </label>
+            </div>
+            <div class="radio-inline">
+              <label><input type="radio" name="channels" id="snapshot"value="snapshot">正式版（snapshot）</label>
+            </div>
+          </div>
+          
         <input  class="btn btn-primary" type="submit" value="完成"/>
       </form>
     </div>
     </div>
 </div>
 
-<div class="col-sm-6 col-xs-6 col-md-6">
+<div class="col-sm-10 col-xs-10 col-md-10">
     <div class="panel panel-primary">
     <div class="panel-heading">发布增量升级包</div>
     <div class="panel-body">

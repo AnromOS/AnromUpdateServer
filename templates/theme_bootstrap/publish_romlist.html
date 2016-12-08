@@ -1,11 +1,11 @@
 $def with (netpref, name, roms ,roms_delta , ptitle=None)
 $var title: $ptitle
 
-<strong>设备 $name 的升级包<strong>
-<div class="row">
-<div class ="col-sm-6 col-xs-6 col-md-6">
+<strong>应用 $name 的所有版本<strong>
+<div class="column">
+<div class ="col-sm-11 col-xs-11 col-md-11">
     <div class="panel panel-primary">
-    <div class="panel-heading">$name 的完整升级包</div>
+    <div class="panel-heading">$name 的所有版本</div>
     <div class="panel-body">
     $for post in roms:
         <div class="panel panel-info">
@@ -22,6 +22,7 @@ $var title: $ptitle
                 <tr><td>发布时间</td><td>$strdate(post['issuetime'])</td></tr>
                 <tr><td>incremental</td><td>$post['incremental']</td></tr>
                 <tr><td>changelog</td><td>$post['changelog']</td></tr>
+                <tr><td>版本通道</td><td>$post['channels']</td></tr>
                 <tr><td>filename</td><td><a href ="$post['url']">$post['filename']</a></td></tr>
                 <tr><td>md5sum</td><td>$post['md5sum']</td></tr>
                 <tr><td>api_level</td><td>$post['api_level']</td></tr>
@@ -35,7 +36,7 @@ $var title: $ptitle
     </div>
 </div>
 
-<div class="col-sm-6 col-xs-6 col-md-6">
+<div class="col-sm-11 col-xs-11 col-md-11">
     <div class="panel panel-primary">
         <div class="panel-heading">$name 的增量升级包</div>
         <div class="panel-body">

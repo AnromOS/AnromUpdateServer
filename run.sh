@@ -1,4 +1,8 @@
 #!/bin/sh
-cd /path/to/cmUpdaterServer/
-su user -c 'nohup python /path/to/cmUpdaterServer/server.py 127.0.0.1:10240 >logs 2>&1 &'
+basepath=$(cd `dirname $0`; pwd)
+cd $basepath
+command='nohup python '${basepath}'/server.py 10240 >logs 2>&1 &'
+echo $command
+$command &
+#su username -c ${command}
 exit 0

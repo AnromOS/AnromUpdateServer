@@ -6,29 +6,29 @@ import web
 import model,config
 import hashlib,json,time,base64,urllib2
 import re
+import os
 
 ### Url mappings
 urls = (
     ##for web view
     '/', 'Index',
-    '/allroms/(.*?)', 'Allroms',
+    '/allroms/(.*?)', 'Allroms', #/allroms/[devicename]
     '/api','API', #for client API
     '/api/v1/build/get_delta','API_DELTA', #for delta client API
     '/api/changelog/(.*?)/changelog(.*?).txt','API_CHANGELOG', #show changelogs 
     '/api/report','API_USER_REPORT', #for delta client API
     config.ADMIN_LOGIN, 'Login', #for web
     '/publish', 'PublishIndex',# for web 
-    '/publish/device','PublishDevice', #for web
+    '/publish/device','PublishNewApp', #for web 发布新的应用
     '/publish/romslist/(.*?)/(.*?)','PublishRomList', #for web
-    '/publish/rom/(.*?)/(.*?)','PublishRom', #for web
-    '/publish/userreport','UserReport', #for web
+    '/publish/rom/(.*?)/(.*?)','PublishNewVersion', #for web 发布更新版本
+    '/publish/userreport','UserReport', #for web 
     '/publish/quit','Quit', #for web
     '/publish/changepwd', 'ChangePwd', #for web
     # Make url ending with or without '/' going to the same class
     '/(.*)/', 'redirect', 
 )
 web.config.debug = False
-purl = re.compile('''http://.*?/(.*?)$''')
 
 ## trans time like 1333316413.0 into '2012-04-02 05:40:13'
 def strtime(time_var):
@@ -41,10 +41,29 @@ def inttime(time_str):
 
 def abs2rev(absurl):
     #print absurl
+    purl = re.compile('''http://.*?/(.*?)$''')
     r = purl.findall(absurl)
     for x in r:
        #print 'find next: ',x
        return "/"+x
+
+def saveBin(filename, content):
+    f = open(filename,mode="wb+")
+    f.write(content)
+    f.flush()
+    f.close()
+
+def createDirs(path):
+    path= path.strip()
+    isExists=os.path.exists(path)
+    if not isExists:
+        print path+' create success!'
+        # 创建目录操作函数
+        os.makedirs(path)
+        return True
+    else:
+        print path+'already exist'
+        return False
 
 ### Templates
 t_globals = {
@@ -59,7 +78,7 @@ sessionstore = model.MemStore()
 session = web.session.Session(app, sessionstore,initializer={'login': 0,'ulogin':0})
 web.config.session_parameters['timeout'] = 86400*2  #24 * 60 * 60, # 24 hours   in seconds 2days
 web.config.session_parameters['ignore_expiry'] = False
-render = web.template.render('templates/theme_bootstrap', base='base', globals=t_globals)
+renderBack = web.template.render('templates/theme_bootstrap', base='base', globals=t_globals)
 renderIndex = web.template.render('templates/theme_bootstrap', base='base_index', globals=t_globals)
 renderDefault = web.template.render('templates/theme_bootstrap')
 
@@ -68,10 +87,7 @@ def logged():
         return True
     else:
         return False
-        
-def createRender():
-    return render
-    
+
 def notfound(errno=404):
     r_index= "Windows IIS 5.0: "+str(errno)
     return r_index
@@ -79,7 +95,7 @@ def notfound(errno=404):
 def countPrivilege():
     '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
     secret = config.AUTOPUB_SECRET
-    salt = time.strftime("%Y-%m-%d %H:%M",time.localtime(time.time()))
+    salt = time.strftime("%Y-%m-%d %H:00",time.localtime(time.time()))
     ptoken = hashlib.sha256(secret+salt).hexdigest()
     print("hasPrivilege: ptoken is:",ptoken)
     return ptoken
@@ -101,6 +117,8 @@ class Index:
             devi['mod_id']= post['mod_id']
             devi['m_device'] = post['m_device']
             devi['m_modname'] = post['m_modname']
+            devi['m_modpicture'] = post['m_modpicture']
+            devi['m_moddescription'] = post['m_moddescription']
             devi['m_time'] = post['m_time']
             devi['m_detail']=model.get_top5_roms_by_modelid(devi['mod_id'])
             devices.append(devi)
@@ -116,6 +134,8 @@ class Allroms:
         for ff in tmd:
             self.mod_id= int(ff['mod_id'])
             self.modname = ff['m_modname']
+            self.modpic = ff['m_modpicture']
+            self.moddstp = ff['m_moddescription']
             self.mtime = ff['m_time']
         if(self.mod_id ==-1):
             return notfound('该设备不支持。')
@@ -124,6 +144,8 @@ class Allroms:
         devi['mod_id']= self.mod_id
         devi['m_device'] = mdevice
         devi['m_modname'] = self.modname
+        devi['m_modpicture'] = self.modpic
+        devi['m_moddescription'] = self.moddstp
         devi['m_time'] = self.mtime
         devi['m_detail']=model.get_all_roms_by_modelid(self.mod_id)
         r_index =renderIndex.index_allroms(models,devi)
@@ -169,6 +191,7 @@ class API:
                         temp["time"] =x['issuetime']
                         temp["md5sum"] =x['md5sum']
                         temp["changes"] = 'http://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+device+'/changelog'+str(x['id'])+'.txt'
+                        temp["changelog"] = x['changelog']
                         temp["channel"] = x['channels']
                         body.append(temp)
             else:
@@ -242,11 +265,10 @@ class PublishIndex:
     '''#生成后台管理的报表并且显示'''
     def GET(self):
         if logged():
-            render = createRender()
             models = model.get_devices()
             prefs = model.get_preferences()
             usrrpt = model.get_user_report_counts()
-            r_index =render.publish_index(models,prefs,config.netpref,usrrpt)
+            r_index =renderBack.publish_index(models,prefs,config.netpref,usrrpt)
             return r_index
         else:
             return notfound(' operation not authorized.')
@@ -255,7 +277,6 @@ class ChangePwd:
     '''#更换管理员密码'''
     def POST(self):
         if logged():
-            render = createRender()
             username = web.input().username
             password = web.input().password
             pwd2 = web.input().password2
@@ -267,8 +288,8 @@ class ChangePwd:
         else:
             return ""
         
-class PublishDevice:
-    '''#发布新的机型支持'''
+class PublishNewApp:
+    '''#发布新的应用'''
     def GET(self):
         if logged():
             x= web.input(a="",mdevice="",mmod="")
@@ -278,25 +299,32 @@ class PublishDevice:
                 model.del_device(did,mdevice)
                 web.seeother("/publish")
                 return
-            render = createRender()
-            return render.publish_device()
+            return renderBack.publish_device()
         else:
             return notfound(" operation not authorized.")
             
     def POST(self):
         if logged():
-            x= web.input(a="",mdevice="",mmod="")
+            x= web.input(a="",mdevice="",mname="",mpicture={},mdescription="")
             if (x['a']=='add'):
                 mdevice =x['mdevice']
-                mmod = x['mmod']
+                mname = x['mname']
+                mpic = x.mpicture
+                mdscpt = x['mdescription']
                 mtime = int(time.time())
-                model.save_device(mdevice, mmod ,mtime)
+                picname = "static/images/"+ mpic.filename
+                #1, 保存新应用的图标
+                saveBin(picname, mpic.value)
+                #2, 为上传的增加保存目录，请确保这里有权限操作
+                createDirs("static/downloads/"+mdevice)
+                #3, 保存在数据库里
+                model.save_device(mdevice, mname, picname, mdscpt, mtime)
             web.seeother("/publish")
         else:
             return notfound(" operation not authrized.")
 
-class PublishRom:
-    '''发布新的rom'''
+class PublishNewVersion:
+    '''发布更新版本'''
     def GET(self,modid,modname):
         if logged():
             pdelta =None 
@@ -308,13 +336,12 @@ class PublishRom:
             if (x['a']=='edit' and x['t']=='full'):
                 wid = x['wid']
                 pupgrade = model.get_rom_by_wid(wid)
-            render = createRender()
-            return render.publish_rom(pdelta,pupgrade)
+            return renderBack.publish_rom(pdelta,pupgrade)
         else:
             return notfound(" operation not authorized.")
     
     def POST(self,modid,modname):
-        x=web.input(a='',t='',api_level=23,channels="nightly", ptoken="")
+        x=web.input(a='',t='',api_level=23,channels="", ptoken="", muploadedfile={})
         ptoken = x['ptoken']
         privileged = hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
@@ -328,8 +355,15 @@ class PublishRom:
                 incremental = x['incremental']
                 changelog=x['changelog']
                 #filename =x['filename']
+                upedFile= x['muploadedfile']
                 url = x['url']
                 filename = x['url'].split('/')[-1]
+                if not (upedFile.filename==""):
+                    #如果是管理员上传的文件，则覆盖掉表单上填写的值
+                    filename = upedFile.filename
+                    upFileName = 'static/downloads/'+modname+'/'+filename
+                    saveBin(upFileName, upedFile.value)
+                    url =  'http://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
                 md5sum=x['md5sum']
                 api_level=x["api_level"]
                 channels = x["channels"]
@@ -374,10 +408,9 @@ class PublishRomList:
             if (x['a']=='edit' and x['t'] =="delta"):
                 wid = x['wid']
                 web.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=delta&wid="+wid)
-            render = createRender()
             romlists = model.get_all_roms_by_modelid(modid)
             deltaromlists =model.get_romdelta_bymodid(modid)
-            return render.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的rom列表")
+            return renderBack.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的rom列表")
         else:
             return notfound(" operation not authorized.")
             
@@ -390,12 +423,11 @@ class UserReport:
                 pid = x['pid']
                 model.del_user_report(pid)
                 web.seeother('')
-            render = createRender()
             pg = int(x['p'])
             pgcon = 50
             pages = 1+ model.get_user_report_counts()/pgcon
             result = model.get_user_report(pg ,pgcon)
-            return render.publish_ureport(result, pages, "后台用户反馈")
+            return renderBack.publish_ureport(result, pages, "后台用户反馈")
         else:
             return notfound(" operation not authorized.")
        

@@ -4,16 +4,24 @@ $var title: $ptitle
 <strong>$ptitle</strong>
 
 <div class="panel panel-primary">
-    <div class="panel-heading">添加一个新的机型</div>
+    <div class="panel-heading">添加一个新的应用</div>
     <div class="panel-body">
-      <form action="?a=add" method="post" class="form" role="form" >
+      <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           <div class="form-group">
-            <label for="mdevice">机器型号 </label>
-            <input type="text" name="mdevice" id="mdevice" value="" class="form-control" placeholder="如hct92_wet_tdd">
+            <label for="mdevice">应用ID(应用的唯一标识，不可重复，只能写英文或数字) </label>
+            <input type="text" name="mdevice" id="mdevice" value="" class="form-control" placeholder="如bacon mixun">
           </div>
           <div class="form-group">
-            <label for="mmod">代号或者名称(该字段用户不可见，随便写) </label>
-            <input type="text" name="mmod" id="mmod" value="" class="form-control" placeholder="如天机，或者几米手机 JIMEE">
+            <label for="mname">代号或者名称(如何在页面上显示) </label>
+            <input type="text" name="mname" id="mname" value="" class="form-control" placeholder="如密流，或者几米手机 JIMEE">
+          </div>
+          <div class="form-group">
+            <label for="mdescription">产品简介</label>
+            <textarea type="text" name="mdescription" id="mdescription" value="" rows=3 class="form-control" placeholder="用一段文字描述这个产品"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="mpicture">上传应用图标</label>
+            <input type="file" name="mpicture" id="mpicture"></input>
           </div>
         <input  class="btn btn-primary" type="submit" value="完成"/>
         </form>

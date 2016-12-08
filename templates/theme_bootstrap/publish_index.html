@@ -72,14 +72,15 @@ $var title: $ptitle
     <div class ="col-sm-8 col-xs-8 col-md-8">
     $for post in models:
         <div class="panel panel-primary">
-        <div class="panel-heading">支持的机型: $post['m_device']</div>
+        <div class="panel-heading">应用ID: $post['m_device'] $post['m_modname']</div>
         <div class="panel-body">
+            <p>$post['m_moddescription']</p>
             <table id="movie-table" class="table table-striped">
                 <thead>
                 <tr>
-                  <th> 机型</th>
+                  <th> 应用</th>
                   <th> 添加时间</th>
-                  <th> 已发布rom数</th>
+                  <th> 已发布版本数</th>
                   <th> 操作</th>
                   <th> </th>
                 </tr>
@@ -89,8 +90,8 @@ $var title: $ptitle
                   <td><strong>$post['m_modname']</strong></td>
                   <td> $strdate(post['m_time'])</td>
                   <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 </a> </td>
-                  <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新rom升级</a></td>
-                  <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该机型</a></td>
+                  <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
+                  <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>
                  </tr>
                 </tbody>
             </table>

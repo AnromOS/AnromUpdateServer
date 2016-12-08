@@ -10,7 +10,7 @@ dba = web.database(dbn='sqlite', db=config.DB_PATH_PUBLISH)
 
 #### for Client API
 def get_devices_byname(device):
-    '''获取所有的机型'''
+    '''获取所有的应用'''
     return dba.query('SELECT * FROM t_model where m_device = $device;', vars=locals())
 
 def get_available_roms_by_modelid(modelid,channels):
@@ -57,12 +57,12 @@ def get_devices():
     '''获取所有的机型'''
     return dba.select('t_model', vars=locals())
     
-def save_device(mdevice, mmod ,mtime):
+def save_device(mdevice, mmod ,mpic, mdescpt ,mtime):
     '''保存某个机型的配置'''
-    if (dba.update("t_model", where="m_device=$mdevice", vars=locals(),m_device=mdevice,m_modname=mmod,m_time=mtime)):
+    if (dba.update("t_model", where="m_device=$mdevice", vars=locals(),m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt, m_time=mtime)):
         pass
     else:
-        dba.insert("t_model",m_device=mdevice,m_modname=mmod,m_time=mtime)
+        dba.insert("t_model",m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt, m_time=mtime)
 
 def del_device(deviceid,mdevice):
     '''删除某个机型'''
@@ -226,6 +226,8 @@ def installdics():
           mod_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           m_device TEXT NOT NULL,
           m_modname TEXT NOT NULL,
+          m_modpicture TEXT NOT NULL,
+          m_moddescription TEXT,
           m_time INTEGER NOT NULL DEFAULT '0'
         );
         CREATE INDEX IF NOT EXISTS index_model ON t_model(mod_id,m_device);
