@@ -341,7 +341,7 @@ class PublishNewVersion:
             return notfound(" operation not authorized.")
     
     def POST(self,modid,modname):
-        x=web.input(a='',t='',api_level=23,channels="", ptoken="", muploadedfile={})
+        x=web.input(a='',t='',api_level=23,channels="nightly", ptoken="", muploadedfile={})
         ptoken = x['ptoken']
         privileged = hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。

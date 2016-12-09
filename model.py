@@ -199,7 +199,7 @@ def installdics():
           url text NOT NULL,
           md5sum text NOT NULL,
           status INTEGER NOT NULL default 0,
-          channels TEXT NOT NULL default 'RC',
+          channels TEXT NOT NULL default 'nightly',
           api_level TEXT NOT NULL default '0',
           issuetime INTEGER NOT NULL default 0,
           m_time INTEGER NOT NULL DEFAULT 0
