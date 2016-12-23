@@ -39,7 +39,7 @@ $var title: $ptitle
                  $for det in post['m_detail']:
                      <tr>
                         <td>$det['changelog']</td>
-                        <td><a href ="$abs2rev(det['url'])" class="btn btn-link" >$det['filename']</a></td>
+                        <td><a href ="$det['url']" class="btn btn-link" >$det['filename']</a></td>
                         <td>$det['md5sum']</td>
                         <td>$strdate(det['issuetime'])</td>
                      </tr>
