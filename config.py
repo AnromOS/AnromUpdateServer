@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #coding=utf-8
-import hashlib
+import hashlib,os
 
 netpref ={}
 #web 服务端API 和管理入口的地址 
@@ -20,3 +20,5 @@ AUTOPUB_SECRET="a9da4e7e26722c6bfb1c3742c18aabe679ce24aa67e7bcdea38fff5ebf6df0b2
 #SQLITE数据库文件名设置
 DB_PATH_MAIN='databases/dbmain.db'
 DB_PATH_PUBLISH='databases/db_publish.db'
+
+ROOT_PATH=os.getcwd()+'/'
