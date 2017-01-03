@@ -109,7 +109,7 @@ class PublishNewVersion(BaseAction):
                     filename = upedFile.filename
                     upFileName = u'static/downloads/'+modname+u'/'+filename
                     utils.saveBin(upFileName, upedFile.value)
-                    url =  'http://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
+                    url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
                 md5sum=x['md5sum']
                 api_level=x["api_level"]
                 channels = x["channels"]

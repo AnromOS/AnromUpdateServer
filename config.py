@@ -6,6 +6,7 @@ netpref ={}
 #web 服务端API 和管理入口的地址 
 netpref['SERVER_HOST']='127.0.0.1'
 netpref['SERVER_PORT']='80'
+netpref['SCHEME']='http'
 
 #登陆后台设置
 ADMIN_LOGIN="/yourloginpath"

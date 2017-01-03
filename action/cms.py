@@ -37,7 +37,7 @@ class Allroms(BaseAction):
             self.moddstp = ff['m_moddescription']
             self.mtime = ff['m_time']
         if(self.mod_id ==-1):
-            return self.notfound('该设备不支持。')
+            return self.renderDefault.plaintext('该设备不支持。')
         models = model.get_devices()
         devi={}
         devi['mod_id']= self.mod_id

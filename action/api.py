@@ -46,7 +46,7 @@ class API(BaseAction):
                         temp["timestamp"] =x['m_time']
                         temp["time"] =x['issuetime']
                         temp["md5sum"] =x['md5sum']
-                        temp["changes"] = 'http://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+device+'/changelog'+str(x['id'])+'.txt'
+                        temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+device+'/changelog'+str(x['id'])+'.txt'
                         temp["changelog"] = x['changelog']
                         temp["channel"] = x['channels']
                         body.append(temp)
@@ -105,7 +105,7 @@ class API_USER_REPORT(BaseAction):
     '''#客户端提交反馈意见'''
     def GET(self):
         web.ctx.session.kill()
-        return self.notfound(200)
+        return self.renderDefault.plaintext(200)
         
     def POST(self):
         web.ctx.session.kill()
