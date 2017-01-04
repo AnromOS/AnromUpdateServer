@@ -4,7 +4,7 @@
 
 import web
 import model,config,utils
-import time
+import time,json
 from action.base import base as BaseAction
 
 class PublishIndex(BaseAction):
@@ -43,6 +43,8 @@ class PublishNewApp(BaseAction):
                 did =x['did']
                 mdevice =x['mdevice']
                 model.del_device(did,mdevice)
+                #管理员更改了数据，把产品数据导出成json文件
+                dumpAllProduct2Json()
                 web.seeother("/publish")
                 return
             return self.renderAdmin.publish_device()
@@ -58,13 +60,15 @@ class PublishNewApp(BaseAction):
                 mpic = x.mpicture
                 mdscpt = x['mdescription']
                 mtime = int(time.time())
-                picname ="static/images/"+ mpic.filename
+                picname ="static/images/"+ (mpic.filename.decode('utf-8'))
                 #1, 保存新应用的图标
                 utils.saveBin(picname, mpic.value)
                 #2, 为上传的增加保存目录，请确保这里有权限操作
                 utils.createDirs("static/downloads/"+mdevice)
                 #3, 保存在数据库里
                 model.save_device(mdevice, mname, picname, mdscpt, mtime)
+            #管理员更改了数据，把产品数据导出成json文件
+            dumpAllProduct2Json()
             web.seeother("/publish")
         else:
             raise web.notfound(" operation not authrized.")
@@ -104,10 +108,12 @@ class PublishNewVersion(BaseAction):
                 upedFile= x['muploadedfile']
                 url = x['url']
                 filename = x['url'].split('/')[-1]
-                if not (upedFile.filename==""):
+                if not (upedFile.filename==u""):
                     #如果是管理员上传的文件，则覆盖掉表单上填写的值
-                    filename = upedFile.filename
-                    upFileName = u'static/downloads/'+modname+u'/'+filename
+                    filename = upedFile.filename.decode('utf-8')
+                    print 'filename=',filename, type(filename)
+                    upFileName = u'static/downloads/'+modname+ u'/' + filename
+                    print upFileName
                     utils.saveBin(upFileName, upedFile.value)
                     url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
                 md5sum=x['md5sum']
@@ -128,6 +134,8 @@ class PublishNewVersion(BaseAction):
                 md5sum=x['md5sum']
                 m_time = int(time.time())
                 model.save_romdelta_new(wid,mod_id, 0, filename, url, md5sum, 2, source_incremental, target_incremental,  m_time)
+            #管理员更改了数据，把产品数据导出成json文件
+            dumpAllProduct2Json()
             if(privileged):
                 return "Post rom ok!."
             else:
@@ -210,3 +218,43 @@ class Quit(BaseAction):
     def GET(self):
         web.ctx.session.kill()
         raise web.seeother(config.ADMIN_LOGIN)
+
+def dumpAllProduct2Json():
+    '''把所有的数据库中的数据输出到json文件'''
+    print("Dumping all products data to one json file....")
+    models = model.get_devices()
+    devices =[]
+    body={}
+    products=[]
+    for post in models:
+        devi={}
+        devi['mod_id']= post['mod_id']
+        devi['m_device'] = post['m_device']
+        devi['m_modname'] = post['m_modname']
+        devi['m_modpicture'] = post['m_modpicture']
+        devi['m_moddescription'] = post['m_moddescription']
+        #devi['m_detail']=model.get_top5_roms_by_modelid(devi['mod_id'])
+        devi['m_detail']=model.get_all_roms_by_modelid(devi['mod_id'])
+        devices.append(devi)
+    for devi in devices:
+        devbody =[]
+        for x in devi['m_detail']:
+            temp={}
+            temp['incremental']=x['incremental']
+            temp["api_level"]= x['api_level']
+            temp["filename"] = x['filename']
+            temp["url"] = x['url']
+            temp["timestamp"] =x['m_time']
+            temp["time"] =x['issuetime']
+            temp["md5sum"] =x['md5sum']
+            temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+devi['m_device']+'/changelog'+str(x['id'])+'.txt'
+            temp["changelog"] = x['changelog']
+            temp["channel"] = x['channels']
+            devbody.append(temp)
+        devi['m_detail']= devbody
+        products.append(devi)
+    body['id']=None
+    body['result']=products
+    body['error']=None
+    result = json.dumps(body,ensure_ascii=False)
+    utils.saveBin(r'static/downloads/allproducts.json',result.encode('utf-8'))

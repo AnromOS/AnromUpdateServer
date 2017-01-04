@@ -4,17 +4,15 @@
 
 import web
 import model,config,utils
-import json,time
+import json,time,urllib
 from action.base import base as BaseAction
 
 class API(BaseAction):
     '''#用于手机客户端的api接口实现'''
     def GET(self):
-        web.ctx.session.kill()
         return ''
 
     def POST(self):
-        web.ctx.session.kill()
         x=web.ctx.env['wsgi.input']
         rawjson = x.readline()
         api={}
@@ -62,7 +60,6 @@ class API(BaseAction):
 class API_DELTA(BaseAction):
     '''给手机客户端返回增量升级的信息'''
     def POST(self):
-        web.ctx.session.kill()
         x=web.ctx.env['wsgi.input']
         rawjson = x.readline()
         api={}
@@ -91,7 +88,7 @@ class API_DELTA(BaseAction):
 class API_CHANGELOG(BaseAction):
     '''#客户端变化日志请求'''
     def GET(self,mdevice,romid):
-        web.ctx.session.kill()
+        #web.ctx.session.kill()
         changelog = model.get_changelog_bydevice(mdevice,romid)
         result =''
         for x in changelog:
@@ -104,11 +101,11 @@ class API_CHANGELOG(BaseAction):
 class API_USER_REPORT(BaseAction):
     '''#客户端提交反馈意见'''
     def GET(self):
-        web.ctx.session.kill()
+        #web.ctx.session.kill()
         return self.renderDefault.plaintext(200)
         
     def POST(self):
-        web.ctx.session.kill()
+        #web.ctx.session.kill()
         x= web.input(fprint="",fcontent = "")
         fprint =x['fprint']
         fcontent = x['fcontent']
@@ -116,3 +113,44 @@ class API_USER_REPORT(BaseAction):
         if (fcontent!='' and fprint !='' and (len(fcontent)<1000) and (len(fprint)<1000) ):
             model.post_user_report(fprint,fcontent,now)
         return "thank you for report!"
+
+class API_APPUP(BaseAction):
+    '''#各个产品线的升级api接口实现'''
+    def GET(self,method,device,channels):
+        #web.ctx.session.kill()
+        api={}
+        body=[]
+        mod_id =0
+        x= web.input(source_incremental="")
+        source_incremental = x['source_incremental']
+        if (method == 'upgrade' and device != '' and channels!='' and source_incremental != ''):
+            print 'recieve a valid Client request :',method,device,channels,source_incremental
+            mods =model.get_devices_byname(device)
+            for x in mods: 
+                mod_id = x['mod_id']
+            if(channels==u"nightly"):
+                channels="nightly"
+            else: channels="snapshot"
+            availableRoms = model.get_available_roms_by_modelid(mod_id,channels)
+            if (availableRoms!=None): 
+                for x in availableRoms:
+                    temp={}
+                    temp['incremental']=x['incremental']
+                    temp["api_level"]= x['api_level']
+                    temp["filename"] = x['filename']
+                    temp["url"] = x['url']
+                    temp["timestamp"] =x['m_time']
+                    temp["time"] =x['issuetime']
+                    temp["md5sum"] =x['md5sum']
+                    temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+device+'/changelog'+str(x['id'])+'.txt'
+                    temp["changelog"] = x['changelog']
+                    temp["channel"] = x['channels']
+                    body.append(temp)
+        else:
+            print 'recieve a INVALID Client request,pass:',method,device,channels,source_incremental
+        api['id']=device
+        api['result']=body
+        api['error']=None
+        print api
+        result = json.dumps(api,ensure_ascii=False)
+        return result.encode('utf-8')

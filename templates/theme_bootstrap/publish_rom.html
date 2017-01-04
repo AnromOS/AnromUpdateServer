@@ -16,7 +16,7 @@ $var title: $ptitle
             $else:
                 value="" 
             >
-            <label for="incremental">incremental</label>
+            <label for="incremental">版本标示(incremental)</label>
             <input type="text" name="incremental" id="incremental" 
             $if(pupgrade!=None):
                 value="$pupgrade.incremental" 
@@ -29,8 +29,6 @@ $var title: $ptitle
             <textarea type="text" name="changelog" id="changelog"  class="form-control" rows="3" placeholder="发布的日志" >
 $if(pupgrade!=None):
     $pupgrade.changelog
-$else:
-    $None
 </textarea>
           </div>
           <div class="form-group">

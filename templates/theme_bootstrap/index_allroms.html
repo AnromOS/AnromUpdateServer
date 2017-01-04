@@ -6,7 +6,7 @@ $var title: $ptitle
     <div class="container" >
     <ul class="nav nav-tabs ">
     $for post in models:
-        <li><a name="devices" href="/allroms/$post['m_device']">$post['m_modname']<img height=50px src="/$post['m_modpicture']"></a></li>
+        <li><a name="devices" href="/allroms/$post['m_device']">$post['m_modname']<img class="img-circle" height=50px src="/$post['m_modpicture']"></a></li>
         
     </ul><!-- /navbar -->
     </div>
@@ -15,19 +15,21 @@ $var title: $ptitle
         <div class="panel panel-info">
         <div class="panel-heading"><a name="$roms['m_device']" href="#devices">应用: $roms['m_modname']</a></div>
             <p>$roms['m_moddescription']</p>
-            <table id="movie-table" class="table table-striped">
+            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                 <thead>
                 <tr>
                   <th> </th>
-                  <th> 应用</th>
-                  <th> </th>
+                  <th> 版本</th>
+                  <th> 下载地址</th>
+                  <th> 变更日志</th>
                   <th> md5</th>
+                  <th> 通道</th>
                   <th> 发布时间 </th>
                 </tr>
                 </thead>
                 <tbody>
                  <tr>
-                  <td width=220px rowspan=30 ><img height=200px src="/$roms['m_modpicture']"></td>
+                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/$roms['m_modpicture']"></td>
                   <td><strong>$roms['m_device']</strong></td>
                   <td></td>
                   <td></td>
@@ -35,9 +37,11 @@ $var title: $ptitle
                  </tr>
                  $for det in roms['m_detail']:
                      <tr>
-                        <td>$det['changelog']</td>
+                        <td>$det['incremental']</td>
                         <td><a href ="$det['url']" class="btn btn-link" >$det['filename']</a></td>
+                        <td>$det['changelog']</td>
                         <td>$det['md5sum']</td>
+                        <td>$det['channels']</td>
                         <td>$strdate(det['issuetime'])</td>
                      </tr>
                      

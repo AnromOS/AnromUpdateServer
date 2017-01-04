@@ -5,7 +5,7 @@ import hashlib,os
 netpref ={}
 #web 服务端API 和管理入口的地址 
 netpref['SERVER_HOST']='127.0.0.1'
-netpref['SERVER_PORT']='80'
+netpref['SERVER_PORT']='8080'
 netpref['SCHEME']='http'
 
 #登陆后台设置
@@ -23,3 +23,6 @@ DB_PATH_MAIN='databases/dbmain.db'
 DB_PATH_PUBLISH='databases/db_publish.db'
 
 ROOT_PATH=os.getcwd()+'/'
+
+netpref['ADMIN_LOGIN']=ADMIN_LOGIN
+netpref['AUTOPUB_SECRET']=AUTOPUB_SECRET

@@ -15,6 +15,7 @@ urls = (
     '/api/v1/build/get_delta',  'action.api.API_DELTA', #for delta client API
     '/api/changelog/(.*?)/changelog(.*?).txt',      'action.api.API_CHANGELOG', #show changelogs 
     '/api/report',              'action.api.API_USER_REPORT', #for delta client API
+    '/api/(upgrade)/(.*?)/(.*?)',              'action.api.API_APPUP', #获取产品升级信息
     config.ADMIN_LOGIN,         'action.admin.Login', #for web
     '/publish',                 'action.admin.PublishIndex',# for web 
     '/publish/device',          'action.admin.PublishNewApp', #for web 发布新的应用
