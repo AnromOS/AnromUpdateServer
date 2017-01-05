@@ -32,7 +32,7 @@ class API(BaseAction):
                     mod_id = x['mod_id']
                 if(channels[0]==u"nightly"):
                     channels="nightly"
-                else: channels="snapshot"
+                else: channels="release"
                 availableRoms = model.get_available_roms_by_modelid(mod_id,channels)
                 if (availableRoms!=None): 
                     for x in availableRoms:
@@ -132,7 +132,7 @@ class API_APPUP(BaseAction):
                 mod_id = x['mod_id']
             if(channels==u"nightly"):
                 channels="nightly"
-            else: channels="snapshot"
+            else: channels="release"
             availableRoms = model.get_available_roms_by_modelid(mod_id,channels)
             if (availableRoms!=None): 
                 for x in availableRoms:

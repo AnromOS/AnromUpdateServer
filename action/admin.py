@@ -230,13 +230,14 @@ def dumpAllProduct2Json():
     products=[]
     for post in models:
         devi={}
-        devi['mod_id']= post['mod_id']
-        devi['m_device'] = post['m_device']
+        mod_id= post['mod_id']
+        devi['id'] = post['m_device']
         devi['m_modname'] = post['m_modname']
         devi['m_modpicture'] = post['m_modpicture']
         devi['m_moddescription'] = post['m_moddescription']
-        #devi['m_detail']=model.get_top5_roms_by_modelid(devi['mod_id'])
-        devi['m_detail']=model.get_all_roms_by_modelid(devi['mod_id'])
+        #devi['m_detail']=model.get_top5_roms_by_modelid(mod_id)
+        #devi['m_detail']=model.get_all_roms_by_modelid(mod_id)
+        devi['m_detail']=model.get_available_roms_by_modelid(mod_id,"release")
         devices.append(devi)
     for devi in devices:
         devbody =[]
@@ -251,7 +252,7 @@ def dumpAllProduct2Json():
             temp["timestamp"] =x['m_time']
             temp["time"] =x['issuetime']
             temp["md5sum"] =x['md5sum']
-            temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+devi['m_device']+'/changelog'+str(x['id'])+'.txt'
+            temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+devi['id']+'/changelog'+str(x['id'])+'.txt'
             temp["changelog"] = x['changelog']
             temp["channel"] = x['channels']
             devbody.append(temp)
@@ -261,4 +262,4 @@ def dumpAllProduct2Json():
     body['result']=products
     body['error']=None
     result = json.dumps(body,ensure_ascii=False)
-    utils.saveBin(r'static/downloads/allproducts.json',result.encode('utf-8'))
+    utils.saveBin(r'static/downloads/latest_releases.json',result.encode('utf-8'))

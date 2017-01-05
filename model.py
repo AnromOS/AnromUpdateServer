@@ -15,7 +15,7 @@ def get_devices_byname(device):
 
 def get_available_roms_by_modelid(modelid,channels):
     '''返回可用的升级'''
-    result= dba.select('t_anrom',where ='mod_id = $modelid AND status = 2 AND channels = $channels ',limit = 1, order='m_time desc', vars=locals())
+    result= dba.select('t_anrom',where ='mod_id = $modelid AND channels = $channels ',limit = 1, order='issuetime desc', vars=locals())
     return result
     
 def get_changelog_bydevice(mdevice,romid):
@@ -86,12 +86,12 @@ def get_rom_by_wid(wid):
     result= dba.select('t_anrom',where ='id = $wid', limit= 1, vars=locals())[0]
     return result
     
-def save_rom_new(wid, mod_id, incremental, changelog, filename, url, md5sum, status, channels, api_level, issuetime, m_time):
+def save_rom_new(wid, mod_id, version,versioncode, changelog, filename, url, size, md5sum, status, channels, api_level, issuetime, m_time):
     '''发布新的rom升级包'''
-    res = dba.update("t_anrom",where="id = $wid",vars=locals(), mod_id = mod_id,  incremental= incremental, changelog = changelog, filename=filename, url=url, md5sum = md5sum, status = status, channels = channels, api_level = api_level)
+    res = dba.update("t_anrom",where="id = $wid",vars=locals(), mod_id = mod_id, version = version,  versioncode= versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels, api_level = api_level,m_time=m_time)
     if(res):return
     else:
-        dba.insert("t_anrom",mod_id = mod_id, incremental =incremental , changelog = changelog, filename=filename, url=url, md5sum = md5sum, status = status, channels = channels, api_level = api_level,issuetime=issuetime,m_time=m_time)
+        dba.insert("t_anrom",mod_id = mod_id, version =version ,versioncode=versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels, api_level = api_level,issuetime=issuetime,m_time=m_time)
         
 def delete_rom_by_id(wid):
     '''删除某个rom升级包'''
@@ -193,11 +193,13 @@ def installdics():
         CREATE TABLE IF NOT EXISTS t_anrom (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           mod_id INTEGER NOT NULL,
-          incremental text NOT NULL,
+          version text NOT NULL,
+          versioncode text NOT NULL,
           changelog text NOT NULL,
           filename text NOT NULL,
           url text NOT NULL,
           md5sum text NOT NULL,
+          size INTEGER NOT NULL default 0,
           status INTEGER NOT NULL default 0,
           channels TEXT NOT NULL default 'nightly',
           api_level TEXT NOT NULL default '0',
