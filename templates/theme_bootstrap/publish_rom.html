@@ -10,19 +10,27 @@ $var title: $ptitle
     <div class="panel-body">
         <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
           <div class="form-group">
-            <input class="hidden" name="wid" id="incremental" 
+            <input class="hidden" name="wid" id="wid" 
             $if(pupgrade!=None):
                 value="$pupgrade.id" 
             $else:
                 value="" 
             >
-            <label for="incremental">版本标示(incremental)</label>
-            <input type="text" name="incremental" id="incremental" 
+            <label for="version">版本(version)</label>
+            <input type="text" name="version" id="version" 
             $if(pupgrade!=None):
-                value="$pupgrade.incremental" 
+                value="$pupgrade.version" 
             $else:
                 value="" 
-            class="form-control" placeholder="增量升级的标识">
+            class="form-control" placeholder="软件版本号">
+            
+            <label for="version">版本标识(versioncode)</label>
+            <input type="text" name="versioncode" id="versioncode" 
+            $if(pupgrade!=None):
+                value="$pupgrade.versioncode" 
+            $else:
+                value="" 
+            class="form-control" placeholder="软件版本标识，递增的整数">
           </div>
           <div class="form-group">
             <label for="changelog">changelog</label>
@@ -39,7 +47,17 @@ $if(pupgrade!=None):
             $else:
                 value="" 
             class="form-control" placeholder="升级文件的下载地址" >
-            <label for="muploadedfile">或者上传文件到本站所在服务器<input type="file" name="muploadedfile" id="muploadedfile"></input> </label>
+           
+            <label for="url">size</label>
+            <input type="text" name="size" id="size" 
+            $if(pupgrade!=None):
+                value="$pupgrade.size"
+            $else:
+                value="" 
+            class="form-control" placeholder="文件的大小单位(字节)" >
+            
+            <label for="muploadedfile">或者上传文件到本站所在服务器（选择上传文件则不必填写url和size字段）</label>
+            <input type="file" name="muploadedfile" id="muploadedfile"></input>
           </div>
           <div class="form-group">
             <label for="md5sum">md5sum</label>
@@ -51,7 +69,7 @@ $if(pupgrade!=None):
             class="form-control" placeholder="升级文件的md5sum值">
           </div>
           <div class="form-group">
-            <label for="channels">版本通道:  </label>
+            <label for="channels">版本通道（若不选择默认是内部版本）:  </label>
             <div class="radio-inline">
               <label><input type="radio" name="channels" id="nightly" value="nightly">内部版（nightly）  </label>
             </div>
@@ -66,7 +84,7 @@ $if(pupgrade!=None):
     </div>
 </div>
 
-<div class="col-sm-10 col-xs-10 col-md-10">
+<div class="col-sm-10 col-xs-10 col-md-10 hidden">
     <div class="panel panel-primary">
     <div class="panel-heading">发布增量升级包</div>
     <div class="panel-body">

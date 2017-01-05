@@ -37,10 +37,12 @@ class API(BaseAction):
                 if (availableRoms!=None): 
                     for x in availableRoms:
                         temp={}
-                        temp['incremental']=x['incremental']
+                        temp['version']=x['version']
+                        temp['versioncode']=x['versionode']
                         temp["api_level"]= x['api_level']
                         temp["filename"] = x['filename'] 
                         temp["url"] = x['url']
+                        temp['size']=x['size']
                         temp["timestamp"] =x['m_time']
                         temp["time"] =x['issuetime']
                         temp["md5sum"] =x['md5sum']
@@ -80,7 +82,7 @@ class API_DELTA(BaseAction):
                 api["filename"]=x["filename"]
                 api["download_url"] = x['url']
                 api["md5sum"] = x["md5sum"]
-                api["incremental"] = x["target_incremental"]
+                api["version"] = x["target_incremental"]
         print api
         result = json.dumps(api)
         return result
@@ -121,10 +123,10 @@ class API_APPUP(BaseAction):
         api={}
         body=[]
         mod_id =0
-        x= web.input(source_incremental="")
-        source_incremental = x['source_incremental']
-        if (method == 'upgrade' and device != '' and channels!='' and source_incremental != ''):
-            print 'recieve a valid Client request :',method,device,channels,source_incremental
+        x= web.input(source_version="")
+        source_version = x['source_version']
+        if (method == 'upgrade' and device != '' and channels!='' and source_version != ''):
+            print 'recieve a valid Client request :',method,device,channels,source_version
             mods =model.get_devices_byname(device)
             for x in mods: 
                 mod_id = x['mod_id']
@@ -135,10 +137,12 @@ class API_APPUP(BaseAction):
             if (availableRoms!=None): 
                 for x in availableRoms:
                     temp={}
-                    temp['incremental']=x['incremental']
+                    temp['version']=x['version']
+                    temp['versioncode']=x['versioncode']
                     temp["api_level"]= x['api_level']
                     temp["filename"] = x['filename']
                     temp["url"] = x['url']
+                    temp["size"] = x['size']
                     temp["timestamp"] =x['m_time']
                     temp["time"] =x['issuetime']
                     temp["md5sum"] =x['md5sum']
@@ -147,7 +151,7 @@ class API_APPUP(BaseAction):
                     temp["channel"] = x['channels']
                     body.append(temp)
         else:
-            print 'recieve a INVALID Client request,pass:',method,device,channels,source_incremental
+            print 'recieve a INVALID Client request,pass:',method,device,channels,source_version
         api['id']=device
         api['result']=body
         api['error']=None

@@ -21,6 +21,7 @@ $var title: $ptitle
                   <th> </th>
                   <th> 版本</th>
                   <th> 下载地址</th>
+                  <th> 大小</th>
                   <th> 变更日志</th>
                   <th> md5</th>
                   <th> 通道</th>
@@ -37,8 +38,9 @@ $var title: $ptitle
                  </tr>
                  $for det in roms['m_detail']:
                      <tr>
-                        <td>$det['incremental']</td>
+                        <td>$det['version']</td>
                         <td><a href ="$det['url']" class="btn btn-link" >$det['filename']</a></td>
+                        <td>$det['size']</td>
                         <td>$det['changelog']</td>
                         <td>$det['md5sum']</td>
                         <td>$det['channels']</td>

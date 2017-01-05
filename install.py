@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+﻿#!/usr/bin/env python
 #coding=utf-8
 ## 安装和初始化网站的数据库
 

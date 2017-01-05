@@ -102,11 +102,13 @@ class PublishNewVersion(BaseAction):
                 if mod_id==999999:
                     tmd = model.find_modid_bydevice(modname)[0]['mod_id']
                     mod_id=int(tmd)
-                incremental = x['incremental']
+                version = x['version']
+                versioncode = x['versioncode']
                 changelog=x['changelog']
                 #filename =x['filename']
                 upedFile= x['muploadedfile']
                 url = x['url']
+                size = x['size']
                 filename = x['url'].split('/')[-1]
                 if not (upedFile.filename==u""):
                     #如果是管理员上传的文件，则覆盖掉表单上填写的值
@@ -116,13 +118,13 @@ class PublishNewVersion(BaseAction):
                     print upFileName
                     utils.saveBin(upFileName, upedFile.value)
                     url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
+                    size = len(upedFile.value)
                 md5sum=x['md5sum']
                 api_level=x["api_level"]
                 channels = x["channels"]
-                #m_time = int(incremental.split('.')[-1])
                 issuetime = int(time.time())
                 m_time = issuetime
-                model.save_rom_new(wid,mod_id, incremental, changelog, filename, url, md5sum, 2, channels, api_level, issuetime, m_time)
+                model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, 2, channels, api_level, issuetime, m_time)
             if(x['a']=='add' and x['t']=='delta'):
                 wid = x['wid']
                 mod_id=int(modid)
@@ -240,10 +242,12 @@ def dumpAllProduct2Json():
         devbody =[]
         for x in devi['m_detail']:
             temp={}
-            temp['incremental']=x['incremental']
+            temp['version']=x['version']
+            temp['versioncode']=x['versioncode']
             temp["api_level"]= x['api_level']
             temp["filename"] = x['filename']
             temp["url"] = x['url']
+            temp['size']=x['size']
             temp["timestamp"] =x['m_time']
             temp["time"] =x['issuetime']
             temp["md5sum"] =x['md5sum']

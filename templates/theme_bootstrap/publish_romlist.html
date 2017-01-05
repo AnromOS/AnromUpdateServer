@@ -20,7 +20,9 @@ $var title: $ptitle
             </thead>
             <tbody>
                 <tr><td>发布时间</td><td>$strdate(post['issuetime'])</td></tr>
-                <tr><td>incremental</td><td>$post['incremental']</td></tr>
+                <tr><td>版本</td><td>$post['version']</td></tr>
+                <tr><td>版本code</td><td>$post['versioncode']</td></tr>
+                <tr><td>大小</td><td>$post['size']</td></tr>
                 <tr><td>changelog</td><td>$post['changelog']</td></tr>
                 <tr><td>版本通道</td><td>$post['channels']</td></tr>
                 <tr><td>filename</td><td><a href ="$post['url']">$post['filename']</a></td></tr>
@@ -36,7 +38,7 @@ $var title: $ptitle
     </div>
 </div>
 
-<div class="col-sm-11 col-xs-11 col-md-11">
+<div class="col-sm-11 col-xs-11 col-md-11 hidden">
     <div class="panel panel-primary">
         <div class="panel-heading">$name 的增量升级包</div>
         <div class="panel-body">
@@ -57,7 +59,7 @@ $var title: $ptitle
                 <tr><td>target_incremental</td><td>$post['target_incremental']</td></tr>
                 <tr><td>filename</td><td><a href ="$post['url']">$post['filename']</a></td></tr>
                 <tr><td>md5sum</td><td>$post['md5sum']</td></tr>
-                <tr><td>发布时间</td><td>$strdate(post['m_time'])</td></tr>
+                <tr><td>时间</td><td>$strdate(post['m_time'])</td></tr>
                 <tr><td>操作</td><td><a class="text-left" href="?a=edit&wid=$post['id']&t=delta" >编辑</a> <td><a class="text-right" href="?a=del&wid=$post['id']&t=delta">删除</a> </td></tr>
             </tbody>
           </table>
