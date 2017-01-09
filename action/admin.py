@@ -28,7 +28,7 @@ class ChangePwd(BaseAction):
             pwd2 = web.input().password2
             if(password == pwd2):
                 model.post_changeuser(str(username),password)
-                raise web.seeother('/publish')
+                raise self.seeother('/publish')
             else: 
                 return "password not match!"
         else:
@@ -45,7 +45,7 @@ class PublishNewApp(BaseAction):
                 model.del_device(did,mdevice)
                 #管理员更改了数据，把产品数据导出成json文件
                 dumpAllProduct2Json()
-                web.seeother("/publish")
+                self.seeother("/publish")
                 return
             return self.renderAdmin.publish_device()
         else:
@@ -69,7 +69,7 @@ class PublishNewApp(BaseAction):
                 model.save_device(mdevice, mname, picname, mdscpt, mtime)
             #管理员更改了数据，把产品数据导出成json文件
             dumpAllProduct2Json()
-            web.seeother("/publish")
+            self.seeother("/publish")
         else:
             raise web.notfound(" operation not authrized.")
 
@@ -141,7 +141,7 @@ class PublishNewVersion(BaseAction):
             if(privileged):
                 return "Post rom ok!."
             else:
-                web.seeother("/publish")
+                self.seeother("/publish")
         else:
             raise web.notfound(" operation not authrized.")
        
@@ -153,17 +153,17 @@ class PublishRomList(BaseAction):
             if (x['a']=='del' and x['t']=="full"):
                 wid = x['wid']
                 model.delete_rom_by_id(wid)
-                web.seeother("/publish/romslist/"+modid+"/"+modname)
+                self.seeother("/publish/romslist/"+modid+"/"+modname)
             if (x['a']=='edit' and x['t'] =="full"):
                 wid = x['wid']
-                web.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=full&wid="+wid)
+                self.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=full&wid="+wid)
             if (x['a']=='del' and x['t'] =="delta"):
                 wid = x['wid']
                 model.delete_romdelta_by_id(wid)
-                web.seeother("/publish/romslist/"+modid+"/"+modname)
+                self.seeother("/publish/romslist/"+modid+"/"+modname)
             if (x['a']=='edit' and x['t'] =="delta"):
                 wid = x['wid']
-                web.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=delta&wid="+wid)
+                self.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=delta&wid="+wid)
             romlists = model.get_all_roms_by_modelid(modid)
             deltaromlists =model.get_romdelta_bymodid(modid)
             return self.renderAdmin.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的rom列表")
@@ -178,7 +178,7 @@ class UserReport(BaseAction):
             if (x['a']=="del"):
                 pid = x['pid']
                 model.del_user_report(pid)
-                web.seeother('')
+                self.seeother('')
             pg = int(x['p'])
             pgcon = 50
             pages = 1+ model.get_user_report_counts()/pgcon
@@ -210,16 +210,16 @@ class Login(BaseAction):
         if (model.login_post(form.d.uname,form.d.pword)):
             #return "login success"
             web.ctx.session.login= 1
-            raise web.seeother('/publish')
+            raise self.seeother('/publish')
         else:
             web.ctx.session.login= 0
-            raise web.seeother(config.ADMIN_LOGIN)
+            raise self.seeother(config.ADMIN_LOGIN)
             
 class Quit(BaseAction):
     '''#管理员退出登录'''
     def GET(self):
         web.ctx.session.kill()
-        raise web.seeother(config.ADMIN_LOGIN)
+        raise self.seeother(config.ADMIN_LOGIN)
 
 def dumpAllProduct2Json():
     '''把所有的数据库中的数据输出到json文件'''

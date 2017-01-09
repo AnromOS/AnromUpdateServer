@@ -43,3 +43,6 @@ class base:
         token = self.countPrivilege()
         print "hasPrivilege: token is:",token ," ptoken is:",ptoken
         return token == ptoken
+    
+    def seeother(path):
+        return web.seeother(config.netpref['SCHEME']+"://"+netpref['SERVER_HOST']+":"+netpref['SERVER_PORT']+path)

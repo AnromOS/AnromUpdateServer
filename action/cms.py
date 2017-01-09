@@ -52,4 +52,4 @@ class Allroms(BaseAction):
 
 class redirect(BaseAction):
     def GET(self, path):
-        web.seeother('/' + path)
+        self.seeother('/' + path)
