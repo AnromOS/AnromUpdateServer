@@ -44,5 +44,5 @@ class base:
         print "hasPrivilege: token is:",token ," ptoken is:",ptoken
         return token == ptoken
     
-    def seeother(path):
-        return web.seeother(config.netpref['SCHEME']+"://"+netpref['SERVER_HOST']+":"+netpref['SERVER_PORT']+path)
+    def seeother(self,path):
+        return web.seeother(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
