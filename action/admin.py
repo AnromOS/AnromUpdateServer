@@ -39,6 +39,7 @@ class PublishNewApp(BaseAction):
     def GET(self):
         if self.logged():
             x= web.input(a="",mdevice="",mmod="")
+            tmd = None
             if (x['a']=='del'):
                 did =x['did']
                 mdevice =x['mdevice']
@@ -47,7 +48,11 @@ class PublishNewApp(BaseAction):
                 dumpAllProduct2Json()
                 self.seeother("/publish")
                 return
-            return self.renderAdmin.publish_device()
+            elif (x['a']=='edit'):
+                did =x['did']
+                mdevice =x['mdevice']
+                tmd = model.find_modid_bydevice(mdevice)[0]
+            return self.renderAdmin.publish_device(tmd)
         else:
            raise web.notfound(" operation not authorized.")
             
@@ -60,9 +65,11 @@ class PublishNewApp(BaseAction):
                 mpic = x.mpicture
                 mdscpt = x['mdescription']
                 mtime = int(time.time())
-                picname ="static/images/"+ (mpic.filename.decode('utf-8'))
-                #1, 保存新应用的图标
-                utils.saveBin(picname, mpic.value)
+                picname =""
+                if not (mpic.filename == u""):
+                    picname ="static/images/"+ (mpic.filename.decode('utf-8'))
+                    #1, 保存新应用的图标
+                    utils.saveBin(picname, mpic.value)
                 #2, 为上传的增加保存目录，请确保这里有权限操作
                 utils.createDirs("static/downloads/"+mdevice)
                 #3, 保存在数据库里
@@ -141,7 +148,7 @@ class PublishNewVersion(BaseAction):
             if(privileged):
                 return "Post rom ok!."
             else:
-                self.seeother("/publish")
+                self.seeother("/publish/romslist/"+modid+"/"+modname)
         else:
             raise web.notfound(" operation not authrized.")
        

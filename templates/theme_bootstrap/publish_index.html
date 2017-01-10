@@ -92,8 +92,9 @@ $var title: $ptitle
                 <tr>
                   <th> 应用</th>
                   <th> 添加时间</th>
-                  <th> 已发布版本数</th>
+                  <th> 已发布版本</th>
                   <th> 操作</th>
+                  <th> </th>
                   <th> </th>
                 </tr>
                 </thead>
@@ -103,6 +104,7 @@ $var title: $ptitle
                   <td> $strdate(post['m_time'])</td>
                   <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 </a> </td>
                   <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
+                  <td><a href="/publish/device?a=edit&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">编辑应用信息</a></td>
                   <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>
                  </tr>
                 </tbody>

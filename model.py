@@ -59,7 +59,7 @@ def get_devices():
     
 def save_device(mdevice, mmod ,mpic, mdescpt ,mtime):
     '''保存某个机型的配置'''
-    if (dba.update("t_model", where="m_device=$mdevice", vars=locals(),m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt, m_time=mtime)):
+    if (dba.update("t_model", where="m_device=$mdevice", vars=locals(),m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt)):
         pass
     else:
         dba.insert("t_model",m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt, m_time=mtime)

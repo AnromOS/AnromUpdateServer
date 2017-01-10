@@ -1,4 +1,4 @@
-﻿$def with (ptitle=None)
+﻿$def with (pupdate =None, ptitle=None)
 $var title: $ptitle
 
 <strong>$ptitle</strong>
@@ -9,15 +9,28 @@ $var title: $ptitle
       <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           <div class="form-group">
             <label for="mdevice">应用ID(应用的唯一标识，不可重复，只能写英文或数字或 下划线_ 横- 点.) </label>
-            <input type="text" name="mdevice" id="mdevice" value="" class="form-control" placeholder="如bacon mixun mihua_win_32">
+            <input type="text" name="mdevice" id="mdevice" class="form-control" placeholder="如bacon mixun mihua_win_32"
+            $if(pupdate!=None):
+                value="$pupdate.m_device" 
+            $else:
+                value="" 
+            >
           </div>
           <div class="form-group">
             <label for="mname">代号或者名称(如何在页面上显示) </label>
-            <input type="text" name="mname" id="mname" value="" class="form-control" placeholder="如密流，或者几米手机 JIMEE">
+            <input type="text" name="mname" id="mname" class="form-control" placeholder="如密流，或者几米手机 JIMEE"
+            $if(pupdate!=None):
+                value="$pupdate.m_modname" 
+            $else:
+                value=""
+            >
           </div>
           <div class="form-group">
             <label for="mdescription">产品简介</label>
-            <textarea type="text" name="mdescription" id="mdescription" value="" rows=3 class="form-control" placeholder="用一段文字描述这个产品"></textarea>
+            <textarea type="text" name="mdescription" id="mdescription" rows=3 class="form-control" placeholder="用一段文字描述这个产品">
+$if(pupdate!=None):
+    $pupdate.m_moddescription
+</textarea>
           </div>
           <div class="form-group">
             <label for="mpicture">上传应用图标</label>

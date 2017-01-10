@@ -36,6 +36,13 @@ $run.sh
 
 
 ```
+upstream backend{
+	ip_hash;
+	server 127.0.0.1:10240;
+	server 127.0.0.1:10241;
+	server 127.0.0.1:10242;
+	server 127.0.0.1:10243;
+}
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server ipv6only=on;
@@ -45,20 +52,20 @@ server {
 	charset utf-8;
 	access_log  /var/log/nginx/anromupdate.access.log;
 	location / {
-	proxy_pass http://127.0.0.1:10240/;
-	proxy_set_header Host $host;
-	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	    proxy_pass http://backend;
+	    proxy_set_header Host $host;
+	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	}
 	location /static {
-	root /path/to/cmUpdaterServer;
-	autoindex on;
-	autoindex_exact_size off;
-	autoindex_localtime on;
-	charset utf-8;
-	if (-f $request_filename) {
-		rewrite ^/static/(.*)$  /static/$1 break;
+	    root /path/to/cmUpdaterServer;
+	    autoindex on;
+	    autoindex_exact_size off;
+	    autoindex_localtime on;
+	    charset utf-8;
+	    if (-f $request_filename) {
+		    rewrite ^/static/(.*)$  /static/$1 break;
+	    }
 	}
-    }
 }
 ```
 
