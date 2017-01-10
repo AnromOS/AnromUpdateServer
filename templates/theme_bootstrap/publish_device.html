@@ -31,6 +31,31 @@ $var title: $ptitle
 $if(pupdate!=None):
     $pupdate.m_moddescription
 </textarea>
+    <script type="text/javascript" src="/static/editor/tinyeditor.js"></script>
+                <link rel="stylesheet" href="/static/editor/style.css" />
+                <script type="text/javascript">
+                    var instance=new TINY.editor.edit('editor',{
+                        id:'mdescription',
+                        width:740,
+                        height:275,
+                        cssclass:'contentls',
+                        controlclass:'tecontrol',
+                        rowclass:'teheader',
+                        dividerclass:'tedivider',
+                        controls:['bold','italic','underline','strikethrough','|','subscript','superscript','|', 'orderedlist','unorderedlist','|','outdent','indent','|','leftalign',
+                            'centeralign','rightalign','blockjustify','|','unformat','|','undo','redo','print','n',
+                            'font','size','style','forecolor','backcolor','|','image','swf','media','upload','|','hr','link','unlink','|','cut','copy','paste'],
+                        footer:true,
+                        fonts:['楷体','宋体','黑体','Verdana','Arial','Georgia'],
+                        xhtml:true,
+                        uploadexc:"",
+                        bodyid:'editor',
+                        footerclass:'tefooter',
+                        toggle:{text:'源码',activetext:'视图',cssclass:'toggle'},
+                        resize:{cssclass:'resize'}
+                    });
+                </script>
+
           </div>
           <div class="form-group">
             <label for="mpicture">上传应用图标</label>

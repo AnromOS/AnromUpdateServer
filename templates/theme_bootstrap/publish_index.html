@@ -2,7 +2,7 @@ $def with (models, prefs, netpref, usrrpt, ptitle=None)
 $var title: $ptitle
 
 <div class="row">
-    <div class="col-sm-8 col-xs-8 col-md-8">
+    <div class="col-sm-7 col-xs-7 col-md-7">
     <div class="jumbotron">
         <h1>欢迎回来!</h1>
         <p>用户反馈区有 <bold>$usrrpt</bold> 条消息</p>
@@ -47,7 +47,7 @@ $var title: $ptitle
     </div>
     </div>
     
-    <div class="col-sm-4 col-xs-4 col-md-4">
+    <div class="col-sm-5 col-xs-5 col-md-5">
     <div class="panel panel-primary">
         <div class="panel-heading">服务器配置</div>
         <div class="panel-body" >
@@ -81,28 +81,27 @@ $var title: $ptitle
 </div>
 
 <div class="row">
-    <div class ="col-sm-8 col-xs-8 col-md-8">
+    <div class ="col-sm-12 col-xs-12 col-md-12">
     $for post in models:
         <div class="panel panel-primary">
-        <div class="panel-heading">应用ID: $post['m_device'] $post['m_modname']</div>
-        <div class="panel-body">
-            <p>$post['m_moddescription']</p>
-            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+        <div class="panel-heading">应用: $post['m_modname']</div>
+            <table id="movie-table" class="table table-striped table-condensed" style="word-break:break-all; word-wrap:break-all;">
+                <p>$:post['m_moddescription']</p>
                 <thead>
                 <tr>
-                  <th> 应用</th>
-                  <th> 添加时间</th>
+                  <th> 应用ID</th>
                   <th> 已发布版本</th>
-                  <th> 操作</th>
+                  <th> 添加时间</th>
+                  <th> 操作 </th>
                   <th> </th>
                   <th> </th>
                 </tr>
                 </thead>
                 <tbody>
                  <tr>
-                  <td><strong>$post['m_modname']</strong></td>
-                  <td> $strdate(post['m_time'])</td>
+                  <td><strong>$post['m_device']</strong></td>
                   <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 </a> </td>
+                  <td> $strdate(post['m_time'])</td>
                   <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
                   <td><a href="/publish/device?a=edit&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">编辑应用信息</a></td>
                   <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>
@@ -110,8 +109,6 @@ $var title: $ptitle
                 </tbody>
             </table>
         </div>
-        </div>
 
     </div>
-    
 </div>
