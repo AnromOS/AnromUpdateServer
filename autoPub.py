@@ -10,24 +10,25 @@ import sys
 
 def countPrivilege():
     '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。使用的时候必须修改这里'''
-    secret = "86da4e7e26722c6bfb1c3742c18aabe679ce24aa67e7bcdea38fff5ebf6d23b3"
+    secret = "a9da4e7e26722c6bfb1c3742c18aabe679ce24aa67e7bcdea38fff5ebf6df0b2"
     salt = time.strftime("%Y-%m-%d %H:00",time.localtime(time.time()))
     ptoken = hashlib.sha256(secret+salt).hexdigest()
     print("hasPrivilege: ptoken is:",ptoken)
     return ptoken
     
-def postrom(dest,channels,changelog,url,md5sum):
+def postrom(dest,channels,version, versioncode, changelog, url, size, md5sum):
     print(url)
     data = {
           'a' : 'add',
           't' : 'full',
-          'wid' : '',
           'api_level' : 23,
-          'channels' : channels,
-          'ptoken' : '', #计算出来的
-          'incremental' : '314159', #暂时没用
-          'changelog' : changelog,
-          'url' : url,
+          'channels' : channels, #nightly表示测试版，release表示发布版本
+          'ptoken' : '', #计算出来的token，若计算出错则无法发送
+          'version' : version, #版本
+          'versioncode': versioncode, #版本号整数
+          'changelog' : changelog, #变动日志
+          'url' : url, #下载地址
+          'size': size, #文件大小 单位字节
           'md5sum':md5sum
         }
     data['ptoken']=countPrivilege()
@@ -45,7 +46,10 @@ if __name__ == '__main__':
         exit()
     dest = sys.argv[1]
     channels = sys.argv[2]
-    changelog = sys.argv[3]
-    url = sys.argv[4]
-    md5sum = sys.argv[5]
-    postrom(dest,channels,changelog,url,md5sum)
+    version = sys.argv[3]
+    versioncode = sys.argv[4]
+    changelog = sys.argv[5]
+    url = sys.argv[6]
+    size = sys.argv[7]
+    md5sum = sys.argv[8]
+    postrom(dest,channels,version, versioncode,changelog,url, size, md5sum)

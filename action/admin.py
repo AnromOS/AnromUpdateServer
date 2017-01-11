@@ -98,36 +98,38 @@ class PublishNewVersion(BaseAction):
             raise web.notfound(" operation not authorized.")
     
     def POST(self,modid,modname):
-        x=web.input(a='',t='',api_level=23,channels="nightly", ptoken="", muploadedfile={})
+        x=web.input(a='',t='',wid='', api_level=23,channels="nightly", ptoken="", muploadedfile={})
         ptoken = x['ptoken']
         privileged = self.hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
         if self.logged() or privileged:
             if (x['a']=='add' and x['t']=='full'):
                 wid = x['wid']
+                upedFile= x['muploadedfile']
                 mod_id=int(modid)
                 if mod_id==999999:
                     tmd = model.find_modid_bydevice(modname)[0]['mod_id']
                     mod_id=int(tmd)
+                    upedFile= None
                 version = x['version']
                 versioncode = x['versioncode']
                 changelog=x['changelog']
                 md5sum=x['md5sum']
-                upedFile= x['muploadedfile']
                 url = x['url']
                 size = x['size']
                 filename = x['url'].split('/')[-1]
-                if not (upedFile.filename==u""):
-                    #如果是管理员上传的文件，则覆盖掉表单上填写的值
-                    filename = upedFile.filename.decode('utf-8')
-                    print 'filename=',filename, type(filename)
-                    upFileName = u'static/downloads/'+modname+ u'/' + filename
-                    print upFileName
-                    utils.saveBin(upFileName, upedFile.value)
-                    url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
-                    size = len(upedFile.value)
-                    if (md5sum== u""):
-                        md5sum = utils.GetFileMd5(upFileName)
+                if not (upedFile is None):
+                    if not (upedFile.filename==u""):
+                        #如果是管理员上传的文件，则覆盖掉表单上填写的值
+                        filename = upedFile.filename.decode('utf-8')
+                        print 'filename=',filename, type(filename)
+                        upFileName = u'static/downloads/'+modname+ u'/' + filename
+                        print upFileName
+                        utils.saveBin(upFileName, upedFile.value)
+                        url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
+                        size = len(upedFile.value)
+                        if (md5sum== u""):
+                            md5sum = utils.GetFileMd5(upFileName)
                 api_level=x["api_level"]
                 channels = x["channels"]
                 issuetime = int(time.time())
