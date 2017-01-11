@@ -51,6 +51,7 @@ def createDirs(path):
         return False
 
 def GetFileMd5(filename):
+    '''get same value as md5sum'''
     if not os.path.isfile(filename):
         return
     myhash = hashlib.md5()
