@@ -3,6 +3,7 @@
 #
 import os,cPickle,time
 import urllib,urllib2
+import hashlib
 
 print 'importing utils...'
 
@@ -48,6 +49,18 @@ def createDirs(path):
     else:
         print path+'already exist'
         return False
+
+def GetFileMd5(filename):
+    if not os.path.isfile(filename):
+        return
+    myhash = hashlib.md5()
+    f = file(filename,'rb')
+    while True:
+        b = f.read(8096)
+        if not b : break
+        myhash.update(b)
+    f.close()
+    return myhash.hexdigest()
 
 def saveObj(obj,filename):#dump对象到本地
     output = open(filename, 'wb+')

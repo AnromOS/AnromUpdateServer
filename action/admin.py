@@ -112,7 +112,7 @@ class PublishNewVersion(BaseAction):
                 version = x['version']
                 versioncode = x['versioncode']
                 changelog=x['changelog']
-                #filename =x['filename']
+                md5sum=x['md5sum']
                 upedFile= x['muploadedfile']
                 url = x['url']
                 size = x['size']
@@ -126,7 +126,8 @@ class PublishNewVersion(BaseAction):
                     utils.saveBin(upFileName, upedFile.value)
                     url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
                     size = len(upedFile.value)
-                md5sum=x['md5sum']
+                    if (md5sum== u""):
+                        md5sum = utils.GetFileMd5(upFileName)
                 api_level=x["api_level"]
                 channels = x["channels"]
                 issuetime = int(time.time())
@@ -205,7 +206,7 @@ class Login(BaseAction):
     def GET(self):
         """ View single post """
         if self.logged():
-            raise web.seeother('/publish')
+            raise self.seeother('/publish')
         form = self.form()
         return self.renderDefault.login(form,config.ADMIN_LOGIN)
         
