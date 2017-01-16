@@ -41,7 +41,7 @@ builduserdebug(){
     CHANGELOG="[ENG]nightly build for $FILENAME"
     MD5SUM=$(md5sum $ROMFILE)
     SIZE=263433
-    publish "$DEST" "$CHANNELS" "$VERSION" "$VERSIONCODE" "$CHANGELOG" "$URL" "$SIZE" "$MD5SUM"
+    publish "$DEST" "$CHANNELS" "$VERSION" "$VERSIONCODE" "$CHANGELOG" "$URL" "$SIZE" $MD5SUM
     echo "publish to web finished."
 }
 

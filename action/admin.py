@@ -45,7 +45,7 @@ class PublishNewApp(BaseAction):
                 mdevice =x['mdevice']
                 model.del_device(did,mdevice)
                 #管理员更改了数据，把产品数据导出成json文件
-                dumpAllProduct2Json()
+                self.dumpAllProduct2Json()
                 self.seeother("/publish")
                 return
             elif (x['a']=='edit'):
@@ -75,7 +75,7 @@ class PublishNewApp(BaseAction):
                 #3, 保存在数据库里
                 model.save_device(mdevice, mname, picname, mdscpt, mtime)
             #管理员更改了数据，把产品数据导出成json文件
-            dumpAllProduct2Json()
+            self.dumpAllProduct2Json()
             self.seeother("/publish")
         else:
             raise web.notfound(" operation not authrized.")
@@ -147,7 +147,7 @@ class PublishNewVersion(BaseAction):
                 m_time = int(time.time())
                 model.save_romdelta_new(wid,mod_id, 0, filename, url, md5sum, 2, source_incremental, target_incremental,  m_time)
             #管理员更改了数据，把产品数据导出成json文件
-            dumpAllProduct2Json()
+            self.dumpAllProduct2Json()
             if(privileged):
                 return "Post rom ok!."
             else:
@@ -230,46 +230,3 @@ class Quit(BaseAction):
     def GET(self):
         web.ctx.session.kill()
         raise self.seeother(config.ADMIN_LOGIN)
-
-def dumpAllProduct2Json():
-    '''把所有的数据库中的数据输出到json文件'''
-    print("Dumping all products data to one json file....")
-    models = model.get_devices()
-    devices =[]
-    body={}
-    products=[]
-    for post in models:
-        devi={}
-        mod_id= post['mod_id']
-        devi['id'] = post['m_device']
-        devi['m_modname'] = post['m_modname']
-        devi['m_modpicture'] = post['m_modpicture']
-        devi['m_moddescription'] = post['m_moddescription']
-        #devi['m_detail']=model.get_top5_roms_by_modelid(mod_id)
-        #devi['m_detail']=model.get_all_roms_by_modelid(mod_id)
-        devi['m_detail']=model.get_available_roms_by_modelid(mod_id,"release")
-        devices.append(devi)
-    for devi in devices:
-        devbody =[]
-        for x in devi['m_detail']:
-            temp={}
-            temp['version']=x['version']
-            temp['versioncode']=x['versioncode']
-            temp["api_level"]= x['api_level']
-            temp["filename"] = x['filename']
-            temp["url"] = x['url']
-            temp['size']=x['size']
-            temp["timestamp"] =x['m_time']
-            temp["time"] =x['issuetime']
-            temp["md5sum"] =x['md5sum']
-            temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+devi['id']+'/changelog'+str(x['id'])+'.txt'
-            temp["changelog"] = x['changelog']
-            temp["channel"] = x['channels']
-            devbody.append(temp)
-        devi['m_detail']= devbody
-        products.append(devi)
-    body['id']=None
-    body['result']=products
-    body['error']=None
-    result = json.dumps(body,ensure_ascii=False)
-    utils.saveBin(r'static/downloads/latest_releases.json',result.encode('utf-8'))

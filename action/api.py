@@ -123,8 +123,8 @@ class API_APPUP(BaseAction):
         api={}
         body=[]
         mod_id =0
-        x= web.input(source_version="")
-        source_version = x['source_version']
+        webinput= web.input(source_version="")
+        source_version = webinput['source_version']
         if (method == 'upgrade' and device != '' and channels!='' and source_version != ''):
             print 'recieve a valid Client request :',method,device,channels,source_version
             mods =model.get_devices_byname(device)
