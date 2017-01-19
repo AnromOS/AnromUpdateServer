@@ -48,7 +48,7 @@ class base:
         return web.seeother(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 
     def dump2Json(self, channels):
-        '''把所有的数据库中的数据输出到json文件, channles 可以写 release, nightly, all'''
+        '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''
         print("Dumping all products data to one json file....")
         models = model.get_devices()
         devices =[]

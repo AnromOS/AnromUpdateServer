@@ -130,7 +130,7 @@ class API_APPUP(BaseAction):
             mods =model.get_devices_byname(device)
             for x in mods: 
                 mod_id = x['mod_id']
-            if(channels==u"nightly"):
+            if(channels.find(u"nightly")>-1):
                 channels="nightly"
             else: channels="release"
             availableRoms = model.get_available_roms_by_modelid(mod_id,channels)

@@ -15,7 +15,8 @@ def get_devices_byname(device):
 
 def get_available_roms_by_modelid(modelid,channels):
     '''返回可用的升级'''
-    result= dba.select('t_anrom',where ='mod_id = $modelid AND channels = $channels ',limit = 1, order='issuetime desc', vars=locals())
+    chann = '%%'+channels+'%%'
+    result= dba.select('t_anrom',where ='mod_id = $modelid AND channels like $chann ',limit = 1, order='issuetime desc', vars=locals())
     return result
     
 def get_changelog_bydevice(mdevice,romid):

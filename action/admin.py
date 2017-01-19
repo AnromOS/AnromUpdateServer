@@ -98,7 +98,7 @@ class PublishNewVersion(BaseAction):
             raise web.notfound(" operation not authorized.")
     
     def POST(self,modid,modname):
-        x=web.input(a='',t='',wid='', api_level=23,channels="nightly", ptoken="", muploadedfile={})
+        x=web.input(a='',t='',wid='', api_level=23, ch1="", ch2="", ptoken="", muploadedfile={})
         ptoken = x['ptoken']
         privileged = self.hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
@@ -131,7 +131,8 @@ class PublishNewVersion(BaseAction):
                         if (md5sum== u""):
                             md5sum = utils.GetFileMd5(upFileName)
                 api_level=x["api_level"]
-                channels = x["channels"]
+                #一个条目支持多个标签
+                channels = x["ch1"] + x["ch2"]
                 issuetime = int(time.time())
                 m_time = issuetime
                 model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, 2, channels, api_level, issuetime, m_time)
@@ -176,7 +177,7 @@ class PublishRomList(BaseAction):
                 self.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=delta&wid="+wid)
             romlists = model.get_all_roms_by_modelid(modid)
             deltaromlists =model.get_romdelta_bymodid(modid)
-            return self.renderAdmin.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的rom列表")
+            return self.renderAdmin.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的更新列表")
         else:
             raise web.notfound(" operation not authorized.")
             

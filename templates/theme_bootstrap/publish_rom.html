@@ -96,12 +96,12 @@ $if(pupgrade!=None):
             class="form-control" placeholder="升级文件的md5sum值">
           </div>
           <div class="form-group">
-            <label for="channels">版本通道（若不选择默认是内部版本）:  </label>
+            <label for="channels">版本通道（若不选通道，则对外不可见）:  </label>
             <div class="radio-inline">
-              <label><input type="radio" name="channels" id="nightly" value="nightly">内部版（nightly）  </label>
+              <label><input type="checkbox" name="ch1" id="nightly" value="[nightly]">内部版（nightly）  </label>
             </div>
             <div class="radio-inline">
-              <label><input type="radio" name="channels" id="release" value="release">正式版（release）</label>
+              <label><input type="checkbox" name="ch2" id="release" value="[release]">正式版（release）</label>
             </div>
           </div>
           
