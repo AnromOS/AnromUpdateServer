@@ -73,7 +73,7 @@ $if(pupgrade!=None):
                 value="$pupgrade.url"
             $else:
                 value="" 
-            class="form-control" placeholder="升级文件的下载地址" >
+            class="form-control" placeholder="升级文件的下载地址" />
            
             <label for="url">size</label>
             <input type="text" name="size" id="size" 
@@ -81,10 +81,10 @@ $if(pupgrade!=None):
                 value="$pupgrade.size"
             $else:
                 value="" 
-            class="form-control" placeholder="文件的大小单位(字节)" >
+            class="form-control" placeholder="文件的大小单位(字节)" />
             
             <label for="muploadedfile">或者上传文件到本站所在服务器（若选择上传文件则不必填写url和size字段）</label>
-            <input type="file" name="muploadedfile" id="muploadedfile">
+            <input type="file" name="muploadedfile" id="muploadedfile"/>
           </div>
           <div class="form-group">
             <label for="md5sum">md5sum（若不填写则以上传到服务器的文件为准计算MD5值）</label>
@@ -93,15 +93,22 @@ $if(pupgrade!=None):
                 value="$pupgrade.md5sum"
             $else:
                 value="" 
-            class="form-control" placeholder="升级文件的md5sum值">
+            class="form-control" placeholder="升级文件的md5sum值"/>
           </div>
           <div class="form-group">
             <label for="channels">版本通道（若不选通道，则对外不可见）:  </label>
             <div class="radio-inline">
-              <label><input type="checkbox" name="ch1" id="nightly" value="[nightly]">内部版（nightly）  </label>
+              <label><input type="checkbox" name="ch1" id="nightly" value="[nightly]"/>内部版（nightly）  </label>
             </div>
             <div class="radio-inline">
-              <label><input type="checkbox" name="ch2" id="release" value="[release]">正式版（release）</label>
+              <label><input type="checkbox" name="ch2" id="release" value="[release]"/>正式版（release）</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="status">自定义特性:  </label>
+            <div class="radio-inline">
+              <label><input type="radio" name="status" id="status" value="1" />开启强制升级 </label>
             </div>
           </div>
           

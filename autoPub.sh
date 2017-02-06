@@ -17,8 +17,9 @@ publish(){
     CHANGELOG=$5
     URL=$6
     SIZE=$7
-    MD5SUM=$8
-    python $POSTCMD "$DEST" "$CHANNELS" "$VERSION" "$VERSIONCODE" "$CHANGELOG" "$URL" "$SIZE" "$MD5SUM"
+    STATUS=$8
+    MD5SUM=$9
+    python $POSTCMD "$DEST" "$CHANNELS" "$VERSION" "$VERSIONCODE" "$CHANGELOG" "$URL" "$SIZE" "$STATUS" "$MD5SUM"
 }
 
 builduserdebug(){
@@ -41,7 +42,8 @@ builduserdebug(){
     CHANGELOG="[ENG]nightly build for $FILENAME"
     MD5SUM=$(md5sum $ROMFILE)
     SIZE=263433
-    publish "$DEST" "$CHANNELS" "$VERSION" "$VERSIONCODE" "$CHANGELOG" "$URL" "$SIZE" $MD5SUM
+    STATUS=1 #1表示开启强制升级
+    publish "$DEST" "$CHANNELS" "$VERSION" "$VERSIONCODE" "$CHANGELOG" "$URL" "$SIZE" "$STATUS" $MD5SUM
     echo "publish to web finished."
 }
 

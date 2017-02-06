@@ -16,7 +16,7 @@ def countPrivilege():
     print("hasPrivilege: ptoken is:",ptoken)
     return ptoken
     
-def postrom(dest,channels,version, versioncode, changelog, url, size, md5sum):
+def postrom(dest,channels,version, versioncode, changelog, url, size, status, md5sum):
     print(url)
     data = {
           'a' : 'add',
@@ -29,6 +29,7 @@ def postrom(dest,channels,version, versioncode, changelog, url, size, md5sum):
           'changelog' : changelog, #变动日志
           'url' : url, #下载地址
           'size': size, #文件大小 单位字节
+          'status':status,
           'md5sum':md5sum
         }
     data['ptoken']=countPrivilege()
@@ -51,5 +52,6 @@ if __name__ == '__main__':
     changelog = sys.argv[5]
     url = sys.argv[6]
     size = sys.argv[7]
-    md5sum = sys.argv[8]
-    postrom(dest,channels,version, versioncode,changelog,url, size, md5sum)
+    status = sys.argv[9]
+    md5sum = sys.argv[10]
+    postrom(dest,channels,version, versioncode,changelog,url, size, status, md5sum)

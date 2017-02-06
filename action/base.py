@@ -19,7 +19,8 @@ class base:
         'strdate':utils.strtime,
         'inttime':utils.inttime,
         'urlquote':utils.urllib2.quote,
-        'abs2rev':utils.abs2rev
+        'abs2rev':utils.abs2rev,
+        'getStatuStr':config.getStatuStr
     }
     renderAdmin = web.template.render('templates/theme_bootstrap', base='base', globals=t_globals)
     renderCMS = web.template.render('templates/theme_bootstrap', base='base_index', globals=t_globals)
@@ -78,6 +79,7 @@ class base:
                 temp["filename"] = x['filename']
                 temp["url"] = x['url']
                 temp['size']=x['size']
+                temp['status']=x['status']
                 temp["timestamp"] =x['m_time']
                 temp["time"] =x['issuetime']
                 temp["md5sum"] =x['md5sum']

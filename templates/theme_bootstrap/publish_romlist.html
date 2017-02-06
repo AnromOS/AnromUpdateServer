@@ -3,22 +3,40 @@ $var title: $ptitle
 
 <h4><strong>应用 $name 的所有版本</strong></h4>
 
-    $for post in roms:
         <div class="panel panel-default">
-        <div class="panel-heading"><strong>$name 升级包 $post['id']</strong></div>
+        <div class="panel-heading"><strong>$name 已经发布的升级包</strong></div>
         <table id="movie-table" class="table table-striped table-hover table-bordered table-condensed">
             <thead>
                 <tr>
-                <th>版本:</th>
-                <th>$post['version']</th>
-                <th>版本号: $post['versioncode']</th>
+                    <th></th>
+                    <th>版本:</th>
+                    <th>版本号:</th>
+                    <th>文件名:</th>
+                    <th>md5sum:</th>
+                    <th>大小(字节):</th>
+                    <th>版本通道:</th>
+                    <th>自定义特性</th>
+                    <th>发布时间:</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td>文件名</td><td><a href ="$post['url']">$post['filename']</a></td><td>$post['changelog']</td></tr>
-                <tr><td>md5sum</td><td>$post['md5sum']</td> <td>大小(字节): $post['size']</td></tr>
-                <tr><td>版本通道</td><td>$post['channels']</td><td>发布时间: $strdate(post['issuetime'])</td></tr>
-                <tr><td>操作</td><td><a class="text-left" href="?a=edit&wid=$post['id']&t=full">编辑</a> <td><a class="text-right" href="?a=del&wid=$post['id']&t=full" >删除</a> </td></tr>
+            $for post in roms:
+                <tr><td>$post['id']</td>
+                    <td>$post['version']</td>
+                    <td>$post['versioncode']</td>
+                    <td><a href ="$post['url']">$post['filename']</a></td>
+                    <!--<td>$post['changelog']</td>-->
+                    <td>$post['md5sum']</td>
+                    <td>$post['size']</td>
+                    <td>$post['channels']</td>
+                    <td>$getStatuStr(post['status'])</td>
+                    <td>$strdate(post['issuetime'])</td>
+                    <td><a class="text-left" href="?a=edit&wid=$post['id']&t=full">编辑</a> 
+                    <td><a class="text-right" href="?a=del&wid=$post['id']&t=full" >删除</a> </td>
+                </tr>
+                
             </tbody>
         </table>
         </div>

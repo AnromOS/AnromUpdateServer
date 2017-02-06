@@ -98,7 +98,7 @@ class PublishNewVersion(BaseAction):
             raise web.notfound(" operation not authorized.")
     
     def POST(self,modid,modname):
-        x=web.input(a='',t='',wid='', api_level=23, ch1="", ch2="", ptoken="", muploadedfile={})
+        x=web.input(a='',t='',wid='', api_level=23,status=0, ch1="", ch2="", ptoken="", muploadedfile={})
         ptoken = x['ptoken']
         privileged = self.hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
@@ -117,6 +117,8 @@ class PublishNewVersion(BaseAction):
                 md5sum=x['md5sum']
                 url = x['url']
                 size = x['size']
+                #自定义的状态，从后台传递过来
+                status = x['status']
                 filename = x['url'].split('/')[-1]
                 if not (upedFile is None):
                     if not (upedFile.filename==u""):
@@ -135,7 +137,7 @@ class PublishNewVersion(BaseAction):
                 channels = x["ch1"] + x["ch2"]
                 issuetime = int(time.time())
                 m_time = issuetime
-                model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, 2, channels, api_level, issuetime, m_time)
+                model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, status, channels, api_level, issuetime, m_time)
             if(x['a']=='add' and x['t']=='delta'):
                 wid = x['wid']
                 mod_id=int(modid)
@@ -214,10 +216,9 @@ class Login(BaseAction):
         return self.renderDefault.login(form,config.ADMIN_LOGIN)
         
     def POST(self):
-        render = self.renderDefault
         form = self.form()
         if not form.validates():
-            return render.login(form)
+            return self.renderDefault.login(form,config.ADMIN_LOGIN)
         if (model.login_post(form.d.uname,form.d.pword)):
             #return "login success"
             web.ctx.session.login= 1
