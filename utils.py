@@ -11,7 +11,6 @@ def getpage(url):
     print url
     req = urllib2.Request(url)
     req.add_header("User-Agent","Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0")
-    req.add_header("If-None-Match","c1858c2845ca9501136ca83d624f8d4d")
     u = urllib2.urlopen(req).read()
     return u
 
@@ -49,6 +48,12 @@ def createDirs(path):
     else:
         print path+'already exist'
         return False
+
+def sha1(value):
+    return hashlib.sha1(value).hexdigest()
+
+def md5(value):
+    return hashlib.md5(value).hexdigest()
 
 def GetFileMd5(filename):
     '''get same value as md5sum'''
