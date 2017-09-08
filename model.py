@@ -206,27 +206,15 @@ def installdics():
           size INTEGER NOT NULL default 0,
           status INTEGER NOT NULL default 0,
           channels TEXT NOT NULL default 'nightly',
+          source_incremental TEXT NOT NULL default '0',
+          target_incremental TEXT NOT NULL default '0',
+          note TEXT NOT NULL default '',
           api_level TEXT NOT NULL default '0',
           issuetime INTEGER NOT NULL default 0,
           m_time INTEGER NOT NULL DEFAULT 0
         );
         CREATE INDEX IF NOT EXISTS index_anrom ON t_anrom(id, mod_id);
-        
-        DROP TABLE IF EXISTS t_rom_delta;
-        CREATE TABLE IF NOT EXISTS t_rom_delta (
-          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          mod_id INTEGER NOT NULL,
-          api_level text NOT NULL,
-          filename text NOT NULL,
-          url text NOT NULL,
-          md5sum text NOT NULL,
-          status INTEGER NOT NULL default 0,
-          source_incremental TEXT NOT NULL default '0',
-          target_incremental TEXT NOT NULL default '0',
-          m_time INTEGER NOT NULL DEFAULT 0
-        );
-        CREATE INDEX IF NOT EXISTS index_rom_delta ON t_rom_delta(id, mod_id,source_incremental,target_incremental);
-        
+
         DROP TABLE IF EXISTS t_model;
         CREATE TABLE IF NOT EXISTS t_model (
           mod_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -243,7 +231,37 @@ def installdics():
     finally:
         c.close()
         print config.DB_PATH_PUBLISH,' install db ok'
-        
+
+def upgradeDB():
+    conn = sqlite3.connect(config.DB_PATH_PUBLISH)
+    c= conn.cursor()
+    '''升级数据库版本'''
+    try:
+        installsql=""" 
+        DROP TABLE IF EXISTS t_anrom;
+        CREATE TABLE IF NOT EXISTS t_anrom (
+          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+          mod_id INTEGER NOT NULL,
+          version text NOT NULL,
+          versioncode text NOT NULL,
+          changelog text NOT NULL,
+          filename text NOT NULL,
+          url text NOT NULL,
+          md5sum text NOT NULL,
+          size INTEGER NOT NULL default 0,
+          status INTEGER NOT NULL default 0,
+          channels TEXT NOT NULL default 'nightly',
+          api_level TEXT NOT NULL default '0',
+          issuetime INTEGER NOT NULL default 0,
+          m_time INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE INDEX IF NOT EXISTS index_anrom ON t_anrom(id, mod_id);
+
+        """
+        c.executescript(installsql)
+    finally:
+        c.close()
+        print config.DB_PATH_PUBLISH,' db upgrade ok'
         
 class MemStore(web.session.Store):
     '''##自定义session store 类，将session信息保存在内存中，提高读写速度'''
