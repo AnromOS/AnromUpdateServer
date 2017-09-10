@@ -8,7 +8,7 @@ written with python, need support of webpy framework.
 2. 安装服务器:
 
 ```
-$python install.py
+$python install.py install
 ```
 
 3. 启动服务器:
@@ -26,6 +26,18 @@ $run.sh
 4. 确保服务器文件系统的写权限:网站目录的/static/images 和/static/downloads/ 需要有写权限
 5. 部署nginx:
 修改nginx中的配置文件，填写root dir的路径为程序的绝对路径，然后部署到nginx中即可，详情见下面
+
+## 就版本如何升级：
+
+ 1. 停止正在运行的服务
+ 2. 运行:
+```
+$python install.py upgrade
+```
+ 3. 重新开始服务
+```
+$run.sh
+```
 
 ## nginx服务器的配置：
 
