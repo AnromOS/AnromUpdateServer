@@ -28,7 +28,8 @@ $var title: $ptitle
                </tbody>
             </table>
             <strong>更改管理员密码</strong>
-            <form action="/publish/changepwd" method="post" class="form-inline" role="form">
+            
+            <form action="/publish/changepwd" method="post" class="form-inline" role="form" enctype="multipart/form-data">
                 <div  class="form-group">
                     <label for="username" class="sr-only">管理员用户名</label>
                     <input name="username" id="username" placeholder="管理员用户名" value="" type="text" class="form-control">
@@ -41,8 +42,9 @@ $var title: $ptitle
                     <label for="password2" class="sr-only">再次输入密码</label>
                     <input name="password2" id="password2" placeholder="再次输入密码" value="" type="password" class="form-control">
                 </div>
-                <input class="btn btn-primary" value="更改" type="submit">
+                <input class="btn btn-primary" type="submit" value="更改" >
             </form> 
+            
         </div>
     </div>
     </div>
@@ -88,10 +90,10 @@ $var title: $ptitle
                 <thead>
                 <tr>
                   <th></th>
-                  <th>应用 </th>
-                  <th>应用ID</th>
-                  <th>已发布版本</th>
-                  <th>最近添加时间</th>
+                  <th>应用(ID) </th>
+                  <th>已发布版本(数量)</th>
+                  <th>最新版本</th>
+                  <th>发布时间</th>
                   <th>操作 </th>
                   <th></th>
                   <th></th>
@@ -101,11 +103,10 @@ $var title: $ptitle
                 $for post in models:
                     <tr>
                       <td><img class="img-rounded" height=35px src="$post['m_modpicture']"/></td>
-                      <td>$post['m_modname']</td>
-                      <td><strong>$post['m_device']</strong></td>
-                      <!--<td>$post['m_moddescription']</td>-->
-                      <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 </a> </td>
-                      <td> $strdate(post['m_time'])</td>
+                      <td>$post['m_modname'] (<strong>$post['m_device']</strong>)</td>
+                      <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 ($post['m_count'])</a> </td>
+                      <td>$post['m_detail']['version']</td>
+                      <td>$strdate(post['m_time'])</td>
                       <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
                       <td><a href="/publish/device?a=edit&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">编辑应用信息</a></td>
                       <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>

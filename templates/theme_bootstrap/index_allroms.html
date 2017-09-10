@@ -8,7 +8,7 @@ $var title: $ptitle
     $for post in models:
         <li>
             <a name="devices" href="/allroms/$post['m_device']">
-            <img class="img-rounded" height=50px src="/$post['m_modpicture']"><!--<img class="img-circle" height=50px src="/$post['m_modpicture']">-->
+            <img class="img-rounded" height=50px src="$post['m_modpicture']"><!--<img class="img-circle" height=50px src="$post['m_modpicture']">-->
             <br/>$post['m_modname']
             </a>
         </li>
@@ -26,7 +26,7 @@ $var title: $ptitle
                   <th> </th>
                   <th> 版本</th>
                   <th> 下载地址</th>
-                  <th> 大小</th>
+                  <th> </th>
                   <th> 变更日志</th>
                   <th> md5</th>
                   <th> 通道</th>
@@ -35,7 +35,7 @@ $var title: $ptitle
                 </thead>
                 <tbody>
                  <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/$roms['m_modpicture']"></td>
+                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="$roms['m_modpicture']"></td>
                   <td><strong>$roms['m_device']</strong></td>
                   <td></td>
                   <td></td>
@@ -44,8 +44,8 @@ $var title: $ptitle
                  $for det in roms['m_detail']:
                      <tr>
                         <td>$det['version']</td>
-                        <td><a href ="$det['url']" class="btn btn-link" >$det['filename']</a></td>
-                        <td>$det['size']</td>
+                        <td><a href ="$det['url']" class="btn btn-link" >$det['filename'] ($det['size'])</a></td>
+                        <td></td>
                         <td>$:det['changelog']</td>
                         <td>$det['md5sum']</td>
                         <td>$det['channels']</td>

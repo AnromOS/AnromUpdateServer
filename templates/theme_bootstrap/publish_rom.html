@@ -1,4 +1,4 @@
-﻿$def with (pdelta =None, pupgrade =None, ptitle=None)
+﻿$def with (pupgrade =None, ptitle=None)
 $var title: $ptitle
 
 <strong>$ptitle</strong>
@@ -33,7 +33,7 @@ $var title: $ptitle
             class="form-control" placeholder="软件版本标识，递增的整数">
           </div>
           <div class="form-group">
-            <label for="changelog">changelog</label>
+            <label for="changelog">变更日志(changelog)</label>
             <textarea type="text" name="changelog" id="changelog"  class="form-control" rows="3" placeholder="发布的日志" >
 $if(pupgrade!=None):
     $pupgrade.changelog
@@ -67,36 +67,7 @@ $if(pupgrade!=None):
           </div>
           
           <div class="form-group">
-            <label for="url">url</label>
-            <input type="text" name="url" id="url" 
-            $if(pupgrade!=None):
-                value="$pupgrade.url"
-            $else:
-                value="" 
-            class="form-control" placeholder="升级文件的下载地址" />
-           
-            <label for="url">size</label>
-            <input type="text" name="size" id="size" 
-            $if(pupgrade!=None):
-                value="$pupgrade.size"
-            $else:
-                value="" 
-            class="form-control" placeholder="文件的大小单位(字节)" />
-            
-            <label for="muploadedfile">或者上传文件到本站所在服务器（若选择上传文件则不必填写url和size字段）</label>
-            <input type="file" name="muploadedfile" id="muploadedfile"/>
-          </div>
-          <div class="form-group">
-            <label for="md5sum">md5sum（若不填写则以上传到服务器的文件为准计算MD5值）</label>
-            <input type="text" name="md5sum" id="md5sum" 
-            $if(pupgrade!=None):
-                value="$pupgrade.md5sum"
-            $else:
-                value="" 
-            class="form-control" placeholder="升级文件的md5sum值"/>
-          </div>
-          <div class="form-group">
-            <label for="channels">版本通道（若不选通道，则对外不可见）:  </label>
+            <label for="channels">版本通道（若不选通道，则对外不可见）:  </label><br>
             <div class="radio-inline">
               <label><input type="checkbox" name="ch1" id="nightly" value="[nightly]"/>内部版（nightly）  </label>
             </div>
@@ -106,68 +77,80 @@ $if(pupgrade!=None):
           </div>
           
           <div class="form-group">
+            <label for="muploadedfile">上传文件到本站所在服务器（若选择上传文件则不必填写url, size, md5sum字段）</label>
+            <input type="file" name="muploadedfile" id="muploadedfile"/>
+          </div>
+          
+          <div class="form-group">
+            <label for="url">下载地址(url)</label>
+            <input type="text" name="url" id="url" 
+            $if(pupgrade!=None):
+                value="$pupgrade.url"
+            $else:
+                value="" 
+            class="form-control" placeholder="升级文件的下载地址" />
+           
+            <label for="url">文件大小(size)</label>
+            <input type="text" name="size" id="size" 
+            $if(pupgrade!=None):
+                value="$pupgrade.size"
+            $else:
+                value="" 
+            class="form-control" placeholder="文件的大小单位(字节)" />
+            
+            <label for="md5sum">校验和(md5sum)</label>
+            <input type="text" name="md5sum" id="md5sum" 
+            $if(pupgrade!=None):
+                value="$pupgrade.md5sum"
+            $else:
+                value="" 
+            class="form-control" placeholder="升级文件的md5sum值（若不填写则以上传到服务器的文件为准计算MD5值）"/>
+          </div>
+          
+          <div class="form-group">
             <label for="status">自定义特性:  </label>
             <div class="radio-inline">
               <label><input type="radio" name="status" id="status" value="1" />开启强制升级 </label>
             </div>
           </div>
           
+          <div class="form-group">
+            <input class="hidden" name="wid" id="incremental" 
+            $if(pupgrade!=None):
+                value="$pupgrade.id" 
+            $else:
+                value="" 
+            >
+            <label for="source_incremental">源版本增量标识(source_incremental) </label>
+            <input type="text" name="source_incremental" id="source_incremental" 
+            $if(pupgrade!=None):
+                value="$pupgrade.source_incremental" 
+            $else: 
+                value=""
+            class="form-control" placeholder="源版本增量标识,用于增量升级包，可以留空">
+          </div>
+          <div class="form-group">
+            <label for="target_incremental">目的版本增量标识(target_incremental) </label>
+            <input type="text" name="target_incremental" id="target_incremental" 
+            $if(pupgrade!=None):
+                value="$pupgrade.target_incremental" 
+            $else: 
+                value=""
+            class="form-control" placeholder="目的版本增量标识,用于增量升级包，可以留空">
+          </div>
+          
+          <div class="form-group">
+            <label for="target_incremental">自定义内容(extra) </label>
+            <input type="text" name="extra" id="extra" 
+            $if(pupgrade!=None):
+                value="$pupgrade.extra" 
+            $else: 
+                value=""
+            class="form-control" placeholder="自定义内容，没有则留空">
+          </div>
+          
         <input  class="btn btn-primary" type="submit" value="完成"/>
       </form>
     </div>
     </div>
-</div>
-
-<div class="col-sm-10 col-xs-10 col-md-10 hidden">
-    <div class="panel panel-primary">
-    <div class="panel-heading">发布增量升级包</div>
-    <div class="panel-body">
-      <form action="?a=add&t=delta" method="post" class="form" role="form" >
-          <div class="form-group">
-            <input class="hidden" name="wid" id="incremental" 
-            $if(pdelta!=None):
-                value="$pdelta.id" 
-            $else:
-                value="" 
-            >
-            <label for="source_incremental">source_incremental </label>
-            <input type="text" name="source_incremental" id="source_incremental" 
-            $if(pdelta!=None):
-                value="$pdelta.source_incremental" 
-            $else: 
-                value=""
-            class="form-control" placeholder="源版本增量标识">
-          </div>
-          <div class="form-group">
-            <label for="target_incremental">target_incremental </label>
-            <input type="text" name="target_incremental" id="target_incremental" 
-            $if(pdelta!=None):
-                value="$pdelta.target_incremental" 
-            $else: 
-                value=""
-            class="form-control" placeholder="目的版本增量标识">
-          </div>
-          <div class="form-group">
-            <label for="url">url</label>
-            <input type="text" name="url" id="url"
-            $if(pdelta!=None):
-                value="$pdelta.url" 
-            $else: 
-                value=""
-            class="form-control" placeholder="升级文件的下载地址">
-          </div>
-          <div class="form-group">
-            <label for="md5sum">md5sum</label>
-            <input type="text" name="md5sum" id="md5sum" 
-            $if(pdelta!=None):
-                value="$pdelta.md5sum" 
-            $else: 
-                value=""
-            class="form-control" placeholder="升级文件的md5sum值">
-          </div>
-        <input  class="btn btn-primary" type="submit" value="完成"/>
-        </form>
-      </div>
-    </div>
-</div>
 </div>

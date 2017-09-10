@@ -13,6 +13,10 @@ def get_devices_byname(device):
     '''获取所有的应用'''
     return dba.query('SELECT * FROM t_model where m_device = $device;', vars=locals())
 
+def get_devices_counts_byname(mod_id):
+    '''已经发布了多少个版本'''
+    return dba.query("select count(*) FROM t_anrom where mod_id = $mod_id", vars=locals())[0]['count(*)']
+    
 def get_available_roms_by_modelid(modelid,channels):
     '''返回可用的升级'''
     chann = '%%'+channels+'%%'
@@ -27,7 +31,7 @@ def get_changelog_bydevice(mdevice,romid):
 def get_available_delta_rom(dev_id,source_inc,target_inc):
     '''查找可用的增量升级包 target_inc 暂时没用'''
     source_inc = '%%'+source_inc.split('.')[-1]+'%%'
-    result= dba.query('select * from t_rom_delta where mod_id = $dev_id AND source_incremental like $source_inc AND status = 2  order by m_time desc limit 1', vars=locals())
+    result= dba.query('select * from t_anrom where mod_id = $dev_id AND source_incremental like $source_inc AND status = 2  order by m_time desc limit 1', vars=locals())
     return result
 
 def post_user_report(fprint, fcontent,ftime):
@@ -69,7 +73,6 @@ def del_device(deviceid,mdevice):
     '''删除某个机型'''
     dba.delete("t_model", where="m_device=$mdevice",vars=locals()) 
     dba.delete("t_anrom", where="mod_id = $deviceid",vars=locals())#删除升级包
-    dba.delete("t_rom_delta", where="mod_id = $deviceid",vars=locals())#删除增量升级包
 
 ### 发布升级包
 def get_all_roms_by_modelid(modelid):
@@ -87,13 +90,13 @@ def get_rom_by_wid(wid):
     result= dba.select('t_anrom',where ='id = $wid', limit= 1, vars=locals())[0]
     return result
     
-def save_rom_new(wid, mod_id, version,versioncode, changelog, filename, url, size, md5sum, status, channels, api_level, issuetime, m_time):
+def save_rom_new(wid, mod_id, version,versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issuetime, m_time):
     '''发布新的rom升级包'''
-    res = dba.update("t_anrom",where="id = $wid",vars=locals(), mod_id = mod_id, version = version,  versioncode= versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels, api_level = api_level,m_time=m_time)
+    res = dba.update("t_anrom",where="id = $wid",vars=locals(), mod_id = mod_id, version = version,  versioncode= versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels,source_incremental = source_incremental, target_incremental = target_incremental, extra= extra, api_level = api_level,m_time=m_time)
     if(res):
         pass
     else:
-        dba.insert("t_anrom",mod_id = mod_id, version =version ,versioncode=versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels, api_level = api_level,issuetime=issuetime,m_time=m_time)
+        dba.insert("t_anrom",mod_id = mod_id, version =version ,versioncode=versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels, source_incremental = source_incremental, target_incremental = target_incremental, extra= extra, api_level = api_level,issuetime=issuetime,m_time=m_time)
     #升级设备最近更新的时间
     dba.update("t_model", where="mod_id=$mod_id", vars=locals(),m_time=m_time)
         
@@ -104,28 +107,7 @@ def delete_rom_by_id(wid):
 def find_modid_bydevice(mdevice):
     '''根据设备名称查找设备ID'''
     return dba.select('t_model', where="m_device=$mdevice" ,limit='1' ,vars=locals())
-    
-#### 增量升级包
-def get_romdelta_bymodid(modid):
-    '''显示某个rom的增量升级包'''
-    return dba.select("t_rom_delta",where="mod_id=$modid",order='target_incremental desc',vars=locals())
-
-def get_romdelta_by_wid(wid):
-    '''获取单个升级包的信息'''
-    result= dba.select('t_rom_delta',where ='id = $wid', limit= 1, vars=locals())[0]
-    return result
-    
-def save_romdelta_new(wid, mod_id, api_level, filename, url, md5sum, status, source_incremental, target_incremental,  m_time):
-    '''发布新的增量rom升级包'''
-    res =dba.update("t_rom_delta",where="id = $wid",vars=locals(),mod_id = mod_id, api_level = api_level, filename=filename, url=url, md5sum = md5sum, status = status, source_incremental = source_incremental, target_incremental = target_incremental,m_time=m_time)
-    if (res):return 
-    else:
-        dba.insert("t_rom_delta",mod_id = mod_id, api_level = api_level, filename=filename, url=url, md5sum = md5sum, status = status, source_incremental = source_incremental, target_incremental = target_incremental, m_time=m_time)
-
-def delete_romdelta_by_id(wid):
-    '''删除某个rom增量升级包'''
-    return dba.delete("t_rom_delta", where=" id = $wid",vars=locals())
-    
+   
 #### 用户反馈的web管理
 def get_user_report_counts():
     '''总共有多少条反馈'''
@@ -158,7 +140,11 @@ def get_pref(name):
         return value
     except KeyError:
         return None
+    except IndexError:
+        return None
 
+### database scheme.
+DB_VERSION=1
 def installmain():
     '''安装网站所需要的主数据库'''
     conn = sqlite3.connect(config.DB_PATH_MAIN)
@@ -180,12 +166,13 @@ def installmain():
         
         insert into pref (key,value) values("user","%s");
         insert into pref (key,value) values("password","%s");
+        insert into pref (key,value) values("db_version","%d");
         insert into ureport (fingerprint,mcontent,mtime) values("test_finger_print","测试的用户提交数据","1015891406");
-        """%(config.ADMIN_USERNAME,config.ADMIN_HASHPWD)
+        """%(config.ADMIN_USERNAME,config.ADMIN_HASHPWD,DB_VERSION)
         c.executescript(installsql)
     finally:
         c.close()
-        print config.DB_PATH_MAIN,' install db ok'
+        print 'install ',config.DB_PATH_MAIN,'  ok'
 
 def installdics():
     '''安装发布版本的数据库'''
@@ -208,7 +195,7 @@ def installdics():
           channels TEXT NOT NULL default 'nightly',
           source_incremental TEXT NOT NULL default '0',
           target_incremental TEXT NOT NULL default '0',
-          note TEXT NOT NULL default '',
+          extra TEXT NOT NULL default '',
           api_level TEXT NOT NULL default '0',
           issuetime INTEGER NOT NULL default 0,
           m_time INTEGER NOT NULL DEFAULT 0
@@ -230,35 +217,36 @@ def installdics():
         c.executescript(installsql)
     finally:
         c.close()
-        print config.DB_PATH_PUBLISH,' install db ok'
+        print 'install ', config.DB_PATH_PUBLISH,' ok'
 
 def upgradeDB():
     conn = sqlite3.connect(config.DB_PATH_PUBLISH)
     c= conn.cursor()
     '''升级数据库版本'''
     try:
-        installsql=""" 
-        DROP TABLE IF EXISTS t_anrom;
-        CREATE TABLE IF NOT EXISTS t_anrom (
-          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          mod_id INTEGER NOT NULL,
-          version text NOT NULL,
-          versioncode text NOT NULL,
-          changelog text NOT NULL,
-          filename text NOT NULL,
-          url text NOT NULL,
-          md5sum text NOT NULL,
-          size INTEGER NOT NULL default 0,
-          status INTEGER NOT NULL default 0,
-          channels TEXT NOT NULL default 'nightly',
-          api_level TEXT NOT NULL default '0',
-          issuetime INTEGER NOT NULL default 0,
-          m_time INTEGER NOT NULL DEFAULT 0
-        );
-        CREATE INDEX IF NOT EXISTS index_anrom ON t_anrom(id, mod_id);
+        cur_version = get_pref("db_version")
+        print cur_version
+        if (cur_version is None) or (cur_version == 0) :
+            cur_version = 0
+            installsql=""" 
+            BEGIN TRANSACTION;
+            
+            DROP TABLE t_rom_delta;
+            ALTER TABLE t_anrom ADD source_incremental TEXT NOT NULL default '0';
+            ALTER TABLE t_anrom ADD target_incremental TEXT NOT NULL default '0';
+            ALTER TABLE t_anrom ADD extra TEXT NOT NULL default '';
+            COMMIT;
 
-        """
-        c.executescript(installsql)
+            """
+            c.executescript(installsql)
+            cur_version = cur_version+1
+            save_pref("db_version",cur_version)
+        elif  (cur_version == 1):
+            # put another database scheme here.
+            pass
+        if (cur_version == DB_VERSION):
+            print "Database has been updated. no need to upgrade."
+            return
     finally:
         c.close()
         print config.DB_PATH_PUBLISH,' db upgrade ok'

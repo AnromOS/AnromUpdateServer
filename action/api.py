@@ -50,6 +50,9 @@ class API(BaseAction):
                         temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+device+'/changelog'+str(x['id'])+'.txt'
                         temp["changelog"] = x['changelog']
                         temp["channel"] = x['channels']
+                        temp["source_incremental"] = x['source_incremental']
+                        temp["target_incremental"] = x['target_incremental']
+                        temp["extra"] = x['extra']
                         body.append(temp)
             else:
                 print 'recieve a INVALID Client request,pass:',method,device,channels,source_incremental
@@ -151,6 +154,9 @@ class API_APPUP(BaseAction):
                     temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+device+'/changelog'+str(x['id'])+'.txt'
                     temp["changelog"] = x['changelog']
                     temp["channel"] = x['channels']
+                    temp["source_incremental"] = x['source_incremental']
+                    temp["target_incremental"] = x['target_incremental']
+                    temp["extra"] = x['extra']
                     body.append(temp)
         else:
             print 'recieve a INVALID Client request,pass:',method,device,channels,source_version

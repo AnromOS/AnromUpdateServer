@@ -86,6 +86,9 @@ class base:
                 temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+devi['id']+'/changelog'+str(x['id'])+'.txt'
                 temp["changelog"] = x['changelog']
                 temp["channel"] = x['channels']
+                temp["source_incremental"] = x['source_incremental']
+                temp["target_incremental"] = x['target_incremental']
+                temp["extra"] = x['extra']
                 devbody.append(temp)
             devi['m_detail']= devbody
             products.append(devi)

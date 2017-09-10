@@ -5,12 +5,16 @@
 import sys,model
 
 def main():
-    if len(sys.argv)>=1:
-        print '''useage: run "install.py install" to initiate the databases \r\n After that, run "python server.py 18080" to start web server \r\n 
+    print '''useage: \n ----"install.py install" to initiate the databases \r\n ----"install.py upgrade" to upgrade the databases \r\nAfter that, run "python server.py 18080" to start web server \r\n 
         '''
-        model.installmain()
-        model.installdics()
-        exit()
+    if len(sys.argv)>1:
+        if (sys.argv[1] == "install"):
+            model.installmain()
+            model.installdics()
+            exit()
+        elif (sys.argv[1] == "upgrade"):
+            model.upgradeDB()
+            exit()
 
 if __name__ =='__main__':
     main()

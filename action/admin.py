@@ -14,7 +14,23 @@ class PublishIndex(BaseAction):
             models = model.get_devices()
             prefs = model.get_preferences()
             usrrpt = model.get_user_report_counts()
-            r_index =self.renderAdmin.publish_index(models,prefs,config.netpref,usrrpt)
+            devices =[]
+            for post in models:
+                devi={}
+                devi['mod_id']= post['mod_id']
+                devi['m_device'] = post['m_device']
+                devi['m_modname'] = post['m_modname']
+                devi['m_modpicture'] = post['m_modpicture']
+                devi['m_moddescription'] = post['m_moddescription']
+                devi['m_time'] = post['m_time']
+                devi['m_count'] = model.get_devices_counts_byname(devi['mod_id'])
+                devi['m_detail'] = {'version':""}
+                mdtop = model.get_top5_roms_by_modelid(devi['mod_id'])
+                for itm in mdtop:
+                    devi['m_detail'] = itm
+                    break
+                devices.append(devi)
+            r_index =self.renderAdmin.publish_index(devices,prefs,config.netpref,usrrpt)
             return r_index
         else:
             raise web.notfound(' operation not authorized.')
@@ -65,7 +81,7 @@ class PublishNewApp(BaseAction):
                 mpic = x.mpicture
                 mdscpt = x['mdescription']
                 mtime = int(time.time())
-                picname =""
+                picname ="/static/images/appdefault.png"
                 if not (mpic.filename == u""):
                     picname ="static/images/"+ (mpic.filename.decode('utf-8'))
                     #1, 保存新应用的图标
@@ -84,16 +100,12 @@ class PublishNewVersion(BaseAction):
     '''发布更新版本'''
     def GET(self,modid,modname):
         if self.logged():
-            pdelta =None 
             pupgrade =None 
             x=web.input(a="",t="")
-            if (x['a']=='edit' and x['t']=='delta'):
-                wid = x['wid']
-                pdelta = model.get_romdelta_by_wid(wid)
             if (x['a']=='edit' and x['t']=='full'):
                 wid = x['wid']
                 pupgrade = model.get_rom_by_wid(wid)
-            return self.renderAdmin.publish_rom(pdelta,pupgrade)
+            return self.renderAdmin.publish_rom(pupgrade)
         else:
             raise web.notfound(" operation not authorized.")
     
@@ -135,20 +147,14 @@ class PublishNewVersion(BaseAction):
                 api_level=x["api_level"]
                 #一个条目支持多个标签
                 channels = x["ch1"] + x["ch2"]
-                issuetime = int(time.time())
-                m_time = issuetime
-                model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, status, channels, api_level, issuetime, m_time)
-            if(x['a']=='add' and x['t']=='delta'):
-                wid = x['wid']
-                mod_id=int(modid)
+                #用于增量升级的选项
                 source_incremental = x['source_incremental']
                 target_incremental=x['target_incremental']
-                #filename =x['filename']
-                filename = x['url'].split('/')[-1]
-                url = x['url']
-                md5sum=x['md5sum']
-                m_time = int(time.time())
-                model.save_romdelta_new(wid,mod_id, 0, filename, url, md5sum, 2, source_incremental, target_incremental,  m_time)
+                #额外的信息，用户自己填写
+                extra =x['extra']
+                issuetime = int(time.time())
+                m_time = issuetime
+                model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issuetime, m_time)
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             if(privileged):
@@ -170,16 +176,8 @@ class PublishRomList(BaseAction):
             if (x['a']=='edit' and x['t'] =="full"):
                 wid = x['wid']
                 self.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=full&wid="+wid)
-            if (x['a']=='del' and x['t'] =="delta"):
-                wid = x['wid']
-                model.delete_romdelta_by_id(wid)
-                self.seeother("/publish/romslist/"+modid+"/"+modname)
-            if (x['a']=='edit' and x['t'] =="delta"):
-                wid = x['wid']
-                self.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=delta&wid="+wid)
             romlists = model.get_all_roms_by_modelid(modid)
-            deltaromlists =model.get_romdelta_bymodid(modid)
-            return self.renderAdmin.publish_romlist(config.netpref, modname,romlists,deltaromlists,"已经发布的更新列表")
+            return self.renderAdmin.publish_romlist(config.netpref, modname,romlists,"已经发布的更新列表")
         else:
             raise web.notfound(" operation not authorized.")
             
