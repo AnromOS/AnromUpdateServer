@@ -1,4 +1,4 @@
-# AnromUpdateServer
+# UpServer
 ## Brief:
 This project is an implementation of CMupdater,
 written with python, need support of webpy framework.
@@ -27,7 +27,7 @@ $run.sh
 5. 部署nginx:
 修改nginx中的配置文件，填写root dir的路径为程序的绝对路径，然后部署到nginx中即可，详情见下面
 
-## 就版本如何升级：
+## 旧版本如何升级：
 
  1. 停止正在运行的服务
  2. 运行:
@@ -81,15 +81,18 @@ server {
 }
 ```
 
-===================================================================================================
-##设置开机自动启动的方法[可选]：
+=============
+
+## 设置开机自动启动的方法[可选]：
+
 1. 编辑run.sh 以及cmupdater
 2. 将cmupdater 拷贝到 /etc/init.d/下
 3. 执行 #update-rc.d cmupdater defaults 99
 
-====================================================================================================
+=============
 
-##附录I： 为rom作增量升级包
+## 附录I： 为rom作增量升级包
+
 1. 制作差分包，使用android自己带的工具../build/tools/releasetools/ota_from_target_files
 
 * 在执行上述命令时会出现未找到recovery_api_version的错误。原因是在执行上面的脚本时如果使用选项i则会调用WriteIncrementalOTAPackage会从A包和B包中的META目录下搜索misc_info.txt来读取recovery_api_version的值。但是在执行make  otapackage命令时生成的update.zip包中没有这个目录更没有这个文档。
@@ -101,9 +104,9 @@ server {
 3. 用于升级的apk项目叫CMUpdater，该app需要root权限向手机目录下写入数据 (已经解决)
 4. MTK自带的升级软件在这个地方 mediatek/packages/apps/AdupsFotaApp 没有源代码(已经去掉)
 
-=====================================================================================================
+=============
 
-##附录II： ROM的发布和文件上传
+## 附录II： ROM的发布和文件上传
 
 * 不管是OTA升级包还是差分升级包，均上传至服务器的/path/to/AnromUpdateServer/static/download/{device}/ 下面
 * 上传完成文件之后，计算升级文件的md5值，然后在web端填写升级信息的表单。
