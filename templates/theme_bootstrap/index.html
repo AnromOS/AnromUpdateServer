@@ -8,7 +8,7 @@ $var title: $ptitle
     $for post in models:
         <li>
             <a name="devices" href="#$post['m_device']">
-            <img class="img-rounded" height=50px src="$post['m_modpicture']"/><br>
+            <img class="img-rounded" height=50px src="/$post['m_modpicture']"/><br>
             $post['m_modname']
             </a>
         </li>
@@ -35,7 +35,7 @@ $var title: $ptitle
                 </thead>
                 <tbody>
                  <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="$post['m_modpicture']"/></td>
+                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/$post['m_modpicture']"/></td>
                   <td><strong>$post['m_device']</strong></td>
                   <td></td>
                   <td></td>
