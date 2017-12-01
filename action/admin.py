@@ -4,7 +4,7 @@
 
 import web
 import model,config,utils
-import time,json
+import time,json,gc
 from action.base import base as BaseAction
 
 class PublishIndex(BaseAction):
@@ -197,7 +197,11 @@ class UserReport(BaseAction):
             return self.renderAdmin.publish_ureport(result, pages, "后台用户反馈")
         else:
             raise web.notfound(" operation not authorized.")
-       
+class UserAdmin():
+    '''管理网站用户'''
+    def GET(BaseAction):
+        return self.renderAdmin.publish_users()
+    
 class Login(BaseAction):
     '''#管理员登录后台'''
     form = web.form.Form(
@@ -220,9 +224,11 @@ class Login(BaseAction):
         if (model.login_post(form.d.uname,form.d.pword)):
             #return "login success"
             web.ctx.session.login= 1
+            web.ctx.session.uname= form.d.uname
             raise self.seeother('/publish')
         else:
             web.ctx.session.login= 0
+            web.ctx.session.uname= ""
             raise self.seeother(config.ADMIN_LOGIN)
             
 class Quit(BaseAction):

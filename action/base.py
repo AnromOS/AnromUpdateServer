@@ -10,7 +10,7 @@ import os
 
 class base:
     def __init__(self):
-        auther="tweety"
+        author="tweety"
         self.session = web.ctx.session
 
     ### Templates

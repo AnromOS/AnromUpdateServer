@@ -217,19 +217,20 @@ def installdics():
           m_modname TEXT NOT NULL,
           m_modpicture TEXT NOT NULL,
           m_moddescription TEXT,
+          issue_uname TEXT NOT NULL default '',
           m_time INTEGER NOT NULL DEFAULT 0
         );
         CREATE INDEX IF NOT EXISTS index_model ON t_model(mod_id,m_device);
 
         DROP TABLE IF EXISTS t_users;
         CREATE TABLE IF NOT EXISTS t_users (
-         uid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-         u_name TEXT NOT NULL,
+         u_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+         u_name TEXT NOT NULL UNIQUE,
          u_avatar TEXT NOT NULL,
          u_description TEXT,
          u_time INTEGER NOT NULL DEFAULT 0
         );
-        CREATE INDEX IF NOT EXITST index_users on t_users(uid, u_name);
+        CREATE INDEX IF NOT EXISTS index_users on t_users(u_id, u_name);
         """
         
         c.executescript(installsql)
@@ -261,7 +262,7 @@ def upgradeDB():
             save_pref("db_version",cur_version)
         elif  (cur_version == 1):
             # put another database scheme here.
-             installsql=""" 
+            installsql=""" 
             BEGIN TRANSACTION;
             
             ALTER TABLE t_anrom ADD issue_uname TEXT NOT NULL default '';
@@ -275,7 +276,6 @@ def upgradeDB():
             );
             CREATE INDEX IF NOT EXITST index_users on t_users(uid, u_name);
             COMMIT;
-
             """
             c.executescript(installsql)
             cur_version = cur_version+1

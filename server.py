@@ -22,6 +22,7 @@ urls = (
     '/publish/romslist/(\d*?)/([a-z0-9_\-\.]*?)',    'action.admin.PublishRomList', #for web
     '/publish/rom/(\d*?)/([a-z0-9_\-\.]*?)', 'action.admin.PublishNewVersion', #for web 发布更新版本
     '/publish/userreport',      'action.admin.UserReport', #for web 
+    '/publish/user',      'action.admin.UserReport', #for web 
     '/publish/quit',            'action.admin.Quit', #for web
     '/publish/changepwd',       'action.admin.ChangePwd', #for web
     # Make url ending with or without '/' going to the same class
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     app = web.application(urls, globals())
     app.notfound = notfound
     sessionstore = model.MemStore()  
-    session = web.session.Session(app, sessionstore,initializer={'login': 0,'ulogin':0})
+    session = web.session.Session(app, sessionstore,initializer={'login': 0,'uname':""})
     def session_hook():
         web.ctx.session = session
     app.add_processor(web.loadhook(session_hook))
