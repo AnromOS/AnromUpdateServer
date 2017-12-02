@@ -5,7 +5,7 @@ This project is an implementation of CMS(Content Management System) for Applicat
 ## 准备工作：
 
 1. 安装redis： sudo apt install redis-server
-2. 安装tornadoweb[https://github.com/tornadoweb/tornado]框架
+2. 安装[tornadoweb](https://github.com/tornadoweb/tornado)框架
 3. 安装python redis驱动: pip install redis
 
 ## 如何使用：

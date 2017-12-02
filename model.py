@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #coding=utf-8
-import web,time,datetime,sqlite3,hashlib
+import time,datetime,hashlib
+import redis
 import config
 
 #dbmain: 网站的数据和设置信息
 #dba 发布的rom保存的位置
-dbmain = web.database(dbn='sqlite', db=config.DB_PATH_MAIN)
-dba = web.database(dbn='sqlite', db=config.DB_PATH_PUBLISH)
+redis_db = redis.StrictRedis(host=netpref['REDIS_HOST'], port=netpref['REDIS_PORT'], db=netpref['REDIS_DB'], password=netpref['REDIS_PASSWORD'])
 
 #### for Client API
 def get_devices_byname(device):

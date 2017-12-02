@@ -1,22 +1,27 @@
 #!/usr/bin/python
 #coding=utf-8
 #
-import os,cPickle,time
+import os,time
 import urllib,urllib2
 import hashlib
+try:
+    import cPickle as pickle    # py2
+except:
+    import pickle               # py3
+
 from math import *
 
-print 'importing utils...'
+print('importing utils...')
 
 def getpage(url):
-    print url
+    print(url)
     req = urllib2.Request(url)
     req.add_header("User-Agent","Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0")
     u = urllib2.urlopen(req).read()
     return u
 
 def savepage(content,filename):
-    print 'saving content...:',filename
+    print('saving content...:',filename)
     f = file(filename,"wb+")
     u = content.decode('gb18030')
     ue= u.encode('utf-8')
@@ -42,12 +47,12 @@ def createDirs(path):
     path= path.strip()
     isExists=os.path.exists(path)
     if not isExists:
-        print path+' create success!'
+        print(path+' create success!')
         # 创建目录操作函数
         os.makedirs(path)
         return True
     else:
-        print path+'already exist'
+        print(path+'already exist')
         return False
 
 def sha1(value):
@@ -74,14 +79,14 @@ def md5(value):
 
 def saveObj(obj,filename):#dump对象到本地
     output = open(filename, 'wb+')
-    cPickle.dump(obj,output)
+    pickle.dump(obj,output)
     output.close()
 
 def loadObjsIfExist(filename):#启动的时候载入持久化的对象
     result= None
     if os.path.exists(filename):
         pkl_file = open(filename, 'rb')
-        result = cPickle.load(pkl_file)
+        result = pickle.load(pkl_file)
         pkl_file.close()
     return result 
     
@@ -120,4 +125,4 @@ def getGeoDistance(Lat_A, Lng_A, Lat_B, Lng_B):
     distance = ra * (xx + dr)  
     return distance  
 
-print 'utils import ok!'    
+print('utils import ok!' )
