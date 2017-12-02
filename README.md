@@ -1,9 +1,15 @@
 # UpServer
 ## Brief:
-This project is an implementation of CMupdater,
-written with python, need support of webpy framework.
+This project is an implementation of CMS(Content Management System) for Application upgrade.
+
+## 准备工作：
+
+1. 安装redis： sudo apt install redis-server
+2. 安装tornadoweb[https://github.com/tornadoweb/tornado]框架
+3. 安装python redis驱动: pip install redis
 
 ## 如何使用：
+
 1. 在config.py中设置文件下载服务器的域名和端口， 自动发布的API key 管理员用户名、密码
 2. 安装服务器:
 
@@ -80,36 +86,3 @@ server {
 	}
 }
 ```
-
-=============
-
-## 设置开机自动启动的方法[可选]：
-
-1. 编辑run.sh 以及cmupdater
-2. 将cmupdater 拷贝到 /etc/init.d/下
-3. 执行 #update-rc.d cmupdater defaults 99
-
-=============
-
-## 附录I： 为rom作增量升级包
-
-1. 制作差分包，使用android自己带的工具../build/tools/releasetools/ota_from_target_files
-
-* 在执行上述命令时会出现未找到recovery_api_version的错误。原因是在执行上面的脚本时如果使用选项i则会调用WriteIncrementalOTAPackage会从A包和B包中的META目录下搜索misc_info.txt来读取recovery_api_version的值。但是在执行make  otapackage命令时生成的update.zip包中没有这个目录更没有这个文档。
-* 此时我们就需要使用执行make otapackage生成的原始的zip包。这个包的位置在out/target/product/xxx/obj/PACKAGING/target_files_intermediates/ 目录下，它是在用命令make otapackage之后的中间生产物，是最原始的升级包。我们将两次编译的生成的包分别重命名为A.zip和B.zip，并拷贝到源码根目录下重复执行上面的命令：
-* 例如  $ ./build/tools/releasetools/ota_from_target_files -i A.zip B.zip update-1416912639-1416913926.zip。强烈建议把升级包的文件名写成如下格式 update-{Incremental1}-{Incremental2}.zip 例如 update-1416912639-1416913926.zip
-* 编译完成增量升级包后，OTA升级包、原始ZIP包和生成的update包 不要删除，请手动移动到某个文件夹妥善保存。
-
-2. mtk的recovery的命令大致和cm recovery的差不多，recovery开机自动执行的命令格式定义在 /bootable/recovery/recovery.cpp 里面。(验证通过)
-3. 用于升级的apk项目叫CMUpdater，该app需要root权限向手机目录下写入数据 (已经解决)
-4. MTK自带的升级软件在这个地方 mediatek/packages/apps/AdupsFotaApp 没有源代码(已经去掉)
-
-=============
-
-## 附录II： ROM的发布和文件上传
-
-* 不管是OTA升级包还是差分升级包，均上传至服务器的/path/to/AnromUpdateServer/static/download/{device}/ 下面
-* 上传完成文件之后，计算升级文件的md5值，然后在web端填写升级信息的表单。
-* Incremental 字段其实就是一个时间戳，这个时间戳在编译的时候生成，编译好的升级文件名中已经包含，找到这个值，然后在表单中填写即可。
-* Incremental字段是客户端判断是否需要下载增量升级包的关键，所以增量升级包一定要和发布的版本中间衔接好。
-
