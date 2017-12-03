@@ -29,6 +29,30 @@ urls = (
     '/(.*)/',                   'action.cms.redirect', 
 )
 
+class MemStore(web.session.Store):
+    '''##自定义session store 类，将session信息保存在内存中，提高读写速度'''
+    def __init__(self):
+        self.shelf = {}
+
+    def __contains__(self, key):
+        return key in self.shelf.keys()
+
+    def __getitem__(self, key):
+        v = self.shelf[key]
+        return self.decode(v)
+
+    def __setitem__(self, key, value):
+        self.shelf[key] = self.encode(value)
+        
+    def __delitem__(self, key):
+        try:
+            del self.shelf[key]
+        except KeyError:
+            pass
+
+    def cleanup(self, timeout):
+        self.shelf.clear()
+        
 def notfound(errno=404):
     r_index= "Windows IIS 5.0: "+str(errno)
     return  web.notfound(r_index)
@@ -37,7 +61,7 @@ if __name__ == '__main__':
     web.config.debug = False
     app = web.application(urls, globals())
     app.notfound = notfound
-    sessionstore = model.MemStore()  
+    sessionstore = MemStore()  
     session = web.session.Session(app, sessionstore,initializer={'login': 0,'uname':""})
     def session_hook():
         web.ctx.session = session

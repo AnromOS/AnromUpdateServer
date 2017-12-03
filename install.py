@@ -10,7 +10,6 @@ def main():
     if len(sys.argv)>1:
         if (sys.argv[1] == "install"):
             model.installmain()
-            model.installdics()
             exit()
         elif (sys.argv[1] == "upgrade"):
             model.upgradeDB()

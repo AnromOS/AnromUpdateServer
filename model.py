@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #coding=utf-8
-import time,datetime,hashlib
+import time,datetime,hashlib,sqlite3,json
 import redis
 import config
 
 #dbmain: 网站的数据和设置信息
 #dba 发布的rom保存的位置
-redis_db = redis.StrictRedis(host=netpref['REDIS_HOST'], port=netpref['REDIS_PORT'], db=netpref['REDIS_DB'], password=netpref['REDIS_PASSWORD'])
+redis_db = redis.StrictRedis(host=config.netpref['REDIS_HOST'], port=config.netpref['REDIS_PORT'], db=config.netpref['REDIS_DB'], password=config.netpref['REDIS_PASSWORD'])
 
 #### for Client API
 def get_devices_byname(device):
@@ -27,29 +27,23 @@ def get_changelog_bydevice(mdevice,romid):
     '''返回机型的changelog'''
     result = dba.query('select changelog FROM t_anrom ,t_model where t_anrom.id = $romid AND t_anrom.mod_id = t_model.mod_id AND t_model.m_device = $mdevice;', vars=locals())
     return result
-    
-def get_available_delta_rom(dev_id,source_inc,target_inc):
-    '''查找可用的增量升级包 target_inc 暂时没用'''
-    source_inc = '%%'+source_inc.split('.')[-1]+'%%'
-    result= dba.query('select * from t_anrom where mod_id = $dev_id AND source_incremental like $source_inc AND status = 2  order by m_time desc limit 1', vars=locals())
-    return result
 
 def post_user_report(fprint, fcontent,ftime):
     '''提交用户反馈'''
-    result = dbmain.insert("ureport",fingerprint= fprint, mcontent=fcontent, mtime = ftime)
+    result = redis_db.rpush("upserver:ureport",json.dumps({"fingerprint":fprint,"mcontent":fcontent, "mtime":ftime}))
     return result
     
 ## for web admin
 def get_preferences():
     '''获取网站的所有配置字段'''
-    return dbmain.select('pref', order='id DESC')
+    return redis_db.hgetall("upserver:pref")
     
 def login_post(username,password):
     '''验证网站管理员登录'''
     usr = get_pref("user")
     pwd = get_pref("password")
-    print username
-    print hashlib.sha256(password).hexdigest()
+    print(username)
+    print(hashlib.sha256(password).hexdigest())
     return (username == usr)and (pwd ==  hashlib.sha256(password).hexdigest())
 
 def post_changeuser(username,password):
@@ -60,19 +54,18 @@ def post_changeuser(username,password):
 #### 发布机型管理  
 def get_devices():
     '''获取所有的机型'''
-    return dba.select('t_model', vars=locals())
+    return redis_db.hgetall("upserver:tmodel")
     
-def save_device(mdevice, mmod ,mpic, mdescpt ,mtime):
+def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     '''保存某个机型的配置'''
-    if (dba.update("t_model", where="m_device=$mdevice", vars=locals(),m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt)):
-        pass
-    else:
-        dba.insert("t_model",m_device=mdevice,m_modname=mmod, m_modpicture=mpic, m_moddescription=mdescpt, m_time=mtime)
+    redis_db.hset("upserver:tmodel",mdevice,json.dumps({"m_device":mdevice,"m_modname":mmod, "m_modpicture":mpic, "m_moddescription":mdescpt, "m_time":mtime,"m_issue_uname":muser}))
 
 def del_device(deviceid,mdevice):
     '''删除某个机型'''
-    dba.delete("t_model", where="m_device=$mdevice",vars=locals()) 
-    dba.delete("t_anrom", where="mod_id = $deviceid",vars=locals())#删除升级包
+    redis_db.hdel("upserver:tmodel",mdevice)
+    redis_db.hdel("upserver:tanrom",mdevice)
+    #dba.delete("t_model", where="m_device=$mdevice",vars=locals()) 
+    #dba.delete("t_anrom", where="mod_id = $deviceid",vars=locals())#删除升级包
 
 ### 发布升级包
 def get_all_roms_by_modelid(modelid):
@@ -111,31 +104,28 @@ def find_modid_bydevice(mdevice):
 #### 用户反馈的web管理
 def get_user_report_counts():
     '''总共有多少条反馈'''
-    return dbmain.query("select count(*) from ureport")[0]['count(*)']
+    return redis_db.llen("upserver:ureport")
 
 def get_user_report(pg, pagesize):
     '''查看用户反馈'''
     p = pagesize*(pg)
-    return dbmain.select("ureport",vars =locals(), limit = pagesize, offset=p, order="mtime desc")
+    return redis_db.lrange("upserver:ureport",p,p+pagesize)
     
 def del_user_report(pid):
     '''查看用户反馈'''
-    return dbmain.delete("ureport",where = "id=$pid",vars =locals())
+    return redis_db.ltrim("upserver:ureport",0,-1)
      
 ### preference
 pref_cache ={}
 def save_pref(name,content):
-    if (dbmain.update("pref", where="key=$name", vars=locals(),value = content)):
-        pass
-    else:
-        dbmain.insert("pref",key= name,value = content)
+    redis_db.hset("upserver:pref",name,content)
     pref_cache[name]=content
 
 def get_pref(name):
     try:
         if name in pref_cache.keys():
             return pref_cache[name]
-        value = dbmain.select("pref",vars=locals(),where="key=$name")[0].value
+        value = redis_db.hget("upserver:pref",name)
         pref_cache[name] = value
         return value
     except KeyError:
@@ -147,39 +137,11 @@ def get_pref(name):
 DB_VERSION=1
 def installmain():
     '''安装网站所需要的主数据库'''
-    conn = sqlite3.connect(config.DB_PATH_MAIN)
-    c= conn.cursor()
-    try:
-        installsql=""" 
-        DROP TABLE IF EXISTS pref;
-        CREATE TABLE pref (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            key TEXT NOT NULL unique,
-            value TEXT NOT NULL);
-        CREATE INDEX IF NOT EXISTS index_pref ON pref(key);
-        
-        DROP TABLE IF EXISTS ureport;
-        CREATE TABLE ureport (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            fingerprint TEXT NOT NULL,
-            mcontent TEXT NOT NULL,
-            mtime INTEGER NOT NULL);
-        CREATE INDEX IF NOT EXISTS index_ureport ON ureport(id, fingerprint);
-        
-        DROP TABLE IF EXISTS oplog;
-        CREATE TABLE oplog (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            mlevel TEXT NOT NULL default "INFO",
-            mcontent TEXT NOT NULL default '',
-            mtime INTEGER NOT NULL default 0);
-        
-        insert into pref (key,value) values("user","%s");
-        insert into pref (key,value) values("password","%s");
-        insert into pref (key,value) values("db_version","%d");
-        insert into oplog (mlevel,mcontent) values("INFO", "创建管理员");
-        insert into ureport (fingerprint,mcontent,mtime) values("test_finger_print","测试的用户提交数据","1015891406");
-        """%(config.ADMIN_USERNAME,config.ADMIN_HASHPWD,DB_VERSION)
-        c.executescript(installsql)
-    finally:
-        c.close()
-        print 'install ',config.DB_PATH_MAIN,'  ok'
+    redis_db.hset("upserver:pref","user",config.ADMIN_USERNAME)
+    redis_db.hset("upserver:pref","password",config.ADMIN_HASHPWD)
+    redis_db.hset("upserver:pref","db_version",DB_VERSION)
+    redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
+    print('save main info into redis ok')
 
 def installdics():
     '''安装发布版本的数据库'''
@@ -217,7 +179,7 @@ def installdics():
           m_modname TEXT NOT NULL,
           m_modpicture TEXT NOT NULL,
           m_moddescription TEXT,
-          issue_uname TEXT NOT NULL default '',
+          m_issue_uname TEXT NOT NULL default '',
           m_time INTEGER NOT NULL DEFAULT 0
         );
         CREATE INDEX IF NOT EXISTS index_model ON t_model(mod_id,m_device);
@@ -236,7 +198,8 @@ def installdics():
         c.executescript(installsql)
     finally:
         c.close()
-        print 'install ', config.DB_PATH_PUBLISH,' ok'
+        print('install ', config.DB_PATH_PUBLISH,' ok')
+    
 
 def upgradeDB():
     conn = sqlite3.connect(config.DB_PATH_PUBLISH)
@@ -244,7 +207,7 @@ def upgradeDB():
     '''升级数据库版本'''
     try:
         cur_version = get_pref("db_version")
-        print cur_version
+        print(cur_version)
         if (cur_version is None) or (cur_version == 0) :
             cur_version = 0
             installsql=""" 
@@ -282,36 +245,13 @@ def upgradeDB():
             save_pref("db_version",cur_version)
             pass
         if (cur_version == DB_VERSION):
-            print "Database has been updated. no need to upgrade."
+            print("Database has been updated. no need to upgrade.")
             return
     finally:
         c.close()
-        print config.DB_PATH_PUBLISH,' db upgrade ok'
+        print(config.DB_PATH_PUBLISH,' db upgrade ok')
         
-class MemStore(web.session.Store):
-    '''##自定义session store 类，将session信息保存在内存中，提高读写速度'''
-    def __init__(self):
-        self.shelf = {}
 
-    def __contains__(self, key):
-        return key in self.shelf.keys()
-
-    def __getitem__(self, key):
-        v = self.shelf[key]
-        return self.decode(v)
-
-    def __setitem__(self, key, value):
-        self.shelf[key] = self.encode(value)
-        
-    def __delitem__(self, key):
-        try:
-            del self.shelf[key]
-        except KeyError:
-            pass
-
-    def cleanup(self, timeout):
-        self.shelf.clear()
-        
 class WebCache:
     '''缓存web页面的类，减少数据库访问，用来提高访问不太经常改变的内容的速度'''
     mcache = {}

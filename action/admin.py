@@ -194,6 +194,8 @@ class UserReport(BaseAction):
             pgcon = 50
             pages = 1+ model.get_user_report_counts()/pgcon
             result = model.get_user_report(pg ,pgcon)
+            print(result)
+            print(type(result))
             return self.renderAdmin.publish_ureport(result, pages, "后台用户反馈")
         else:
             raise web.notfound(" operation not authorized.")
