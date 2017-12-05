@@ -20,6 +20,8 @@ ADMIN_USERNAME="youradminname"
 ADMIN_PWD="youradminpwd"
 ADMIN_HASHPWD=hashlib.sha256(ADMIN_PWD).hexdigest()
 
+DEFAULT_HEAD="/static/images/default_head.png"
+
 #自动发布设置
 #put your secret here.
 AUTOPUB_SECRET="a9da4e7e26722c6bfb1c3742c18aabe679ce24aa67e7bcdea38fff5ebf6df0b2"

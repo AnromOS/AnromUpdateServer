@@ -140,6 +140,7 @@ def installmain():
     redis_db.hset("upserver:pref","user",config.ADMIN_USERNAME)
     redis_db.hset("upserver:pref","password",config.ADMIN_HASHPWD)
     redis_db.hset("upserver:pref","db_version",DB_VERSION)
+    redis_db.hset("upserver:users",config.ADMIN_USERNAME,json.dumps({"u_name":config.ADMIN_USERNAME,"u_password":config.ADMIN_HASHPWD,"u_avatar":config.DEFAULT_HEAD,"u_description":"超级管理员","u_time":"1115891406"}))
     redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
     print('save main info into redis ok')
 
@@ -184,15 +185,6 @@ def installdics():
         );
         CREATE INDEX IF NOT EXISTS index_model ON t_model(mod_id,m_device);
 
-        DROP TABLE IF EXISTS t_users;
-        CREATE TABLE IF NOT EXISTS t_users (
-         u_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-         u_name TEXT NOT NULL UNIQUE,
-         u_avatar TEXT NOT NULL,
-         u_description TEXT,
-         u_time INTEGER NOT NULL DEFAULT 0
-        );
-        CREATE INDEX IF NOT EXISTS index_users on t_users(u_id, u_name);
         """
         
         c.executescript(installsql)
@@ -202,54 +194,7 @@ def installdics():
     
 
 def upgradeDB():
-    conn = sqlite3.connect(config.DB_PATH_PUBLISH)
-    c= conn.cursor()
-    '''升级数据库版本'''
-    try:
-        cur_version = get_pref("db_version")
-        print(cur_version)
-        if (cur_version is None) or (cur_version == 0) :
-            cur_version = 0
-            installsql=""" 
-            BEGIN TRANSACTION;
-            
-            DROP TABLE t_rom_delta;
-            ALTER TABLE t_anrom ADD source_incremental TEXT NOT NULL default '0';
-            ALTER TABLE t_anrom ADD target_incremental TEXT NOT NULL default '0';
-            ALTER TABLE t_anrom ADD extra TEXT NOT NULL default '';
-            COMMIT;
-
-            """
-            c.executescript(installsql)
-            cur_version = cur_version+1
-            save_pref("db_version",cur_version)
-        elif  (cur_version == 1):
-            # put another database scheme here.
-            installsql=""" 
-            BEGIN TRANSACTION;
-            
-            ALTER TABLE t_anrom ADD issue_uname TEXT NOT NULL default '';
-            DROP TABLE IF EXISTS t_users;
-            CREATE TABLE IF NOT EXISTS t_users (
-             uid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-             u_name TEXT NOT NULL,
-             u_avatar TEXT NOT NULL,
-             u_description TEXT,
-             u_time INTEGER NOT NULL DEFAULT 0
-            );
-            CREATE INDEX IF NOT EXITST index_users on t_users(uid, u_name);
-            COMMIT;
-            """
-            c.executescript(installsql)
-            cur_version = cur_version+1
-            save_pref("db_version",cur_version)
-            pass
-        if (cur_version == DB_VERSION):
-            print("Database has been updated. no need to upgrade.")
-            return
-    finally:
-        c.close()
-        print(config.DB_PATH_PUBLISH,' db upgrade ok')
+    print(config.DB_PATH_PUBLISH,' db upgrade ok')
         
 
 class WebCache:
