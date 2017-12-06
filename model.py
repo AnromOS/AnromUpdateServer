@@ -15,7 +15,7 @@ def get_devices_byname(device):
 
 def get_devices_counts_byname(mod_id):
     '''已经发布了多少个版本'''
-    return dba.query("select count(*) FROM t_anrom where mod_id = $mod_id", vars=locals())[0]['count(*)']
+    return redis_db.zcard("upserver:tmodel_index")
     
 def get_available_roms_by_modelid(modelid,channels):
     '''返回可用的升级'''
@@ -54,7 +54,12 @@ def post_changeuser(username,password):
 #### 发布机型管理  
 def get_devices():
     '''获取所有的机型'''
-    return redis_db.hgetall("upserver:tmodel")
+    result=[]
+    pnames = redis_db.zrange("upserver:tmodel_index",0,-1)
+    for pn in pnames:
+        rd = redis_db.hgetall("upserver:tmodel:%s"%pn)
+        result.append(rd)
+    return result
     
 def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     '''保存某个机型的配置'''
@@ -75,7 +80,7 @@ def get_all_roms_by_modelid(modelid):
     
 def get_top5_roms_by_modelid(modelid):
     '''获取某个机型id对应的rom,只显示前5个'''
-    result= dba.select('t_anrom',where ='mod_id = $modelid', order='issuetime desc', limit='5', vars=locals())
+    result= redis_db.zrange("upserver:tmodel:testProduct.items",-1,-5)
     return result
     
 def get_rom_by_wid(wid):
@@ -140,58 +145,51 @@ def installmain():
     redis_db.hset("upserver:pref","user",config.ADMIN_USERNAME)
     redis_db.hset("upserver:pref","password",config.ADMIN_HASHPWD)
     redis_db.hset("upserver:pref","db_version",DB_VERSION)
+    ##测试用户
     redis_db.hset("upserver:users",config.ADMIN_USERNAME,json.dumps({"u_name":config.ADMIN_USERNAME,"u_password":config.ADMIN_HASHPWD,"u_avatar":config.DEFAULT_HEAD,"u_description":"超级管理员","u_time":"1115891406"}))
+    ##测试用户提交数据
     redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
+    ##测试添加产品线
+    pName= "testProduct"
+    mod_id=redis_db.incr("upserver:latest:mod_id")
+    redis_db.zadd("upserver:tmodel_index",mod_id,pName)
+    hindex="upserver:tmodel:%s"%pName
+    mdetail={
+    "mod_id":mod_id,
+    "m_device":pName,
+    "m_modname":"测试产品",
+    "m_modpicture":"static/images/appdefault.png",
+    "m_moddescription":"这是用来测试的产品数据",
+    "m_issue_uname":config.ADMIN_USERNAME,
+    "m_time":1115891406
+    }
+    redis_db.hmset(hindex,mdetail)
+    ##测试添加条目
+    itmid=redis_db.incr("upserver:latest:itm")
+    anindex="upserver:tanrom:%s"%itmid
+    redis_db.zadd(hindex+".items",itmid,anindex)
+    mdetail={
+    'id':itmid,
+    'mod_id':'testProduct',
+    'version':'1.0.1',
+    'versioncode':'1001',
+    'changelog':'1,改变了世界 2,拯救了未来',
+    'filename':'test.deb',
+    'url':'http://example.com/test.deb',
+    'md5sum':'63d475e6b67ebcb959224a1587f28214',
+    'size':1024,
+    'status':0,
+    'channels':'nightly',
+    'source_incremental':'0',
+    'target_incremental':'0',
+    'extra':'',
+    'api_level':'0',
+    'issue_uname':config.ADMIN_USERNAME,
+    'issuetime':0,
+    'm_time':0
+    }
+    redis_db.hmset(anindex,mdetail)
     print('save main info into redis ok')
-
-def installdics():
-    '''安装发布版本的数据库'''
-    conn = sqlite3.connect(config.DB_PATH_PUBLISH)
-    c= conn.cursor()
-    try:
-        installsql=""" 
-        DROP TABLE IF EXISTS t_anrom;
-        CREATE TABLE IF NOT EXISTS t_anrom (
-          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          mod_id INTEGER NOT NULL,
-          version text NOT NULL,
-          versioncode text NOT NULL,
-          changelog text NOT NULL,
-          filename text NOT NULL,
-          url text NOT NULL,
-          md5sum text NOT NULL,
-          size INTEGER NOT NULL default 0,
-          status INTEGER NOT NULL default 0,
-          channels TEXT NOT NULL default 'nightly',
-          source_incremental TEXT NOT NULL default '0',
-          target_incremental TEXT NOT NULL default '0',
-          extra TEXT NOT NULL default '',
-          api_level TEXT NOT NULL default '0',
-          issue_uname TEXT NOT NULL default '',
-          issuetime INTEGER NOT NULL default 0,
-          m_time INTEGER NOT NULL DEFAULT 0
-        );
-        CREATE INDEX IF NOT EXISTS index_anrom ON t_anrom(id, mod_id);
-
-        DROP TABLE IF EXISTS t_model;
-        CREATE TABLE IF NOT EXISTS t_model (
-          mod_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          m_device TEXT NOT NULL,
-          m_modname TEXT NOT NULL,
-          m_modpicture TEXT NOT NULL,
-          m_moddescription TEXT,
-          m_issue_uname TEXT NOT NULL default '',
-          m_time INTEGER NOT NULL DEFAULT 0
-        );
-        CREATE INDEX IF NOT EXISTS index_model ON t_model(mod_id,m_device);
-
-        """
-        
-        c.executescript(installsql)
-    finally:
-        c.close()
-        print('install ', config.DB_PATH_PUBLISH,' ok')
-    
 
 def upgradeDB():
     print(config.DB_PATH_PUBLISH,' db upgrade ok')
