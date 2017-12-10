@@ -32,6 +32,9 @@ class base:
         else:
             return False
 
+    def getCurrentUser(self):
+        return web.ctx.session.uname
+
     def countPrivilege(self):
         '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
         secret = config.AUTOPUB_SECRET

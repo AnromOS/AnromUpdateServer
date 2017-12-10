@@ -22,7 +22,7 @@ class PublishIndex(BaseAction):
                 devi['m_modname'] = post['m_modname']
                 devi['m_modpicture'] = post['m_modpicture']
                 devi['m_moddescription'] = post['m_moddescription']
-                devi['m_time'] = post['m_time']
+                devi['m_time'] = int(post['m_time'])
                 devi['m_count'] = model.get_devices_counts_byname(devi['mod_id'])
                 devi['m_detail'] = {'version':""}
                 mdtop = model.get_top5_roms_by_modelid(devi['mod_id'])
@@ -89,7 +89,7 @@ class PublishNewApp(BaseAction):
                 #2, 为上传的增加保存目录，请确保这里有权限操作
                 utils.createDirs("static/downloads/"+mdevice)
                 #3, 保存在数据库里
-                model.save_device(mdevice, mname, picname, mdscpt, mtime)
+                model.save_device(mdevice, mname, picname, mdscpt, mtime, self.getCurrentUser())
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             self.seeother("/publish")
