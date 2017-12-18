@@ -115,12 +115,12 @@ $var title: $ptitle
                     <tr>
                       <td><img class="img-rounded" height=35px src="$post['m_modpicture']"/></td>
                       <td>$post['m_modname'] (<strong>$post['m_device']</strong>)</td>
-                      <td><a href="/publish/romslist/$post['mod_id']/$post['m_device']" class="btn btn-link"> 点击查看 ($post['m_count'])</a> </td>
+                      <td><a href="/publish/romslist/$post['m_device']" class="btn btn-link"> 点击查看 ($post['m_count'])</a> </td>
                       <td>$post['m_detail']['version']</td>
                       <td>$strdate(post['m_time'])</td>
-                      <td><a href="/publish/rom/$post['mod_id']/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
-                      <td><a href="/publish/device?a=edit&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">编辑应用信息</a></td>
-                      <td><a href="/publish/device?a=del&did=$post['mod_id']&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>
+                      <td><a href="/publish/rom/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
+                      <td><a href="/publish/device?a=edit&mdevice=$post['m_device']" class="btn btn-link">编辑应用信息</a></td>
+                      <td><a href="/publish/device?a=del&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>
                     </tr>
                  
                 </tbody>

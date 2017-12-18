@@ -61,16 +61,15 @@ class base:
         dumpfilename = r'static/downloads/latest_'+channels+'.json'
         for post in models:
             devi={}
-            mod_id= post['mod_id']
             devi['id'] = post['m_device']
             devi['m_modname'] = post['m_modname']
             devi['m_modpicture'] = post['m_modpicture']
             devi['m_moddescription'] = post['m_moddescription']
-            #devi['m_detail']=model.get_top5_roms_by_modelid(mod_id)
+            #devi['m_detail']=model.get_top5_roms_by_modelid(post['m_device'],5)
             if (channels==r'all'):
-                devi['m_detail']=model.get_all_roms_by_modelid(mod_id)
+                devi['m_detail']=model.get_roms_by_devicesname(post['m_device'],-1)
             else: 
-                devi['m_detail']=model.get_available_roms_by_modelid(mod_id, channels)
+                devi['m_detail']=model.get_available_roms_by_modelid(post['m_device'], channels)
             devices.append(devi)
         for devi in devices:
             devbody =[]
@@ -99,7 +98,7 @@ class base:
         body['result']=products
         body['error']=None
         result = json.dumps(body,ensure_ascii=False)
-        utils.saveBin(dumpfilename,result.encode('utf-8'))
+        utils.saveBin(dumpfilename,result)
     
     def dumpAllProduct2Json(self):
         self.dump2Json(r"release")

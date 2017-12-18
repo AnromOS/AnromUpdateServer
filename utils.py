@@ -92,11 +92,11 @@ def loadObjsIfExist(filename):#启动的时候载入持久化的对象
     
 ## trans time like 1333316413.0 into '20120402'    
 def strtimefold(time_var):
-    return time.strftime("%Y%m%d",time.localtime(time_var))
+    return time.strftime("%Y%m%d",time.localtime(float(time_var)))
 
 ## trans time like 1333316413.0 into '2012-04-02 05:40:13'    
 def strtime(time_var):
-    return time.strftime("%Y-%m-%d %H:%M:%S ",time.localtime(time_var))
+    return time.strftime("%Y-%m-%d %H:%M:%S ",time.localtime(float(time_var)))
 
 ## trans time like '2012-04-02 05:40:13' into 1333316413.0
 def inttime(time_str):

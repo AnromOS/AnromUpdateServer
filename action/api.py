@@ -18,7 +18,6 @@ class API(BaseAction):
         api={}
         body=[]
         if(rawjson !=None):
-            mod_id =0
             req = json.loads(rawjson)
             #print req
             method = req['method']
@@ -28,12 +27,10 @@ class API(BaseAction):
             if (method == 'get_all_builds' and device != '' and len(channels)>0 and source_incremental != ''):
                 print 'recieve a valid Client request :',method,device,channels,source_incremental
                 mods =model.get_devices_byname(device)
-                for x in mods: 
-                    mod_id = x['mod_id']
                 if(channels[0]==u"nightly"):
                     channels="nightly"
                 else: channels="release"
-                availableRoms = model.get_available_roms_by_modelid(mod_id,channels)
+                availableRoms = model.get_available_roms_by_modelid(device,channels)
                 if (availableRoms!=None): 
                     for x in availableRoms:
                         temp={}
@@ -90,20 +87,7 @@ class API_DELTA(BaseAction):
         print api
         result = json.dumps(api)
         return result
-        
-class API_CHANGELOG(BaseAction):
-    '''#客户端变化日志请求'''
-    def GET(self,mdevice,romid):
-        #web.ctx.session.kill()
-        changelog = model.get_changelog_bydevice(mdevice,romid)
-        result =''
-        for x in changelog:
-            result = x['changelog']
-            break
-        #Do not return result, we use the render to solve the default Charset into utf-8
-        _render = self.renderDefault
-        return _render.plaintext(result)
-        
+
 class API_USER_REPORT(BaseAction):
     '''#客户端提交反馈意见'''
     def GET(self):

@@ -10,19 +10,18 @@ import action
 urls = (
     ##for web view
     '/',                'action.cms.Index',
-    '/allroms/([a-z0-9_\-\.]*?)',   'action.cms.Allroms', #/allroms/[devicename]
+    '/allroms/([A-Za-z0-9_\-\.]*?)',   'action.cms.Allroms', #/allroms/[devicename]
     '/api',             'action.api.API', #for client API
     '/api/v1/build/get_delta',  'action.api.API_DELTA', #for delta client API
-    '/api/changelog/([a-z0-9_\-\.]*?)/changelog(\d*?).txt',      'action.api.API_CHANGELOG', #show changelogs 
     '/api/report',              'action.api.API_USER_REPORT', #for delta client API
-    '/api/(upgrade)/([a-z0-9_\-\.]*?)/([a-z0-9_\-\.]*?)',              'action.api.API_APPUP', #获取产品升级信息
+    '/api/(upgrade)/([A-Za-z0-9_\-\.]*?)/([A-Za-z0-9_\-\.]*?)',              'action.api.API_APPUP', #获取产品升级信息
     config.ADMIN_LOGIN,         'action.admin.Login', #for web
     '/publish',                 'action.admin.PublishIndex',# for web 
     '/publish/device',          'action.admin.PublishNewApp', #for web 发布新的应用
-    '/publish/romslist/(\d*?)/([a-z0-9_\-\.]*?)',    'action.admin.PublishRomList', #for web
-    '/publish/rom/(\d*?)/([a-z0-9_\-\.]*?)', 'action.admin.PublishNewVersion', #for web 发布更新版本
+    '/publish/romslist/([A-Za-z0-9_\-\.]*?)',    'action.admin.PublishRomList', #for web
+    '/publish/rom/([A-Za-z0-9_\-\.]*?)', 'action.admin.PublishNewVersion', #for web 发布更新版本
     '/publish/userreport',      'action.admin.UserReport', #for web 
-    '/publish/user',      'action.admin.UserReport', #for web 
+    '/publish/users',      'action.admin.UserReport', #for web 
     '/publish/quit',            'action.admin.Quit', #for web
     '/publish/changepwd',       'action.admin.ChangePwd', #for web
     # Make url ending with or without '/' going to the same class

@@ -11,7 +11,7 @@ $var title: $ptitle
             <label for="mdevice">应用ID(应用的唯一标识，不可重复，只能写英文或数字或 下划线_ 横- 点.) </label>
             <input type="text" name="mdevice" id="mdevice" class="form-control" placeholder="如bacon mixun mihua_win_32"
             $if(pupdate!=None):
-                value="$pupdate.m_device" 
+                value="$pupdate['m_device']" 
             $else:
                 value="" 
             >
@@ -20,7 +20,7 @@ $var title: $ptitle
             <label for="mname">代号或者名称(如何在页面上显示) </label>
             <input type="text" name="mname" id="mname" class="form-control" placeholder="如密流，或者几米手机 JIMEE"
             $if(pupdate!=None):
-                value="$pupdate.m_modname" 
+                value="$pupdate['m_modname']" 
             $else:
                 value=""
             >
@@ -29,7 +29,7 @@ $var title: $ptitle
             <label for="mdescription">产品简介</label>
             <textarea type="text" name="mdescription" id="mdescription" rows=3 class="form-control" placeholder="用一段文字描述这个产品">
 $if(pupdate!=None):
-    $pupdate.m_moddescription
+    $pupdate['m_moddescription']
 </textarea>
     <!--<script type="text/javascript" src="/static/editor/tinyeditor.js"></script>
                 <link rel="stylesheet" href="/static/editor/style.css" />

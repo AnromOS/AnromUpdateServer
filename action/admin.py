@@ -17,15 +17,14 @@ class PublishIndex(BaseAction):
             devices =[]
             for post in models:
                 devi={}
-                devi['mod_id']= post['mod_id']
                 devi['m_device'] = post['m_device']
                 devi['m_modname'] = post['m_modname']
                 devi['m_modpicture'] = post['m_modpicture']
                 devi['m_moddescription'] = post['m_moddescription']
                 devi['m_time'] = int(post['m_time'])
-                devi['m_count'] = model.get_devices_counts_byname(devi['mod_id'])
+                devi['m_count'] = model.get_devices_counts_byname(devi['m_device'])
                 devi['m_detail'] = {'version':""}
-                mdtop = model.get_top5_roms_by_modelid(devi['mod_id'])
+                mdtop = model.get_roms_by_devicesname(devi['m_device'],5)
                 for itm in mdtop:
                     devi['m_detail'] = itm
                     break
@@ -57,17 +56,15 @@ class PublishNewApp(BaseAction):
             x= web.input(a="",mdevice="",mmod="")
             tmd = None
             if (x['a']=='del'):
-                did =x['did']
                 mdevice =x['mdevice']
-                model.del_device(did,mdevice)
+                model.del_device(mdevice)
                 #管理员更改了数据，把产品数据导出成json文件
                 self.dumpAllProduct2Json()
                 self.seeother("/publish")
                 return
             elif (x['a']=='edit'):
-                did =x['did']
                 mdevice =x['mdevice']
-                tmd = model.find_modid_bydevice(mdevice)[0]
+                tmd = model.get_devices_byname(mdevice)
             return self.renderAdmin.publish_device(tmd)
         else:
            raise web.notfound(" operation not authorized.")
@@ -98,7 +95,7 @@ class PublishNewApp(BaseAction):
 
 class PublishNewVersion(BaseAction):
     '''发布更新版本'''
-    def GET(self,modid,modname):
+    def GET(self,modname):
         if self.logged():
             pupgrade =None 
             x=web.input(a="",t="")
@@ -109,8 +106,8 @@ class PublishNewVersion(BaseAction):
         else:
             raise web.notfound(" operation not authorized.")
     
-    def POST(self,modid,modname):
-        x=web.input(a='',t='',wid='', api_level=23,status=0, ch1="", ch2="", ptoken="", muploadedfile={})
+    def POST(self,modname):
+        x=web.input(a='',t='',wid='0', api_level=23,status=0, ch1="", ch2="", ptoken="", muploadedfile={})
         ptoken = x['ptoken']
         privileged = self.hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
@@ -118,11 +115,6 @@ class PublishNewVersion(BaseAction):
             if (x['a']=='add' and x['t']=='full'):
                 wid = x['wid']
                 upedFile= x['muploadedfile']
-                mod_id=int(modid)
-                if mod_id==999999:
-                    tmd = model.find_modid_bydevice(modname)[0]['mod_id']
-                    mod_id=int(tmd)
-                    upedFile= None
                 version = x['version']
                 versioncode = x['versioncode']
                 changelog=x['changelog']
@@ -132,13 +124,14 @@ class PublishNewVersion(BaseAction):
                 #自定义的状态，从后台传递过来
                 status = x['status']
                 filename = x['url'].split('/')[-1]
-                if not (upedFile is None):
+                if not (upedFile=={}):
                     if not (upedFile.filename==u""):
                         #如果是管理员上传的文件，则覆盖掉表单上填写的值
                         filename = upedFile.filename.decode('utf-8')
                         print 'filename=',filename, type(filename)
                         upFileName = u'static/downloads/'+modname+ u'/' + filename
                         print upFileName
+                        utils.createDirs("static/downloads/"+modname)
                         utils.saveBin(upFileName, upedFile.value)
                         url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
                         size = len(upedFile.value)
@@ -154,29 +147,29 @@ class PublishNewVersion(BaseAction):
                 extra =x['extra']
                 issuetime = int(time.time())
                 m_time = issuetime
-                model.save_rom_new(wid,mod_id, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issuetime, m_time)
+                model.save_rom_new(wid,modname, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, self.getCurrentUser(),issuetime, m_time)
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             if(privileged):
                 return "Post rom ok!."
             else:
-                self.seeother("/publish/romslist/"+modid+"/"+modname)
+                self.seeother("/publish/romslist/"+modname)
         else:
             raise web.notfound(" operation not authrized.")
        
 class PublishRomList(BaseAction):
     '''#查看已经发布的rom列表'''
-    def GET(self,modid,modname):
+    def GET(self,modname):
         if self.logged():
             x=web.input(a="",t="")
             if (x['a']=='del' and x['t']=="full"):
                 wid = x['wid']
                 model.delete_rom_by_id(wid)
-                self.seeother("/publish/romslist/"+modid+"/"+modname)
+                self.seeother("/publish/romslist/"+modname)
             if (x['a']=='edit' and x['t'] =="full"):
                 wid = x['wid']
-                self.seeother("/publish/rom/"+modid+"/"+modname+"?a=edit&t=full&wid="+wid)
-            romlists = model.get_all_roms_by_modelid(modid)
+                self.seeother("/publish/rom/"+modname+"?a=edit&t=full&wid="+wid)
+            romlists = model.get_roms_by_devicesname(modname,-1)
             return self.renderAdmin.publish_romlist(config.netpref, modname,romlists,"已经发布的更新列表")
         else:
             raise web.notfound(" operation not authorized.")

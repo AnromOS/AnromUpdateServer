@@ -28,7 +28,7 @@ $var title: $ptitle
                     <td><a href ="$post['url']">$post['filename']  ($post['size'])</a></td>
                     <td>$post['md5sum']</td>
                     <td>$post['source_incremental'] - $post['target_incremental']</td>
-                    <td>$post['channels']</td>
+                    <td>$getStatuStr(post['channels'])</td>
                     <td>$getStatuStr(post['status'])</td>
                     <td>$strdate(post['issuetime'])</td>
                     <td><a class="text-left" href="?a=edit&wid=$post['id']&t=full">编辑</a> 
