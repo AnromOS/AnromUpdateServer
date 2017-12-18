@@ -12,6 +12,7 @@ redis_db = redis.StrictRedis(host=config.netpref['REDIS_HOST'], port=config.netp
 def get_devices_byname(device):
     '''获取所有的应用'''
     return dba.query('SELECT * FROM t_model where m_device = $device;', vars=locals())
+    return redis_db.
 
 def get_devices_counts_byname(mod_id):
     '''已经发布了多少个版本'''
@@ -63,7 +64,20 @@ def get_devices():
     
 def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     '''保存某个机型的配置'''
-    redis_db.hset("upserver:tmodel",mdevice,json.dumps({"m_device":mdevice,"m_modname":mmod, "m_modpicture":mpic, "m_moddescription":mdescpt, "m_time":mtime,"m_issue_uname":muser}))
+    mod_id=redis_db.incr("upserver:latest:mod_id")
+    redis_db.zadd("upserver:tmodel_index",mod_id,mdevice)
+    hindex="upserver:tmodel:%s"%mdevice
+    mdetail={
+    "mod_id":mod_id,
+    "m_device":mdevice,
+    "m_modname":mmod,
+    "m_modpicture":mpic,
+    "m_moddescription":mdescpt,
+    "m_issue_uname":muser,
+    "m_time":mtime
+    }
+    redis_db.hmset(hindex,mdetail)
+    return mod_id
 
 def del_device(deviceid,mdevice):
     '''删除某个机型'''
@@ -88,15 +102,33 @@ def get_rom_by_wid(wid):
     result= dba.select('t_anrom',where ='id = $wid', limit= 1, vars=locals())[0]
     return result
     
-def save_rom_new(wid, mod_id, version,versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issuetime, m_time):
-    '''发布新的rom升级包'''
-    res = dba.update("t_anrom",where="id = $wid",vars=locals(), mod_id = mod_id, version = version,  versioncode= versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels,source_incremental = source_incremental, target_incremental = target_incremental, extra= extra, api_level = api_level,m_time=m_time)
-    if(res):
-        pass
-    else:
-        dba.insert("t_anrom",mod_id = mod_id, version =version ,versioncode=versioncode, changelog = changelog, filename=filename, url=url,size = size, md5sum = md5sum, status = status, channels = channels, source_incremental = source_incremental, target_incremental = target_incremental, extra= extra, api_level = api_level,issuetime=issuetime,m_time=m_time)
-    #升级设备最近更新的时间
-    dba.update("t_model", where="mod_id=$mod_id", vars=locals(),m_time=m_time)
+def save_rom_new(wid, mod_id, version,versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issue_uname, issuetime, m_time):
+    '''发布新的rom升级包'''    
+    itmid=redis_db.incr("upserver:latest:itm")
+    anindex="upserver:tanrom:%s"%itmid
+    redis_db.zadd(hindex+".items",itmid,anindex)
+    mdetail={
+    'id':itmid,
+    'mod_id':mod_id,
+    'version':version,
+    'versioncode':versioncode,
+    'changelog':changelog,
+    'filename':filename,
+    'url':url,
+    'md5sum':md5sum,
+    'size':size,
+    'status':status,
+    'channels':channels,
+    'source_incremental':source_incremental,
+    'target_incremental':target_incremental,
+    'extra':extra,
+    'api_level':api_level,
+    'issue_uname':issue_uname,
+    'issuetime':issuetime,
+    'm_time':m_time
+    }
+    redis_db.hmset(anindex,mdetail)
+    return itmid
         
 def delete_rom_by_id(wid):
     '''删除某个rom升级包'''
@@ -150,45 +182,11 @@ def installmain():
     ##测试用户提交数据
     redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
     ##测试添加产品线
-    pName= "testProduct"
-    mod_id=redis_db.incr("upserver:latest:mod_id")
-    redis_db.zadd("upserver:tmodel_index",mod_id,pName)
-    hindex="upserver:tmodel:%s"%pName
-    mdetail={
-    "mod_id":mod_id,
-    "m_device":pName,
-    "m_modname":"测试产品",
-    "m_modpicture":"static/images/appdefault.png",
-    "m_moddescription":"这是用来测试的产品数据",
-    "m_issue_uname":config.ADMIN_USERNAME,
-    "m_time":1115891406
-    }
-    redis_db.hmset(hindex,mdetail)
+    pName = "testProduct"
+    mod_id = save_device(pName, "测试产品" ,"static/images/appdefault.png", "这是用来测试的产品数据" ,1115891406, config.ADMIN_USERNAME)
+    
     ##测试添加条目
-    itmid=redis_db.incr("upserver:latest:itm")
-    anindex="upserver:tanrom:%s"%itmid
-    redis_db.zadd(hindex+".items",itmid,anindex)
-    mdetail={
-    'id':itmid,
-    'mod_id':'testProduct',
-    'version':'1.0.1',
-    'versioncode':'1001',
-    'changelog':'1,改变了世界 2,拯救了未来',
-    'filename':'test.deb',
-    'url':'http://example.com/test.deb',
-    'md5sum':'63d475e6b67ebcb959224a1587f28214',
-    'size':1024,
-    'status':0,
-    'channels':'nightly',
-    'source_incremental':'0',
-    'target_incremental':'0',
-    'extra':'',
-    'api_level':'0',
-    'issue_uname':config.ADMIN_USERNAME,
-    'issuetime':0,
-    'm_time':0
-    }
-    redis_db.hmset(anindex,mdetail)
+    itmid = save_rom_new(0, mod_id, '1.0.1','1001', '1,改变了世界 2,拯救了未来', 'test.deb', 'http://example.com/test.deb', 1024, '63d475e6b67ebcb959224a1587f28214', 0, 'nightly', '0', '0', '', '0',config.ADMIN_USERNAME, 0, 0)
     print('save main info into redis ok')
 
 def upgradeDB():
