@@ -2,69 +2,67 @@
 #coding=utf-8
 # web.py In Memery of Aaron Swartz
 
-import web
+import tornado.escape
+from tornado import gen
+import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+from tornado.options import define, options
+
 import model,config
 import action
+import action.cms
+import action.admin
+import action.api
+
+import os
 
 ### Url mappings
-urls = (
+handlers = [
     ##for web view
-    '/',                'action.cms.Index',
-    '/allroms/([A-Za-z0-9_\-\.]*?)',   'action.cms.Allroms', #/allroms/[devicename]
-    '/api',             'action.api.API', #for client API
-    '/api/v1/build/get_delta',  'action.api.API_DELTA', #for delta client API
-    '/api/report',              'action.api.API_USER_REPORT', #for delta client API
-    '/api/(upgrade)/([A-Za-z0-9_\-\.]*?)/([A-Za-z0-9_\-\.]*?)',              'action.api.API_APPUP', #获取产品升级信息
-    config.ADMIN_LOGIN,         'action.admin.Login', #for web
-    '/publish',                 'action.admin.PublishIndex',# for web 
-    '/publish/device',          'action.admin.PublishNewApp', #for web 发布新的应用
-    '/publish/romslist/([A-Za-z0-9_\-\.]*?)',    'action.admin.PublishRomList', #for web
-    '/publish/rom/([A-Za-z0-9_\-\.]*?)', 'action.admin.PublishNewVersion', #for web 发布更新版本
-    '/publish/userreport',      'action.admin.UserReport', #for web 
-    '/publish/users',      'action.admin.UserReport', #for web 
-    '/publish/quit',            'action.admin.Quit', #for web
-    '/publish/changepwd',       'action.admin.ChangePwd', #for web
+    (r'/',                action.cms.Index),
+    (r'/allroms/([A-Za-z0-9_\-\.]*?)',   action.cms.Allroms), #/allroms/[devicename]
+    (r'/api',             action.api.API), #for client API
+    (r'/api/v1/build/get_delta',  action.api.API_DELTA), #for delta client API
+    (r'/api/report',              action.api.API_USER_REPORT), #for delta client API
+    (r'/api/(upgrade)/([A-Za-z0-9_\-\.]*?)/([A-Za-z0-9_\-\.]*?)',action.api.API_APPUP), #获取产品升级信息
+    (config.ADMIN_LOGIN,         action.admin.Login), #for web
+    (r'/publish',                 action.admin.PublishIndex),# for web 
+    (r'/publish/device',          action.admin.PublishNewApp), #for web 发布新的应用
+    (r'/publish/romslist/([A-Za-z0-9_\-\.]*?)',    action.admin.PublishRomList), #for web
+    (r'/publish/rom/([A-Za-z0-9_\-\.]*?)', action.admin.PublishNewVersion), #for web 发布更新版本
+    (r'/publish/userreport',      action.admin.UserReport), #for web 
+    (r'/publish/users',      action.admin.UserReport), #for web 
+    (r'/publish/quit',            action.admin.Quit), #for web
+    (r'/publish/changepwd',       action.admin.ChangePwd), #for web
     # Make url ending with or without '/' going to the same class
-    '/(.*)/',                   'action.cms.redirect', 
-)
-
-class MemStore(web.session.Store):
-    '''##自定义session store 类，将session信息保存在内存中，提高读写速度'''
+    (r'/(.*)/',                   action.cms.redirect), 
+]
+define("port", default=8080, help="run on the given port", type=int)
+class Application(tornado.web.Application):
     def __init__(self):
-        self.shelf = {}
+        settings = dict(
+            template_path=os.path.join(os.path.dirname(__file__), "templates/theme_bootstrap"),
+            static_path=os.path.join(os.path.dirname(__file__), "static"),
+            ui_modules={"Entry": EntryModule},
+            xsrf_cookies=True,
+            cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
+            login_url="/auth/login",
+            debug=False,
+        )
+        super(Application, self).__init__(handlers, **settings)
 
-    def __contains__(self, key):
-        return key in self.shelf.keys()
+class EntryModule(tornado.web.UIModule):
+    def render(self, entry):
+        return self.render_string("modules/entry.html", entry=entry)
+       
+def main():
+    tornado.options.parse_command_line()
+    http_server = tornado.httpserver.HTTPServer(Application())
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.current().start()
 
-    def __getitem__(self, key):
-        v = self.shelf[key]
-        return self.decode(v)
-
-    def __setitem__(self, key, value):
-        self.shelf[key] = self.encode(value)
-        
-    def __delitem__(self, key):
-        try:
-            del self.shelf[key]
-        except KeyError:
-            pass
-
-    def cleanup(self, timeout):
-        self.shelf.clear()
-        
-def notfound(errno=404):
-    r_index= "Windows IIS 5.0: "+str(errno)
-    return  web.notfound(r_index)
 
 if __name__ == '__main__':
-    web.config.debug = False
-    app = web.application(urls, globals())
-    app.notfound = notfound
-    sessionstore = MemStore()  
-    session = web.session.Session(app, sessionstore,initializer={'login': 0,'uname':""})
-    def session_hook():
-        web.ctx.session = session
-    app.add_processor(web.loadhook(session_hook))
-    web.config.session_parameters['timeout'] = 86400*2  #24 * 60 * 60, # 24 hours   in seconds 2days
-    web.config.session_parameters['ignore_expiry'] = False
-    app.run()
+    main()

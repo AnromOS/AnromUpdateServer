@@ -5,7 +5,7 @@ import model
 from action.base import base as BaseAction
 
 class Index(BaseAction):
-    def GET(self):
+    def get(self):
         """ Show page """
         #self.session.kill()
         models = model.get_devices()
@@ -20,8 +20,7 @@ class Index(BaseAction):
             devi['m_time'] = post['m_time']
             devi['m_detail']=model.get_roms_by_devicesname(devi['m_device'],5)
             devices.append(devi)
-        r_index =self.renderCMS.index(devices,prefs)
-        return r_index
+        self.render("index.html", devices=devices, prefs=prefs)
 
 class Allroms(BaseAction):
      def GET(self,mdevice):

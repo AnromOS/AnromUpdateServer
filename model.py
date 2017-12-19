@@ -155,7 +155,20 @@ def delete_rom_by_id(wid):
         redis_db.lrem("upserver:tmodel:%s.%s"%(mdevice,chan),1,wid)
     ##delete from items
     return redis_db.delete(anindex)
-   
+
+#### 网站用户管理
+def get_all_users():
+    return redis_db.hgetall("upserver:users")
+
+def get_user_by_uname(uname):
+    return redis_db.hget("upserver:users",uname)
+
+def add_new_user(uname, upasswd, urole, uavatar, udescription, utime):
+    redis_db.hset("upserver:users",uname,json.dumps({"u_name":uname,"u_password":upasswd,"u_role":urole, "u_avatar":uavatar,"u_description":udescription,"u_time":utime}))
+
+def del_user(uname):
+    redis_db.hdel("upserver:users",uname)
+
 #### 用户反馈的web管理
 def get_user_report_counts():
     '''总共有多少条反馈'''
@@ -199,8 +212,8 @@ def installmain():
     redis_db.hset("upserver:pref","user",config.ADMIN_USERNAME)
     redis_db.hset("upserver:pref","password",config.ADMIN_HASHPWD)
     redis_db.hset("upserver:pref","db_version",DB_VERSION)
-    ##测试用户
-    redis_db.hset("upserver:users",config.ADMIN_USERNAME,json.dumps({"u_name":config.ADMIN_USERNAME,"u_password":config.ADMIN_HASHPWD,"u_avatar":config.DEFAULT_HEAD,"u_description":"超级管理员","u_time":"1115891406"}))
+    ##添加一个测试用户
+    add_new_user(config.ADMIN_USERNAME,config.ADMIN_USERNAME,config.ADMIN_HASHPWD,config.DEFAULT_HEAD,"超级管理员","1115891406")
     ##测试用户提交数据
     redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
     ##测试添加产品线

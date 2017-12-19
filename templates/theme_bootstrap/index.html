@@ -1,28 +1,28 @@
-﻿$def with (models, prefs, ptitle=None)
-$var title: $ptitle
+{% extends "base_index.html" %}
 
+{% block body %}
 <!-- Home -->
 <div class="row">
     <div class="container-fluid" >
     <ul class="nav nav-tabs ">
-    $for post in models:
+    {% for post in devices %}
         <li>
-            <a name="devices" href="#$post['m_device']">
-            <img class="img-rounded" height=50px src="/$post['m_modpicture']"/><br>
-            $post['m_modname']
+            <a name="devices" href="#{{ escape(post['m_device']) }}">
+            <img class="img-rounded" height=50px src="/{{ escape(post['m_modpicture']) }}"/><br>
+            {{ escape(post['m_modname']) }}
             </a>
         </li>
-        
+    {% end %}   
     </ul><!-- /navbar -->
     </div>
     <div>
     </div>
     
     <div class ="col-sm-12 col-xs-12 col-md-12">
-    $for post in models:
+    {% for post in devices %}
         <div class="panel panel-info">
-        <div class="panel-heading"><a name="$post['m_device']" href="#devices">应用: $post['m_modname']</a> </div>
-            <p>$:post['m_moddescription']</p>
+        <div class="panel-heading"><a name="{{ escape(post['m_device']) }}" href="#devices">应用: {{ escape(post['m_modname']) }}</a> </div>
+            <p>{{ escape(post['m_moddescription']) }}</p>
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                 <thead>
                 <tr>
@@ -35,24 +35,26 @@ $var title: $ptitle
                 </thead>
                 <tbody>
                  <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/$post['m_modpicture']"/></td>
-                  <td><strong>$post['m_device']</strong></td>
+                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/{{ escape(post['m_modpicture']) }}"/></td>
+                  <td><strong>{{ escape(post['m_device']) }}</strong></td>
                   <td></td>
                   <td></td>
-                  <td> $strdate(post['m_time'])</td>
+                  <td> {{ escape(post['m_time']) }}</td>
                  </tr>
-                 $for det in post['m_detail']:
+                 {% for det in post['m_detail'] %}
                      <tr>
-                        <td>$det['version']</td>
-                        <td><a href ="$det['url']" class="btn btn-link" >$det['filename']</a></td>
-                        <td>$det['channels']</td>
-                        <td>$strdate(det['issuetime'])</td>
+                        <td>{{ escape(det['version']) }}</td>
+                        <td><a href ="{{ escape(det['url']) }}" class="btn btn-link" >{{ escape(det['filename']) }}</a></td>
+                        <td>{{ escape(det['channels']) }}</td>
+                        <td>{{ escape(det['issuetime']) }}</td>
                      </tr>
+                 {% end %}
                 </tbody>
             </table>
             
             <p class="text-right"><a href="/allroms/$post['m_device']">更多历史版本...</a></p>
-            
+        {% end %}     
         </div>
     </div>
 </div>
+{% end %}

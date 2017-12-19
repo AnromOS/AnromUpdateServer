@@ -2,38 +2,38 @@
 #coding=utf-8
 # web.py In Memery of Aaron Swartz
 
-import web
+import tornado.web
 import model,config,utils
 import hashlib,json,time,base64,urllib2
 import re
 import os
 
-class base:
-    def __init__(self):
-        author="tweety"
-        self.session = web.ctx.session
+class base(tornado.web.RequestHandler):
 
     ### Templates
     t_globals = {
-        'datestr': web.datestr,
         'strdate':utils.strtime,
         'inttime':utils.inttime,
         'urlquote':utils.urllib2.quote,
         'abs2rev':utils.abs2rev,
         'getStatuStr':config.getStatuStr
     }
-    renderAdmin = web.template.render('templates/theme_bootstrap', base='base', globals=t_globals)
-    renderCMS = web.template.render('templates/theme_bootstrap', base='base_index', globals=t_globals)
-    renderDefault = web.template.render('templates/theme_bootstrap')
+    #renderAdmin = web.template.render('templates/theme_bootstrap', base='base', globals=t_globals)
+    #renderCMS = web.template.render('templates/theme_bootstrap', base='base_index', globals=t_globals)
+    #renderDefault = web.template.render('templates/theme_bootstrap')
 
     def logged(self):
-        if web.ctx.session.login==1:
+        if True:
             return True
         else:
             return False
 
+    def get_current_user(self):
+        user_id =  self.get_secure_cookie("currentuser")
+        if not user_id: return None
+    
     def getCurrentUser(self):
-        return web.ctx.session.uname
+        return ""
 
     def countPrivilege(self):
         '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
@@ -49,7 +49,7 @@ class base:
         return token == ptoken
     
     def seeother(self,path):
-        return web.seeother(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
+        self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 
     def dump2Json(self, channels):
         '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''
