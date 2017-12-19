@@ -31,6 +31,7 @@ ROOT_PATH=os.getcwd()+'/'
 
 netpref['ADMIN_LOGIN']=ADMIN_LOGIN
 netpref['AUTOPUB_SECRET']=AUTOPUB_SECRET
+netpref['CHANNELS']="[nightly][release]"
 
 sDics={
 "[nightly]":"测试版",

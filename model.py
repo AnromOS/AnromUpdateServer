@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 #coding=utf-8
-import time,datetime,hashlib,sqlite3,json
+import time,datetime,hashlib,json,re
 import redis
 import config
 
 #1.本应用所有的key以upserver:开头
 #2.
 redis_db = redis.StrictRedis(host=config.netpref['REDIS_HOST'], port=config.netpref['REDIS_PORT'], db=config.netpref['REDIS_DB'], password=config.netpref['REDIS_PASSWORD'])
+
+chanPatten= re.compile('\[.*?\]')
 
 ## for web admin
 def get_preferences():
@@ -49,7 +51,10 @@ def get_devices_byname(mdevice):
 def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     '''保存某个机型的配置'''
     hindex="upserver:tmodel:%s"%mdevice
+    ## renew index
+    redis_db.lrem("upserver:tmodel_index",1,mdevice)
     redis_db.lpush("upserver:tmodel_index",mdevice)
+    ## save detail
     mdetail={
     "m_device":mdevice,
     "m_modname":mmod,
@@ -88,22 +93,31 @@ def get_available_roms_by_modelid(mdevice,channels):
     '''返回当前设备下的1个可用的升级'''
     result = []
     lkey = "upserver:tmodel:%s.[%s]"%(mdevice,channels)
-    print lkey
     itmid = redis_db.lindex(lkey,0)
-    print itmid
     pupgrade = get_rom_by_wid(itmid)
-    result.append(pupgrade)
-    print pupgrade, type(pupgrade)
+    if(not pupgrade == {}):
+        result.append(pupgrade)
     return result
    
 def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issue_uname, issuetime, m_time):
     '''发布新的rom升级包'''  
     itmid=wid
-    if(wid<=0):
-        itmid=redis_db.incr("upserver:latest:itm")
     anindex="upserver:tanrom:%s"%itmid
+    if(not redis_db.exists(anindex)):
+        itmid=redis_db.incr("upserver:latest:itm")
+        anindex="upserver:tanrom:%s"%itmid
+    print("saving new rom:",anindex)
+    ##put item id into the index first 
+    redis_db.lrem("upserver:tmodel:%s.items"%mdevice,1,itmid)
     redis_db.lpush("upserver:tmodel:%s.items"%mdevice,itmid)
-    redis_db.lpush("upserver:tmodel:%s.%s"%(mdevice,channels),itmid)
+    ## put item id in different channels
+    chans = chanPatten.findall(config.netpref['CHANNELS'])
+    for chan in chans:
+        redis_db.lrem("upserver:tmodel:%s.%s"%(mdevice,chan),1,itmid)
+    chans = chanPatten.findall(channels)
+    for chan in chans:
+        redis_db.lpush("upserver:tmodel:%s.%s"%(mdevice,chan),itmid)
+    ##save data into redis
     mdetail={
     'id':itmid,
     'mdevice':mdevice,
@@ -130,7 +144,16 @@ def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, si
 def delete_rom_by_id(wid):
     '''删除某个rom升级包'''
     anindex="upserver:tanrom:%s"%wid
+    itm = get_rom_by_wid(wid)
+    mdevice = itm['mdevice']
+    channels= itm['channels']
+    ##delete from index queue,
     redis_db.lrem("upserver:tmodel:%s.items"%mdevice,1,wid)
+    ##delete from channel index
+    chans = chanPatten.findall(config.netpref['CHANNELS'])
+    for chan in chans:
+        redis_db.lrem("upserver:tmodel:%s.%s"%(mdevice,chan),1,wid)
+    ##delete from items
     return redis_db.delete(anindex)
    
 #### 用户反馈的web管理

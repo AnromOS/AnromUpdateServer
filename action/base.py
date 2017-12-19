@@ -80,10 +80,10 @@ class base:
                 temp["api_level"]= x['api_level']
                 temp["filename"] = x['filename']
                 temp["url"] = x['url']
-                temp['size']=x['size']
-                temp['status']=x['status']
-                temp["timestamp"] =x['m_time']
-                temp["time"] =x['issuetime']
+                temp['size']=int(x['size'])
+                temp['status']=int(x['status'])
+                temp["timestamp"] =int(x['m_time'])
+                temp["time"] =int(x['issuetime'])
                 temp["md5sum"] =x['md5sum']
                 temp["changes"] = config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+'/api/changelog/'+devi['id']+'/changelog'+str(x['id'])+'.txt'
                 temp["changelog"] = x['changelog']

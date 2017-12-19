@@ -18,7 +18,7 @@ class Index(BaseAction):
             devi['m_modpicture'] = post['m_modpicture']
             devi['m_moddescription'] = post['m_moddescription']
             devi['m_time'] = post['m_time']
-            devi['m_detail']=model.get_devices_byname(devi['m_device'],5)
+            devi['m_detail']=model.get_roms_by_devicesname(devi['m_device'],5)
             devices.append(devi)
         r_index =self.renderCMS.index(devices,prefs)
         return r_index
@@ -27,25 +27,10 @@ class Allroms(BaseAction):
      def GET(self,mdevice):
         """ Show single page """
         #web.ctx.session.kill()
-        self.mod_id =-1
-        tmd = model.find_modid_bydevice(mdevice)
-        for ff in tmd:
-            self.mod_id= int(ff['mod_id'])
-            self.modname = ff['m_modname']
-            self.modpic = ff['m_modpicture']
-            self.moddstp = ff['m_moddescription']
-            self.mtime = ff['m_time']
-        if(self.mod_id ==-1):
-            return self.renderDefault.plaintext('该设备不支持。')
+        tmd = model.get_devices_byname(mdevice)
         models = model.get_devices()
-        devi={}
-        devi['m_device'] = mdevice
-        devi['m_modname'] = self.modname
-        devi['m_modpicture'] = self.modpic
-        devi['m_moddescription'] = self.moddstp
-        devi['m_time'] = self.mtime
-        devi['m_detail']=model.get_devices_byname(mdevice)
-        r_index =self.renderCMS.index_allroms(models,devi)
+        tmd['m_detail']=model.get_roms_by_devicesname(mdevice,-1)
+        r_index =self.renderCMS.index_allroms(models,tmd)
         return r_index
 
 class redirect(BaseAction):
