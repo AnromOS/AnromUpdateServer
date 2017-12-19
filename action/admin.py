@@ -198,21 +198,14 @@ class UserAdmin():
         return self.renderAdmin.publish_users()
     
 class Login(BaseAction):
-    '''#管理员登录后台'''
-    form = web.form.Form(
-        web.form.Textbox('uname', web.form.notnull, size=30,description="uname:"),
-        web.form.Password('pword', web.form.notnull, size=30,description="pword:"),
-        web.form.Button('Login'),
-    )
-    
-    def GET(self):
+    '''#管理员登录后台'''    
+    def get(self):
         """ View single post """
         if self.logged():
             raise self.seeother('/publish')
-        form = self.form()
-        return self.renderDefault.login(form,config.ADMIN_LOGIN)
+        self.render("login.html",loginpoint=config.ADMIN_LOGIN)
         
-    def POST(self):
+    def post(self):
         form = self.form()
         if not form.validates():
             return self.renderDefault.login(form,config.ADMIN_LOGIN)

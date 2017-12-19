@@ -23,14 +23,13 @@ class Index(BaseAction):
         self.render("index.html", devices=devices, prefs=prefs)
 
 class Allroms(BaseAction):
-     def GET(self,mdevice):
+     def get(self,mdevice):
         """ Show single page """
         #web.ctx.session.kill()
         tmd = model.get_devices_byname(mdevice)
         models = model.get_devices()
         tmd['m_detail']=model.get_roms_by_devicesname(mdevice,-1)
-        r_index =self.renderCMS.index_allroms(models,tmd)
-        return r_index
+        self.render("index_allroms.html",models=models,roms=tmd)
 
 class redirect(BaseAction):
     def GET(self, path):

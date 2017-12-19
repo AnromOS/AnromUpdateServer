@@ -23,7 +23,7 @@ class base(tornado.web.RequestHandler):
     #renderDefault = web.template.render('templates/theme_bootstrap')
 
     def logged(self):
-        if True:
+        if False:
             return True
         else:
             return False

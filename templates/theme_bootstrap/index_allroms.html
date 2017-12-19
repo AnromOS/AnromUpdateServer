@@ -1,25 +1,26 @@
-﻿$def with (models, roms, ptitle=None)
-$var title: $ptitle
+{% extends "base_index.html" %}
 
+{% block body %}
 <!-- Home -->
 <div class="row">
     <div class="container-fluid" >
     <ul class="nav nav-tabs ">
-    $for post in models:
+    {% for post in models %}
         <li>
-            <a name="devices" href="/allroms/$post['m_device']">
-            <img class="img-rounded" height=50px src="/$post['m_modpicture']"><!--<img class="img-circle" height=50px src="/$post['m_modpicture']">-->
-            <br/>$post['m_modname']
+            <a name="devices" href="/allroms/{{ escape(post['m_device']) }}">
+            <img class="img-rounded" height=50px src="/{{ escape(post['m_modpicture']) }}"><!--<img class="img-circle" height=50px src="/{{ escape(post['m_modpicture']) }}">-->
+            <br/>{{ escape(post['m_modname']) }}
             </a>
         </li>
-        
+     {% end %}
+   
     </ul><!-- /navbar -->
     </div>
     
     <div class ="col-sm-12 col-xs-12 col-md-12">
         <div class="panel panel-info">
-        <div class="panel-heading"><a name="$roms['m_device']" href="#devices">应用: $roms['m_modname']</a></div>
-            <p>$:roms['m_moddescription']</p>
+        <div class="panel-heading"><a name="{{ escape(roms['m_device']) }}" href="#devices">应用: {{ escape(roms['m_modname']) }}</a></div>
+            <p>{{ escape(roms['m_moddescription']) }}</p>
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                 <thead>
                 <tr>
@@ -34,24 +35,25 @@ $var title: $ptitle
                 </thead>
                 <tbody>
                  <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/$roms['m_modpicture']"></td>
-                  <td><strong>$roms['m_device']</strong></td>
+                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/{{ escape(roms['m_modpicture']) }}"></td>
+                  <td><strong>{{ escape(roms['m_device']) }}</strong></td>
                   <td></td>
                   <td></td>
-                  <td> $strdate(roms['m_time'])</td>
+                  <td> {{ escape(roms['m_time']) }}</td>
                  </tr>
-                 $for det in roms['m_detail']:
+                 {% for det in roms['m_detail'] %}
                      <tr>
-                        <td>$det['version']</td>
-                        <td><a href ="$det['url']" class="btn btn-link" >$det['filename'] ($det['size'])</a></td>
-                        <td>$:det['changelog']</td>
-                        <td>$det['md5sum']</td>
-                        <td>$det['channels']</td>
-                        <td>$strdate(det['issuetime'])</td>
+                        <td>{{ escape(det['version']) }}</td>
+                        <td><a href ="{{ escape(det['url']) }}" class="btn btn-link" >{{ escape(det['filename']) }} ( {{ escape(det['size']) }} )</a></td>
+                        <td>{{ escape(det['changelog']) }}</td>
+                        <td>{{ escape(det['md5sum']) }}</td>
+                        <td>{{ escape(det['channels']) }}</td>
+                        <td>{{ escape(det['issuetime']) }}</td>
                      </tr>
-                     
+                  {% end %}   
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+{% end %}
