@@ -1,86 +1,47 @@
 {% extends "base.html" %}
 
 {% block body %}
+
+<!--
 <div class="jumbotron">
         <h1>欢迎回来!</h1>
         <p>用户反馈区有 <bold>{{ usrrpt }}</bold> 条消息</p>
 </div>
+-->
 
 <div class="row">
-    
-    <div class="col-sm-6 col-xs-6 col-md-6">
+    <div class="col-sm-6 col-xs-12 col-md-6">
     <div class="panel panel-primary">
-        <div class="panel-heading">服务器配置</div>
-        <div class="panel-body" >
-            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+      <div class="panel-heading"><img class="img-rounded" height=35px src="{{ escape(curusr['u_avatar']) }}"/> {{ escape(curusr['u_name']) }} ( {{ escape(getStatuStr(curusr['u_role'])) }} )</div>
+      <div class="panel-body">
+        <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                <tbody>
                    <tr>
-                    <td>web服务器协议类型</td>
-                    <td>{{ escape(netpref['SCHEME']) }}</td>
-                   </tr>
-                   <tr>
-                    <td>web服务器域名</td>
-                    <td>{{ escape(netpref['SERVER_HOST']) }}</td>
-                   </tr>
-                    <tr>
-                    <td>web端口</td>
-                    <td>{{ escape(netpref['SERVER_PORT']) }}</td>
-                   </tr>
-                    <tr>
-                    <td>后台登陆地址</td>
-                    <td>{{ escape(netpref['ADMIN_LOGIN']) }}</td>
-                   </tr>
-                    <tr>
-                    <td>自动发布APIKEY</td>
-                    <td>{{ escape(netpref['AUTOPUB_SECRET']) }}</td>
+                    <td>{{ escape(curusr['u_description']) }}</td>
+                    <td>{{ escape(strtime(curusr['u_time'])) }}</td>
                    </tr>
                </tbody>
-             </table>
-        </div>
-    </div>
-    </div>
-    
-    <div class="col-sm-6 col-xs-6 col-md-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">管理员</div>
-      <div class="panel-body">
-        <strong>更改管理员密码</strong>
-            
-            <form  action="/publish/changepwd" method="post" class="form-inline" role="form">
-                <div  class="form-group">
-                    <label for="username" class="sr-only">管理员用户名</label>
-                    <input name="username" id="username" placeholder="管理员用户名" value="" type="text" class="form-control">
-                </div>
-                
-                <div  class="form-group">
-                    <label for="password" class="sr-only">管理员密码</label>
-                    <input name="password" id="password" placeholder="管理员密码" value="" type="password" class="form-control">
-                </div>
-                
-                <div  class="form-group">
-                    <label for="password2" class="sr-only">再次输入密码</label>
-                    <input name="password2" id="password2" placeholder="再次输入密码" value="" type="password" class="form-control">
-                </div>
-                {% module xsrf_form_html() %}
-                <input class="btn btn-primary" type="submit" value="更改" />
-            </form> 
+        </table>
+       
       </div>
     </div>
     </div>
     
-    <div class="col-sm-6 col-xs-6 col-md-6">
+    <div class="col-sm-6 col-xs-12 col-md-6">
     <div class="panel panel-primary">
         <div class="panel-heading">用户列表</div>
         <div class="panel-body" >
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
-               <thead><tr>  <th></th> <th>ID</th> <th>角色</th> <th>添加时间</th> </tr></thead>
+               <thead><tr>  <th></th> <th>ID</th> <th>角色</th> <th>添加时间</th> <th></th> <th></th></tr></thead>
                <tbody>
-                   {% for user in users %}
+                   {% for user in users.keys() %}
                    <tr>
-                    <td><img class="img-rounded" height=35px src="{{ escape(user['u_avatar']) }}"/></td>
-                    <td>{{ escape(user['u_name']) }}</td>
-                    <td>{{ escape(getStatuStr(user['u_role'])) }}</td>
-                    <td>{{ escape(strtime(user['u_time'])) }}</td>
+                    <td><img class="img-rounded" height=35px src="{{ escape(users[user]['u_avatar']) }}"/></td>
+                    <td>{{ escape(users[user]['u_name']) }}</td>
+                    <td>{{ escape(getStatuStr(users[user]['u_role'])) }}</td>
+                    <td>{{ escape(strtime(users[user]['u_time'])) }}</td>
+                    <td><a href="/publish/users?a=edit&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">编辑</a></td>
+                    <td><a href="/publish/users?a=del&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">删除</a></td>
                    </tr>
                    {% end %}
                </tbody>
@@ -88,32 +49,6 @@
         </div>
     </div>
     </div>
-    
-    <div class="col-sm-6 col-xs-6 col-md-6">    
-    <div class="panel panel-primary">
-        <div class="panel-heading">网站当前配置</div>
-        <div class="panel-body" data-toggle="collapse">
-            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
-               <thead>
-                <tr>
-                  <th> 条目</th>
-                  <th> 值</th>
-                </tr>
-               </thead>
-               <tbody>
-               {% for pref in prefs %}
-                   <tr>
-                    <td>{{ escape(pref) }}</td>
-                    <td>{{ escape(prefs[pref]) }}</td>
-                   </tr>
-               {% end %}
-                
-               </tbody>
-            </table>
-        </div>
-    </div>
-    </div>
-
 </div>
 
 <div class="row">
@@ -153,4 +88,64 @@
 
     </div>
 </div>
+
+<div class="row">
+    <div class="col-sm-6 col-xs-12 col-md-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">服务器配置</div>
+        <div class="panel-body" >
+            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+               <tbody>
+                   <tr>
+                    <td>web服务器协议类型</td>
+                    <td>{{ escape(netpref['SCHEME']) }}</td>
+                   </tr>
+                   <tr>
+                    <td>web服务器域名</td>
+                    <td>{{ escape(netpref['SERVER_HOST']) }}</td>
+                   </tr>
+                    <tr>
+                    <td>web端口</td>
+                    <td>{{ escape(netpref['SERVER_PORT']) }}</td>
+                   </tr>
+                    <tr>
+                    <td>后台登陆地址</td>
+                    <td>{{ escape(netpref['ADMIN_LOGIN']) }}</td>
+                   </tr>
+                    <tr>
+                    <td>自动发布APIKEY</td>
+                    <td>{{ escape(netpref['AUTOPUB_SECRET']) }}</td>
+                   </tr>
+               </tbody>
+             </table>
+        </div>
+    </div>
+    </div>
+    
+    <div class="col-sm-6 col-xs-12 col-md-6">    
+    <div class="panel panel-primary">
+        <div class="panel-heading">网站当前配置</div>
+        <div class="panel-body" data-toggle="collapse">
+            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+               <thead>
+                <tr>
+                  <th> 条目</th>
+                  <th> 值</th>
+                </tr>
+               </thead>
+               <tbody>
+               {% for pref in prefs %}
+                   <tr>
+                    <td>{{ escape(pref) }}</td>
+                    <td>{{ escape(prefs[pref]) }}</td>
+                   </tr>
+               {% end %}
+                
+               </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+
 {% end %}

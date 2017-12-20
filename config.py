@@ -20,7 +20,7 @@ ADMIN_USERNAME="youradminname"
 ADMIN_PWD="youradminpwd"
 ADMIN_HASHPWD=hashlib.sha256(ADMIN_PWD).hexdigest()
 
-DEFAULT_HEAD="/static/images/default_head.png"
+DEFAULT_HEAD="static/images/default_head.png"
 
 #自动发布设置
 #put your secret here.

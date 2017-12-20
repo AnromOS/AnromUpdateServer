@@ -15,6 +15,7 @@
                     <th>增量升级:</th>
                     <th>版本通道:</th>
                     <th>自定义特性</th>
+                    <th>发布者</th>
                     <th>发布时间:</th>
                     <th></th>
                     <th></th>
@@ -30,6 +31,11 @@
                     <td>{{ escape(post['source_incremental']) }} - {{ escape(post['target_incremental']) }}</td>
                     <td>{{ escape(post['channels']) }}</td>
                     <td>{{ escape(getStatuStr(post['status'])) }}</td>
+                    {% if post['issue_uname'] in users.keys() %}
+                    <td><img class="img-rounded" height=35px src="/{{ escape(users[post['issue_uname']]['u_avatar']) }}"/> {{ escape(post['issue_uname']) }}</td>
+                    {% else %}
+                    <td><img class="img-rounded" height=35px src="/static/images/default_head.png"/> {{ escape(post['issue_uname']) }}</td> 
+                    {% end %}
                     <td>{{ escape(strdate(post['issuetime'])) }}</td>
                     <td><a class="text-left" href="?a=edit&wid={{ escape(post['id']) }}&t=full">编辑</a> 
                     <td><a class="text-right" href="?a=del&wid={{ escape(post['id']) }}&t=full" >删除</a> </td>

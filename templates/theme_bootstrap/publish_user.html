@@ -9,10 +9,10 @@
       <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           
           <div class="form-group">
-            <label for="mname">开发者ID(在页面上显示) </label>
-            <input type="text" name="mname" id="mname" class="form-control" placeholder="用户的ID"
+            <label for="uname">开发者ID(在页面上显示) </label>
+            <input type="text" name="uname" id="uname" class="form-control" placeholder="用户的ID"
             {% if (pupdate!=None) %}
-                value="{{ escape(pupdate['m_modname']) }}" 
+                value="{{ escape(pupdate['u_name']) }}" 
             {% else %}
                 value=""
             {% end %}
@@ -22,28 +22,28 @@
           <div class="form-group">
             <label for="channels">用户类型（若不选，则默认是开发者）:  </label><br>
             <div class="radio-inline">
-              <label><input type="radio" name="urole" id="admin" value="admin"/>管理员</label>
+              <label><input type="radio" name="urole" id="admin" value="admin"/>{{ getStatuStr('admin') }}</label>
             </div>
             <div class="radio-inline">
-              <label><input type="radio" name="urole" id="developer" value="developer"/>开发者</label>
+              <label><input type="radio" name="urole" id="developer" value="developer"/>{{ getStatuStr('developer') }}</label>
             </div>
           </div>
           
           <div class="form-group">
-            <label for="mdevice">用户密码 </label>
-            <input name="mdevice" id="mdevice" type="password" class="form-control" placeholder="不能为空" value="" >
+            <label for="upassword">用户密码 </label>
+            <input name="upassword" id="upassword" type="password" class="form-control" placeholder="不能为空" value="" >
           </div>
           
           <div class="form-group">
-            <label for="mdevice">再次输入用户密码 </label>
-            <input name="mdevice" id="mdevice" type="password" class="form-control" placeholder="不能为空" value="" >
+            <label for="upassword2">再次输入用户密码 </label>
+            <input name="upassword2" id="upassword2" type="password" class="form-control" placeholder="不能为空" value="" >
           </div>
           
           <div class="form-group">
-            <label for="mdescription">简介</label>
-            <textarea type="text" name="mdescription" id="mdescription" rows=3 class="form-control" placeholder="用一段文字描述这个用户">
+            <label for="udescription">简介</label>
+            <textarea type="text" name="udescription" id="udescription" rows=3 class="form-control" placeholder="用一段文字描述这个用户">
 {% if (pupdate!=None) %}
-    {{ escape(pupdate['m_moddescription']) }}
+    {{ escape(pupdate['u_description']) }}
 {% end %}
 </textarea>
     <!--<script type="text/javascript" src="/static/editor/tinyeditor.js"></script>
@@ -73,8 +73,8 @@
 
           </div>
           <div class="form-group">
-            <label for="mpicture">上传头像</label>
-            <input type="file" name="mpicture" id="mpicture"></input>
+            <label for="uavatar">上传头像</label>
+            <input type="file" name="uavatar" id="uavatar"></input>
           </div>
           {% module xsrf_form_html() %}
         <input  class="btn btn-primary" type="submit" value="完成"/>

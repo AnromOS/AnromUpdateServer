@@ -4,7 +4,7 @@
 # 2017.12.10: Switched into Tornado
 
 import model,config,utils
-import time,json,gc
+import time,json,gc,hashlib
 from action.base import base as BaseAction
 from tornado import gen
 import tornado.web
@@ -17,6 +17,7 @@ class PublishIndex(BaseAction):
         prefs = model.get_preferences()
         usrrpt = model.get_user_report_counts()
         users = model.get_all_users()
+        curusr = model.get_user_by_uname(self.current_user)
         devices =[]
         for post in models:
             devi={}
@@ -32,22 +33,8 @@ class PublishIndex(BaseAction):
                 devi['m_detail'] = itm
                 break
             devices.append(devi)
-        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users, strtime=utils.strtime, getStatuStr=config.getStatuStr)
+        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr)
 
-
-class ChangePwd(BaseAction):
-    '''#更换管理员密码'''
-    @tornado.web.authenticated
-    def post(self):
-        username = self.get_argument("username")
-        password = self.get_argument("password")
-        pwd2 = self.get_argument("password2")
-        if(password and password == pwd2):
-            model.post_changeuser(str(username),password)
-            self.seeother('/publish')
-        else: 
-            self.write("password not match!")
-        
 class PublishNewApp(BaseAction):
     '''#发布新的应用'''
     @tornado.web.authenticated
@@ -205,7 +192,8 @@ class PublishRomList(BaseAction):
                 wid = x['wid']
                 self.seeother("/publish/rom/"+modname+"?a=edit&t=full&wid="+wid)
             romlists = model.get_roms_by_devicesname(modname,-1)
-            return self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists, ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
+            users = model.get_all_users()
+            self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
             
 class UserReport(BaseAction):
     '''#查看后台用户反馈'''
@@ -227,17 +215,64 @@ class UserReport(BaseAction):
             result = model.get_user_report(pg ,pgcon)
             print(result)
             print(type(result))
-            return self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strdate=utils.strtime)
+            self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strdate=utils.strtime)
 
 class PublishNewUser(BaseAction):
     '''管理网站用户'''
     @tornado.web.authenticated
     def get(self):
-        self.render("publish_user.html",pupdate=None, ptitle="添加用户")
+        x ={
+        'a':self.get_argument("a",""),
+        'uname':self.get_argument("uname","")
+        }
+        tmd = None
+        title = "添加用户"
+        if (x['a']=='del'):
+            if (self.current_user == x['uname']):
+                self.write("注意，你不能删除自己")
+                return
+            else:
+                model.del_user(x['uname'])
+            self.seeother("/publish")
+            return
+        elif (x['a']=='edit'):
+            tmd = model.get_user_by_uname(x['uname'])
+            title = "编辑用户信息"
+        self.render("publish_user.html",pupdate=tmd, ptitle=title,getStatuStr=config.getStatuStr)
     
     @tornado.web.authenticated
     def post(self):
-        pass
+        if self.primissived():
+            x={
+            'a':self.get_argument("a",""),
+            'uname':self.get_argument("uname",""),
+            'urole':self.get_argument("urole","developer"),
+            'upassword':self.get_argument("upassword",""),
+            'upassword2':self.get_argument("upassword2",""),
+            'uavatar':self.request.files.items(),
+            'udescription':self.get_argument("udescription","")
+            }
+            if (x['a']=='add'):
+                uname =x['uname']
+                urole = x['urole']
+                udscpt = x['udescription']
+                upwd1=x['upassword']
+                upwd2=x['upassword2']
+                if (not (upwd1 == upwd2)) or (upwd1==""):
+                    print (upwd1,upwd2)
+                    self.write("密码输入不一致")
+                    return
+                mtime = int(time.time())
+                picname = config.DEFAULT_HEAD
+                if (len(x['uavatar'])>0):
+                    (field, mpic) = x['uavatar'][0]
+                    for picfile in mpic:
+                        picname ="static/images/"+ (picfile["filename"])
+                        #1, 保存新应用的图标
+                        utils.saveBin(picname, picfile["body"])
+                #3, 保存在数据库里
+                model.add_new_user(uname, hashlib.sha256(upwd1).hexdigest(), urole, picname, udscpt, mtime)
+            self.seeother("/publish")
 
 class Login(BaseAction):
     '''#管理员登录后台'''  

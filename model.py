@@ -26,13 +26,6 @@ def login_post(username,password):
     j1 = (username == usr)
     j2 = (pwd ==  hashlib.sha256(password).hexdigest())
     return j1 and j2
-
-def post_changeuser(username,password):
-    '''更改管理员密码'''
-    user = get_user_by_uname(username)
-    if (user):
-        add_new_user(user["u_name"], hashlib.sha256(password).hexdigest(), user['u_role'], user['u_avatar'], user['u_description'], user['u_time'])
-    
   
 #### 发布机型管理  
 def get_devices():
@@ -165,9 +158,9 @@ def delete_rom_by_id(wid):
 #### 网站用户管理
 def get_all_users():
     uinfos = redis_db.hgetall("upserver:users")
-    result =[]
+    result = {}
     for uname in uinfos.keys():
-        result.append(json.loads(uinfos[uname]))
+        result[uname]=json.loads(uinfos[uname])
     return result
 
 def get_user_by_uname(uname):
