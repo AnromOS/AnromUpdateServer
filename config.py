@@ -44,6 +44,8 @@ sDics={
 "0":"强制升级未开启",
 "1":"开启强制升级",
 "2":"其他",
+"admin":"管理员",
+"developer":"开发者"
 }
 def getStatuStr(SKey):
     return sDics[SKey]

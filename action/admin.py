@@ -16,6 +16,7 @@ class PublishIndex(BaseAction):
         models = model.get_devices()
         prefs = model.get_preferences()
         usrrpt = model.get_user_report_counts()
+        users = model.get_all_users()
         devices =[]
         for post in models:
             devi={}
@@ -31,7 +32,7 @@ class PublishIndex(BaseAction):
                 devi['m_detail'] = itm
                 break
             devices.append(devi)
-        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt, strtime=utils.strtime)
+        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users, strtime=utils.strtime, getStatuStr=config.getStatuStr)
 
 
 class ChangePwd(BaseAction):
@@ -228,12 +229,16 @@ class UserReport(BaseAction):
             print(type(result))
             return self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strdate=utils.strtime)
 
-class UserAdmin():
+class PublishNewUser(BaseAction):
     '''管理网站用户'''
     @tornado.web.authenticated
-    def get(BaseAction):
-        self.render("publish_users.html")
+    def get(self):
+        self.render("publish_user.html",pupdate=None, ptitle="添加用户")
     
+    @tornado.web.authenticated
+    def post(self):
+        pass
+
 class Login(BaseAction):
     '''#管理员登录后台'''  
     @gen.coroutine  
@@ -241,13 +246,13 @@ class Login(BaseAction):
         """ View single post """
         if self.get_current_user():
             self.seeother('/publish')
-        self.render("login.html",loginpoint=config.ADMIN_LOGIN)
+        else:
+            self.render("login.html",loginpoint=config.ADMIN_LOGIN)
     
     @gen.coroutine
     def post(self):
         uname = self.get_argument("uname",'')
         pword = self.get_argument("pword",'')
-        print uname, pword
         if (model.login_post(uname,pword)):
             #return "login success"
             self.set_secure_cookie("uname", uname, expires_days=2)

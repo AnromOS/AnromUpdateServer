@@ -7,30 +7,6 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-6 col-xs-6 col-md-6">    
-    <div class="panel panel-primary">
-        <div class="panel-heading">网站当前配置</div>
-        <div class="panel-body" data-toggle="collapse">
-            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
-               <thead>
-                <tr>
-                  <th> 条目</th>
-                  <th> 值</th>
-                </tr>
-               </thead>
-               <tbody>
-               {% for pref in prefs %}
-                   <tr>
-                    <td>{{ escape(pref) }}</td>
-                    <td>{{ escape(prefs[pref]) }}</td>
-                   </tr>
-               {% end %}
-                
-               </tbody>
-            </table>
-        </div>
-    </div>
-    </div>
     
     <div class="col-sm-6 col-xs-6 col-md-6">
     <div class="panel panel-primary">
@@ -89,6 +65,52 @@
                 <input class="btn btn-primary" type="submit" value="更改" />
             </form> 
       </div>
+    </div>
+    </div>
+    
+    <div class="col-sm-6 col-xs-6 col-md-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">用户列表</div>
+        <div class="panel-body" >
+            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+               <thead><tr>  <th></th> <th>ID</th> <th>角色</th> <th>添加时间</th> </tr></thead>
+               <tbody>
+                   {% for user in users %}
+                   <tr>
+                    <td><img class="img-rounded" height=35px src="{{ escape(user['u_avatar']) }}"/></td>
+                    <td>{{ escape(user['u_name']) }}</td>
+                    <td>{{ escape(getStatuStr(user['u_role'])) }}</td>
+                    <td>{{ escape(strtime(user['u_time'])) }}</td>
+                   </tr>
+                   {% end %}
+               </tbody>
+             </table>
+        </div>
+    </div>
+    </div>
+    
+    <div class="col-sm-6 col-xs-6 col-md-6">    
+    <div class="panel panel-primary">
+        <div class="panel-heading">网站当前配置</div>
+        <div class="panel-body" data-toggle="collapse">
+            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+               <thead>
+                <tr>
+                  <th> 条目</th>
+                  <th> 值</th>
+                </tr>
+               </thead>
+               <tbody>
+               {% for pref in prefs %}
+                   <tr>
+                    <td>{{ escape(pref) }}</td>
+                    <td>{{ escape(prefs[pref]) }}</td>
+                   </tr>
+               {% end %}
+                
+               </tbody>
+            </table>
+        </div>
     </div>
     </div>
 

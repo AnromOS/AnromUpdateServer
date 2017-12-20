@@ -34,7 +34,7 @@ handlers = [
     (r'/publish/romslist/([A-Za-z0-9_\-\.]*?)',    action.admin.PublishRomList), #for web
     (r'/publish/rom/([A-Za-z0-9_\-\.]*?)', action.admin.PublishNewVersion), #for web 发布更新版本
     (r'/publish/userreport',      action.admin.UserReport), #for web 
-    (r'/publish/users',      action.admin.UserReport), #for web 
+    (r'/publish/users',      action.admin.PublishNewUser), #for web 
     (r'/publish/quit',            action.admin.Quit), #for web
     (r'/publish/changepwd',       action.admin.ChangePwd), #for web
     (r'/404',                   action.cms.ErrorPage), 

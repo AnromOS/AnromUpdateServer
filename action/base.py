@@ -41,11 +41,9 @@ class base(tornado.web.RequestHandler):
         return token == ptoken
     
     def primissived(self):
-        '''判断当前用户是否有权限'''
-        return True
-    
-    def notfound(message):
-        self.write(message)
+        '''判断当前用户是否有管理员权限'''
+        uinfo = model.get_user_by_uname(self.current_user)
+        return (uinfo['u_role'] == "admin")
     
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)

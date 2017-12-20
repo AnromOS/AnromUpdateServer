@@ -17,16 +17,22 @@ def get_preferences():
     
 def login_post(username,password):
     '''验证网站管理员登录'''
-    usr = get_pref("user")
-    pwd = get_pref("password")
-    print(username)
-    print(hashlib.sha256(password).hexdigest())
-    return (username == usr)and (pwd ==  hashlib.sha256(password).hexdigest())
+    print("user login:",username)
+    user = get_user_by_uname(username)
+    if (user is None):
+        return False
+    usr = user["u_name"]
+    pwd = user["u_password"]
+    j1 = (username == usr)
+    j2 = (pwd ==  hashlib.sha256(password).hexdigest())
+    return j1 and j2
 
 def post_changeuser(username,password):
     '''更改管理员密码'''
-    save_pref("user",username)
-    save_pref("password",hashlib.sha256(password).hexdigest())
+    user = get_user_by_uname(username)
+    if (user):
+        add_new_user(user["u_name"], hashlib.sha256(password).hexdigest(), user['u_role'], user['u_avatar'], user['u_description'], user['u_time'])
+    
   
 #### 发布机型管理  
 def get_devices():
@@ -158,15 +164,24 @@ def delete_rom_by_id(wid):
 
 #### 网站用户管理
 def get_all_users():
-    return redis_db.hgetall("upserver:users")
+    uinfos = redis_db.hgetall("upserver:users")
+    result =[]
+    for uname in uinfos.keys():
+        result.append(json.loads(uinfos[uname]))
+    return result
 
 def get_user_by_uname(uname):
-    return redis_db.hget("upserver:users",uname)
+    uinfo = redis_db.hget("upserver:users",uname)
+    if uinfo:
+        return json.loads(uinfo)
+    else: return None
 
 def add_new_user(uname, upasswd, urole, uavatar, udescription, utime):
+    print("saving user:",uname)
     redis_db.hset("upserver:users",uname,json.dumps({"u_name":uname,"u_password":upasswd,"u_role":urole, "u_avatar":uavatar,"u_description":udescription,"u_time":utime}))
 
 def del_user(uname):
+    print("deleting user:",uname)
     redis_db.hdel("upserver:users",uname)
 
 #### 用户反馈的web管理
@@ -210,11 +225,11 @@ def get_pref(name):
 DB_VERSION=1
 def installmain():
     '''安装网站所需要的主数据库'''
-    redis_db.hset("upserver:pref","user",config.ADMIN_USERNAME)
-    redis_db.hset("upserver:pref","password",config.ADMIN_HASHPWD)
     redis_db.hset("upserver:pref","db_version",DB_VERSION)
-    ##添加一个测试用户
-    add_new_user(config.ADMIN_USERNAME,config.ADMIN_USERNAME,config.ADMIN_HASHPWD,config.DEFAULT_HEAD,"超级管理员","1115891406")
+    for k in config.netpref.keys():
+        save_pref(k,config.netpref[k])
+    ##添加一个管理员
+    add_new_user(config.ADMIN_USERNAME,config.ADMIN_HASHPWD,"admin",config.DEFAULT_HEAD,"超级管理员","1115891406")
     ##测试用户提交数据
     redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
     ##测试添加产品线
