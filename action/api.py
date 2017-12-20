@@ -9,10 +9,10 @@ from action.base import base as BaseAction
 
 class API(BaseAction):
     '''#用于手机客户端的api接口实现'''
-    def GET(self):
+    def get(self):
         return ''
 
-    def POST(self):
+    def post(self):
         x=web.ctx.env['wsgi.input']
         rawjson = x.readline()
         api={}
@@ -62,7 +62,7 @@ class API(BaseAction):
         
 class API_DELTA(BaseAction):
     '''给手机客户端返回增量升级的信息'''
-    def POST(self):
+    def post(self):
         x=web.ctx.env['wsgi.input']
         rawjson = x.readline()
         api={}
@@ -90,11 +90,11 @@ class API_DELTA(BaseAction):
 
 class API_USER_REPORT(BaseAction):
     '''#客户端提交反馈意见'''
-    def GET(self):
+    def get(self):
         #web.ctx.session.kill()
         return self.renderDefault.plaintext(200)
         
-    def POST(self):
+    def post(self):
         #web.ctx.session.kill()
         x= web.input(fprint="",fcontent = "")
         fprint =x['fprint']
@@ -106,7 +106,7 @@ class API_USER_REPORT(BaseAction):
 
 class API_APPUP(BaseAction):
     '''#各个产品线的升级api接口实现'''
-    def GET(self,method,device,channels):
+    def get(self,method,device,channels):
         #web.ctx.session.kill()
         api={}
         body=[]

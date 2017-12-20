@@ -178,6 +178,7 @@ def post_user_report(fprint, fcontent,ftime):
     '''提交用户反馈'''
     result = redis_db.rpush("upserver:ureport",json.dumps({"fingerprint":fprint,"mcontent":fcontent, "mtime":ftime}))
     return result
+
 def get_user_report(pg, pagesize):
     '''查看用户反馈'''
     p = pagesize*(pg)

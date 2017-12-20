@@ -46,6 +46,7 @@
                     </label>
                     <input class="form-control" name="pword" id="pword" placeholder="管理员密码" value="" type="password" class="form-control">
                 </div>
+                {% module xsrf_form_html() %}
                 
                 <input class="btn btn-primary" value="登陆" type="submit">
             </form>  

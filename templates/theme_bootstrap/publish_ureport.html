@@ -1,10 +1,10 @@
-$def with (ureports , pages= 0, ptitle=None)
-$var title: $ptitle
+{% extends "base.html" %}
 
+{% block body %}
 <div class="row">
 <div class ="col-sm-12 col-xs-12 col-md-12">
     <div class="panel panel-primary">
-    <div class="panel-heading"><strong> $ptitle <strong></div>
+    <div class="panel-heading"><strong> {{ escape(ptitle) }} <strong></div>
     <div class="panel-body">
         <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
             <thead>
@@ -16,21 +16,24 @@ $var title: $ptitle
                 </tr>
             </thead>
             <tbody>
-            $for post in ureports:
+            {% for post in ureports %}
                 <tr>
-                <td>$post['fingerprint']</td>
-                <td>$post['mcontent']</td>
-                <td>$strdate(post['mtime'])</td>
-                <td><a href="?a=del&pid=$post['fingerprint']" class="btn btn-link">删除</a></td>
+                <!--
+                <td><a href="?a=del&pid={{ escape(post) }}" class="btn btn-link">删除</a></td>
+                -->
+                <td>{{ escape(post) }}</td>
                 </tr>
+            {% end %}
+            
             </tbody>
         </table>
     </div>
     </div>
     <nav>
       <ul class="pagination">
-        $for pg in range(pages):
-        <li><a href="?p=$pg">$pg</a></li>
+        {% for pg in range(pages) %}
+        <li><a href="?p={{ pg }}">{{ pg }}</a></li>
+        {% end %}
         
       </ul>
     </nav>
@@ -46,3 +49,4 @@ $var title: $ptitle
     </div>
 </div>
 </div>
+{% end %}

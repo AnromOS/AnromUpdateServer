@@ -1,7 +1,7 @@
-﻿$def with (pupgrade =None, ptitle=None)
-$var title: $ptitle
+{% extends "base.html" %}
 
-<strong>$ptitle</strong>
+{% block body %}
+<strong>{{ escape(ptitle) }}</strong>
 <p>这个表单只是发布一个下载链接。升级文件请一律用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
 <div class="column">
 <div class ="col-sm-12 col-xs-12 col-md-12" style="word-break:break-all; word-wrap:break-all;">
@@ -11,32 +11,36 @@ $var title: $ptitle
         <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
           <div class="form-group">
             <input class="hidden" name="wid" id="wid" 
-            $if(pupgrade!=None):
-                value="$pupgrade['id']" 
-            $else:
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['id']) }}" 
+            {% else %}
                 value="" 
+            {% end %}
             >
             <label for="version">版本(version)</label>
             <input type="text" name="version" id="version" 
-            $if(pupgrade!=None):
-                value="$pupgrade['version']" 
-            $else:
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['version']) }}" 
+            {% else %}
                 value="" 
+            {% end %}
             class="form-control" placeholder="软件版本号">
             
             <label for="version">版本标识(versioncode)</label>
             <input type="text" name="versioncode" id="versioncode" 
-            $if(pupgrade!=None):
-                value="$pupgrade['versioncode']" 
-            $else:
-                value="" 
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['versioncode']) }}" 
+            {% else %}
+                value=""
+            {% end %}
             class="form-control" placeholder="软件版本标识，递增的整数">
           </div>
           <div class="form-group">
             <label for="changelog">变更日志(changelog)</label>
             <textarea type="text" name="changelog" id="changelog"  class="form-control" rows="3" placeholder="发布的日志" >
-$if(pupgrade!=None):
-    $pupgrade['changelog']
+{% if (pupgrade!=None) %}
+    {{ escape(pupgrade['changelog']) }}
+{% end %}
 </textarea>
                 <!--
                 <script type="text/javascript" src="/static/editor/tinyeditor.js"></script>
@@ -84,26 +88,29 @@ $if(pupgrade!=None):
           <div class="form-group">
             <label for="url">下载地址(url)</label>
             <input type="text" name="url" id="url" 
-            $if(pupgrade!=None):
-                value="$pupgrade['url']"
-            $else:
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['url']) }}"
+            {% else %}
                 value="" 
+            {% end %}
             class="form-control" placeholder="升级文件的下载地址" />
            
             <label for="url">文件大小(size)</label>
             <input type="text" name="size" id="size" 
-            $if(pupgrade!=None):
-                value="$pupgrade['size']"
-            $else:
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['size']) }}"
+            {% else %}
                 value="0" 
+            {% end %}
             class="form-control" placeholder="文件的大小单位(字节)" />
             
             <label for="md5sum">校验和(md5sum)</label>
             <input type="text" name="md5sum" id="md5sum" 
-            $if(pupgrade!=None):
-                value="$pupgrade['md5sum']"
-            $else:
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['md5sum']) }}"
+            {% else %}
                 value="" 
+            {% end %}
             class="form-control" placeholder="升级文件的md5sum值（若不填写则以上传到服务器的文件为准计算MD5值）"/>
           </div>
           
@@ -116,41 +123,46 @@ $if(pupgrade!=None):
           
           <div class="form-group">
             <input class="hidden" name="wid" id="incremental" 
-            $if(pupgrade!=None):
-                value="$pupgrade['id']" 
-            $else:
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['id']) }}" 
+            {% else %}
                 value="" 
+            {% end %}
             >
             <label for="source_incremental">源版本增量标识(source_incremental) </label>
             <input type="text" name="source_incremental" id="source_incremental" 
-            $if(pupgrade!=None):
-                value="$pupgrade['source_incremental']" 
-            $else: 
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['source_incremental']) }}" 
+            {% else %}
                 value=""
+            {% end %}
             class="form-control" placeholder="源版本增量标识,用于增量升级包，可以留空">
           </div>
           <div class="form-group">
             <label for="target_incremental">目的版本增量标识(target_incremental) </label>
             <input type="text" name="target_incremental" id="target_incremental" 
-            $if(pupgrade!=None):
-                value="$pupgrade['target_incremental']" 
-            $else: 
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['target_incremental']) }}" 
+            {% else %}
                 value=""
+            {% end %}
             class="form-control" placeholder="目的版本增量标识,用于增量升级包，可以留空">
           </div>
           
           <div class="form-group">
             <label for="target_incremental">自定义内容(extra) </label>
             <input type="text" name="extra" id="extra" 
-            $if(pupgrade!=None):
-                value="$pupgrade['extra']" 
-            $else: 
+            {% if (pupgrade!=None) %}
+                value="{{ escape(pupgrade['extra']) }}" 
+            {% else %}
                 value=""
+            {% end %}
             class="form-control" placeholder="自定义内容，没有则留空">
           </div>
-          
+        {% module xsrf_form_html() %}  
         <input  class="btn btn-primary" type="submit" value="完成"/>
       </form>
     </div>
     </div>
 </div>
+{% end %}

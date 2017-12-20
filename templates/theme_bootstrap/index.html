@@ -39,22 +39,22 @@
                   <td><strong>{{ escape(post['m_device']) }}</strong></td>
                   <td></td>
                   <td></td>
-                  <td> {{ escape(post['m_time']) }}</td>
+                  <td> {{ escape(strtime(post['m_time'])) }}</td>
                  </tr>
                  {% for det in post['m_detail'] %}
                      <tr>
                         <td>{{ escape(det['version']) }}</td>
                         <td><a href ="{{ escape(det['url']) }}" class="btn btn-link" >{{ escape(det['filename']) }}</a></td>
                         <td>{{ escape(det['channels']) }}</td>
-                        <td>{{ escape(det['issuetime']) }}</td>
+                        <td>{{ escape(strtime(det['issuetime'])) }}</td>
                      </tr>
                  {% end %}
                 </tbody>
             </table>
             
             <p class="text-right"><a href="/allroms/{{ escape(post['m_device']) }}">更多历史版本...</a></p>
-        {% end %}     
         </div>
+    {% end %}
     </div>
 </div>
 {% end %}

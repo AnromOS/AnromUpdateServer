@@ -36,6 +36,7 @@ handlers = [
     (r'/publish/users',      action.admin.UserReport), #for web 
     (r'/publish/quit',            action.admin.Quit), #for web
     (r'/publish/changepwd',       action.admin.ChangePwd), #for web
+    (r'/404',                   action.cms.ErrorPage), 
     # Make url ending with or without '/' going to the same class
     (r'/(.*)/',                   action.cms.redirect), 
 ]
@@ -47,8 +48,9 @@ class Application(tornado.web.Application):
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Entry": EntryModule},
             xsrf_cookies=True,
-            cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-            login_url="/auth/login",
+            cookie_secret="bc4c516d9ab23c22c65ea2483aae5ba34c907f46f6d8dae11ece24004f486330",
+            login_url="/404",#no need to show any login url.
+            default_handler_class=action.cms.ErrorPage,
             debug=False,
         )
         super(Application, self).__init__(handlers, **settings)

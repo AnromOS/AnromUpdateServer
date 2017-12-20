@@ -39,7 +39,7 @@
                   <td><strong>{{ escape(roms['m_device']) }}</strong></td>
                   <td></td>
                   <td></td>
-                  <td> {{ escape(roms['m_time']) }}</td>
+                  <td> {{ escape(strtime(roms['m_time'])) }}</td>
                  </tr>
                  {% for det in roms['m_detail'] %}
                      <tr>
@@ -48,7 +48,7 @@
                         <td>{{ escape(det['changelog']) }}</td>
                         <td>{{ escape(det['md5sum']) }}</td>
                         <td>{{ escape(det['channels']) }}</td>
-                        <td>{{ escape(det['issuetime']) }}</td>
+                        <td>{{ escape(strtime(det['issuetime'])) }}</td>
                      </tr>
                   {% end %}   
                 </tbody>

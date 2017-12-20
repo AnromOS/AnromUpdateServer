@@ -1,9 +1,9 @@
-$def with (models, prefs, netpref, usrrpt, ptitle=None)
-$var title: $ptitle
+{% extends "base.html" %}
 
+{% block body %}
 <div class="jumbotron">
         <h1>欢迎回来!</h1>
-        <p>用户反馈区有 <bold>$usrrpt</bold> 条消息</p>
+        <p>用户反馈区有 <bold>{{ usrrpt }}</bold> 条消息</p>
 </div>
 
 <div class="row">
@@ -19,12 +19,13 @@ $var title: $ptitle
                 </tr>
                </thead>
                <tbody>
-               $for pref in prefs:
+               {% for pref in prefs %}
                    <tr>
-                    <td>$pref</td>
-                    <td>$prefs[pref]</td>
+                    <td>{{ escape(pref) }}</td>
+                    <td>{{ escape(prefs[pref]) }}</td>
                    </tr>
-                   
+               {% end %}
+                
                </tbody>
             </table>
         </div>
@@ -39,23 +40,23 @@ $var title: $ptitle
                <tbody>
                    <tr>
                     <td>web服务器协议类型</td>
-                    <td>$netpref['SCHEME']</td>
+                    <td>{{ escape(netpref['SCHEME']) }}</td>
                    </tr>
                    <tr>
                     <td>web服务器域名</td>
-                    <td>$netpref['SERVER_HOST']</td>
+                    <td>{{ escape(netpref['SERVER_HOST']) }}</td>
                    </tr>
                     <tr>
                     <td>web端口</td>
-                    <td>$netpref['SERVER_PORT']</td>
+                    <td>{{ escape(netpref['SERVER_PORT']) }}</td>
                    </tr>
                     <tr>
                     <td>后台登陆地址</td>
-                    <td>$netpref['ADMIN_LOGIN']</td>
+                    <td>{{ escape(netpref['ADMIN_LOGIN']) }}</td>
                    </tr>
                     <tr>
                     <td>自动发布APIKEY</td>
-                    <td>$netpref['AUTOPUB_SECRET']</td>
+                    <td>{{ escape(netpref['AUTOPUB_SECRET']) }}</td>
                    </tr>
                </tbody>
              </table>
@@ -84,7 +85,7 @@ $var title: $ptitle
                     <label for="password2" class="sr-only">再次输入密码</label>
                     <input name="password2" id="password2" placeholder="再次输入密码" value="" type="password" class="form-control">
                 </div>
-                
+                {% module xsrf_form_html() %}
                 <input class="btn btn-primary" type="submit" value="更改" />
             </form> 
       </div>
@@ -111,21 +112,23 @@ $var title: $ptitle
                 </tr>
                 </thead>
                 <tbody>
-                $for post in models:
+                {% for post in models %}
                     <tr>
-                      <td><img class="img-rounded" height=35px src="$post['m_modpicture']"/></td>
-                      <td>$post['m_modname'] (<strong>$post['m_device']</strong>)</td>
-                      <td><a href="/publish/romslist/$post['m_device']" class="btn btn-link"> 点击查看 ($post['m_count'])</a> </td>
-                      <td>$post['m_detail']['version']</td>
-                      <td>$strdate(post['m_time'])</td>
-                      <td><a href="/publish/rom/$post['m_device']" class="btn btn-link">添加新版本升级</a></td>
-                      <td><a href="/publish/device?a=edit&mdevice=$post['m_device']" class="btn btn-link">编辑应用信息</a></td>
-                      <td><a href="/publish/device?a=del&mdevice=$post['m_device']" class="btn btn-link">删除该应用</a></td>
+                      <td><img class="img-rounded" height=35px src="{{ escape(post['m_modpicture']) }}"/></td>
+                      <td>{{ escape(post['m_modname']) }} (<strong>{{ escape(post['m_device']) }}</strong>)</td>
+                      <td><a href="/publish/romslist/{{ escape(post['m_device']) }}" class="btn btn-link"> 点击查看 ({{ post['m_count'] }})</a> </td>
+                      <td>{{ escape(post['m_detail']['version']) }}</td>
+                      <td>{{ escape(strtime(post['m_time'])) }}</td>
+                      <td><a href="/publish/rom/{{ escape(post['m_device']) }}" class="btn btn-link">添加新版本升级</a></td>
+                      <td><a href="/publish/device?a=edit&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">编辑应用信息</a></td>
+                      <td><a href="/publish/device?a=del&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">删除该应用</a></td>
                     </tr>
-                 
+                {% end %}
+
                 </tbody>
             </table>
         </div>
 
     </div>
 </div>
+{% end %}

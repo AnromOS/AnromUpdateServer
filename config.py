@@ -26,6 +26,9 @@ DEFAULT_HEAD="/static/images/default_head.png"
 #put your secret here.
 AUTOPUB_SECRET="a9da4e7e26722c6bfb1c3742c18aabe679ce24aa67e7bcdea38fff5ebf6df0b2"
 
+##给cookie设置，发布时必须修改
+COOKIE_SECRET="bc4c516d9ab23c22c65ea2483aae5ba34c907f46f6d8dae11ece24004f486330"
+
 #ROOT path
 ROOT_PATH=os.getcwd()+'/'
 

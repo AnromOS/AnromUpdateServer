@@ -18,23 +18,16 @@ class base(tornado.web.RequestHandler):
         'abs2rev':utils.abs2rev,
         'getStatuStr':config.getStatuStr
     }
-    #renderAdmin = web.template.render('templates/theme_bootstrap', base='base', globals=t_globals)
     #renderCMS = web.template.render('templates/theme_bootstrap', base='base_index', globals=t_globals)
     #renderDefault = web.template.render('templates/theme_bootstrap')
 
-    def logged(self):
-        if False:
-            return True
-        else:
-            return False
-
     def get_current_user(self):
-        user_id =  self.get_secure_cookie("currentuser")
-        if not user_id: return None
+        user_id =  self.get_secure_cookie("uname")
+        print("get_current_user:",user_id)
+        if not user_id:
+            return None
+        return user_id
     
-    def getCurrentUser(self):
-        return ""
-
     def countPrivilege(self):
         '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
         secret = config.AUTOPUB_SECRET
@@ -48,12 +41,19 @@ class base(tornado.web.RequestHandler):
         print "hasPrivilege: token is:",token ," ptoken is:",ptoken
         return token == ptoken
     
+    def primissived(self):
+        '''判断当前用户是否有权限'''
+        return True
+    
+    def notfound(message):
+        self.write(message)
+    
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 
     def dump2Json(self, channels):
         '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''
-        print("Dumping all products data to one json file....")
+        print("Dumping products data to latest_%s.json...."%channels)
         models = model.get_devices()
         devices =[]
         body={}
