@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #coding=utf-8
 # web.py In Memery of Aaron Swartz
+# 2017.12.10: Switched into Tornado
 
 import model,config,utils
 import time,json,gc
@@ -76,20 +77,21 @@ class PublishNewApp(BaseAction):
             'a':self.get_argument("a",""),
             'mdevice':self.get_argument("mdevice",""),
             'mname':self.get_argument("mname",""),
-            'mpicture':self.get_argument("mpicture",{}),
+            'mpicture':self.request.files.items(),
             'mdescription':self.get_argument("mdescription","")
             }
             if (x['a']=='add'):
                 mdevice =x['mdevice']
                 mname = x['mname']
-                mpic = x['mpicture']
                 mdscpt = x['mdescription']
                 mtime = int(time.time())
-                picname ="/static/images/appdefault.png"
-                if not (mpic.filename == u""):
-                    picname ="static/images/"+ (mpic.filename.decode('utf-8'))
-                    #1, 保存新应用的图标
-                    utils.saveBin(picname, mpic.value)
+                picname ="static/images/appdefault.png"
+                if (len(x['mpicture'])>0):
+                    (field, mpic) = x['mpicture'][0]
+                    for picfile in mpic:
+                        picname ="static/images/"+ (picfile["filename"])
+                        #1, 保存新应用的图标
+                        utils.saveBin(picname, picfile["body"])
                 #2, 为上传的增加保存目录，请确保这里有权限操作
                 utils.createDirs("static/downloads/"+mdevice)
                 #3, 保存在数据库里
@@ -120,12 +122,22 @@ class PublishNewVersion(BaseAction):
             'a':self.get_argument("a",""),
             't':self.get_argument("t",""),
             'wid':self.get_argument("wid","0"),
+            'version':self.get_argument("version",""),
+            'versioncode':self.get_argument("versioncode",""),
+            'changelog':self.get_argument("changelog",""),
+            'md5sum':self.get_argument("md5sum",""),
+            'url':self.get_argument("url",""),
+            'size':self.get_argument("size",0),
+            'source_incremental':self.get_argument("source_incremental",""),
+            'target_incremental':self.get_argument("target_incremental",""),
+            'extra':self.get_argument("extra",""),
+            'md5sum':self.get_argument("md5sum",""),
             'api_level':self.get_argument("api_level",23),
             'status':self.get_argument("status",0),
             'ch1':self.get_argument("ch1",""),
             'ch2':self.get_argument("ch2",""),
             'ptoken':self.get_argument("ptoken",""),
-            'muploadedfile':self.get_argument("muploadedfile",{})
+            'muploadedfile':self.request.files.items()
         }
         ptoken = x['ptoken']
         privileged = self.hasPrivilege(ptoken)
@@ -133,7 +145,6 @@ class PublishNewVersion(BaseAction):
         if self.primissived() or privileged:
             if (x['a']=='add' and x['t']=='full'):
                 wid = x['wid']
-                upedFile= x['muploadedfile']
                 version = x['version']
                 versioncode = x['versioncode']
                 changelog=x['changelog']
@@ -143,17 +154,18 @@ class PublishNewVersion(BaseAction):
                 #自定义的状态，从后台传递过来
                 status = x['status']
                 filename = x['url'].split('/')[-1]
-                if not (upedFile=={}):
-                    if not (upedFile.filename==u""):
+                if (len(x['muploadedfile'])>0):
+                    (field, upedF) = x['muploadedfile'][0]
+                    for upedFile in upedF:
                         #如果是管理员上传的文件，则覆盖掉表单上填写的值
-                        filename = upedFile.filename.decode('utf-8')
+                        filename = upedFile["filename"]
                         print 'filename=',filename, type(filename)
                         upFileName = u'static/downloads/'+modname+ u'/' + filename
                         print upFileName
                         utils.createDirs("static/downloads/"+modname)
-                        utils.saveBin(upFileName, upedFile.value)
+                        utils.saveBin(upFileName, upedFile["body"])
                         url =  config.netpref['SCHEME']+'://'+config.netpref['SERVER_HOST']+':'+config.netpref['SERVER_PORT']+"/"+ upFileName
-                        size = len(upedFile.value)
+                        size = len(upedFile["body"])
                         if (md5sum== u""):
                             md5sum = utils.GetFileMd5(upFileName)
                 api_level=x["api_level"]

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #coding=utf-8
 # web.py In Memery of Aaron Swartz
+# 2017.12.10: Switched into Tornado
 
 import tornado.web
 import model,config,utils
@@ -18,8 +19,6 @@ class base(tornado.web.RequestHandler):
         'abs2rev':utils.abs2rev,
         'getStatuStr':config.getStatuStr
     }
-    #renderCMS = web.template.render('templates/theme_bootstrap', base='base_index', globals=t_globals)
-    #renderDefault = web.template.render('templates/theme_bootstrap')
 
     def get_current_user(self):
         user_id =  self.get_secure_cookie("uname")
