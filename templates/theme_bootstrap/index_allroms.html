@@ -1,26 +1,24 @@
 {% extends "base_index.html" %}
 
 {% block body %}
-<!-- Home -->
-<div class="row">
-    <div class="container-fluid" >
-    <ul class="nav nav-tabs ">
-    {% for post in models %}
-        <li>
-            <a name="devices" href="/allroms/{{ escape(post['m_device']) }}">
-            <img class="img-rounded" height=50px src="/{{ escape(post['m_modpicture']) }}"><!--<img class="img-circle" height=50px src="/{{ escape(post['m_modpicture']) }}">-->
-            <br/>{{ escape(post['m_modname']) }}
-            </a>
-        </li>
-     {% end %}
-   
-    </ul><!-- /navbar -->
-    </div>
+
+<div class="row">  
     
+    {% for post in models %}
+    <div class="col-xs-6 col-md-2">
+       <a name="devices" href="/allroms/{{ escape(post['m_device']) }}">
+       <img class="img-rounded" src="/{{ escape(post['m_modpicture']) }}"/><br>
+       {{ escape(post['m_modname']) }}
+       </a>
+    </div>
+    {% end %}   
+    
+</div>
+
+<div class="row">    
     <div class ="col-sm-12 col-xs-12 col-md-12">
         <div class="panel panel-info">
         <div class="panel-heading"><a name="{{ escape(roms['m_device']) }}" href="#devices">应用: {{ escape(roms['m_modname']) }}</a></div>
-            <p>{{ escape(roms['m_moddescription']) }}</p>
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                 <thead>
                 <tr>
@@ -37,6 +35,8 @@
                  <tr>
                   <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/{{ escape(roms['m_modpicture']) }}"></td>
                   <td><strong>{{ escape(roms['m_device']) }}</strong></td>
+                  <td><p>{{ escape(roms['m_moddescription']) }}</p></td>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td> {{ escape(strtime(roms['m_time'])) }}</td>

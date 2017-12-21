@@ -22,7 +22,6 @@ class base(tornado.web.RequestHandler):
 
     def get_current_user(self):
         user_id =  self.get_secure_cookie("uname")
-        print("get_current_user:",user_id)
         if not user_id:
             return None
         return user_id
@@ -40,7 +39,7 @@ class base(tornado.web.RequestHandler):
         print "hasPrivilege: token is:",token ," ptoken is:",ptoken
         return token == ptoken
     
-    def primissived(self):
+    def isAdmin(self):
         '''判断当前用户是否有管理员权限'''
         uinfo = model.get_user_by_uname(self.current_user)
         return (uinfo['u_role'] == "admin")

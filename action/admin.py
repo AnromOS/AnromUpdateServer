@@ -39,70 +39,67 @@ class PublishNewApp(BaseAction):
     '''#发布新的应用'''
     @tornado.web.authenticated
     def get(self):
-        if self.primissived():
-            x={
-            'a':self.get_argument("a",""),
-            'mdevice':self.get_argument("mdevice",""),
-            'mmod':self.get_argument("mmod","")
-            }
-            tmd = None
-            if (x['a']=='del'):
-                mdevice =x['mdevice']
-                model.del_device(mdevice)
-                #管理员更改了数据，把产品数据导出成json文件
-                self.dumpAllProduct2Json()
-                self.seeother("/publish")
-                return
-            elif (x['a']=='edit'):
-                mdevice =x['mdevice']
-                tmd = model.get_devices_byname(mdevice)
-            self.render("publish_device.html",pupdate=tmd,ptitle="发布新产品")
-    
-    @tornado.web.authenticated   
-    def post(self):
-        if self.primissived():
-            x={
-            'a':self.get_argument("a",""),
-            'mdevice':self.get_argument("mdevice",""),
-            'mname':self.get_argument("mname",""),
-            'mpicture':self.request.files.items(),
-            'mdescription':self.get_argument("mdescription","")
-            }
-            if (x['a']=='add'):
-                mdevice =x['mdevice']
-                mname = x['mname']
-                mdscpt = x['mdescription']
-                mtime = int(time.time())
-                picname ="static/images/appdefault.png"
-                if (len(x['mpicture'])>0):
-                    (field, mpic) = x['mpicture'][0]
-                    for picfile in mpic:
-                        picname ="static/images/"+ (picfile["filename"])
-                        #1, 保存新应用的图标
-                        utils.saveBin(picname, picfile["body"])
-                #2, 为上传的增加保存目录，请确保这里有权限操作
-                utils.createDirs("static/downloads/"+mdevice)
-                #3, 保存在数据库里
-                model.save_device(mdevice, mname, picname, mdscpt, mtime, self.current_user)
+        x={
+        'a':self.get_argument("a",""),
+        'mdevice':self.get_argument("mdevice",""),
+        'mmod':self.get_argument("mmod","")
+        }
+        tmd = None
+        if (x['a']=='del'):
+            mdevice =x['mdevice']
+            model.del_device(mdevice)
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             self.seeother("/publish")
+            return
+        elif (x['a']=='edit'):
+            mdevice =x['mdevice']
+            tmd = model.get_devices_byname(mdevice)
+        self.render("publish_device.html",pupdate=tmd,ptitle="发布新产品")
+    
+    @tornado.web.authenticated   
+    def post(self):
+        x={
+        'a':self.get_argument("a",""),
+        'mdevice':self.get_argument("mdevice",""),
+        'mname':self.get_argument("mname",""),
+        'mpicture':self.request.files.items(),
+        'mdescription':self.get_argument("mdescription","")
+        }
+        if (x['a']=='add'):
+            mdevice =x['mdevice']
+            mname = x['mname']
+            mdscpt = x['mdescription']
+            mtime = int(time.time())
+            picname ="static/images/appdefault.png"
+            if (len(x['mpicture'])>0):
+                (field, mpic) = x['mpicture'][0]
+                for picfile in mpic:
+                    picname ="static/images/"+ (picfile["filename"])
+                    #1, 保存新应用的图标
+                    utils.saveBin(picname, picfile["body"])
+            #2, 为上传的增加保存目录，请确保这里有权限操作
+            utils.createDirs("static/downloads/"+mdevice)
+            #3, 保存在数据库里
+            model.save_device(mdevice, mname, picname, mdscpt, mtime, self.current_user)
+        #管理员更改了数据，把产品数据导出成json文件
+        self.dumpAllProduct2Json()
+        self.seeother("/publish")
 
 class PublishNewVersion(BaseAction):
     '''发布更新版本'''
     @tornado.web.authenticated
     def get(self,modname):
-        if self.primissived():
-            pupgrade =None 
-            x={
-            'a':self.get_argument("a",""),
-            't':self.get_argument("t",""),
-            'wid':self.get_argument("wid",0)
-            }
-            if (x['a']=='edit' and x['t']=='full'):
-                wid = x['wid']
-                pupgrade = model.get_rom_by_wid(wid)
-            self.render("publish_rom.html",pupgrade=pupgrade,ptitle="添加新条目")
+        pupgrade =None 
+        x={
+        'a':self.get_argument("a",""),
+        't':self.get_argument("t",""),
+        'wid':self.get_argument("wid",0)
+        }
+        if (x['a']=='edit' and x['t']=='full'):
+            wid = x['wid']
+            pupgrade = model.get_rom_by_wid(wid)
+        self.render("publish_rom.html",pupgrade=pupgrade,ptitle="添加新条目")
     
     @tornado.web.authenticated
     def post(self,modname):
@@ -130,7 +127,7 @@ class PublishNewVersion(BaseAction):
         ptoken = x['ptoken']
         privileged = self.hasPrivilege(ptoken)
         #计算特权的token，只有持有预置secret的自动发布程序才有特权。
-        if self.primissived() or privileged:
+        if True or privileged:
             if (x['a']=='add' and x['t']=='full'):
                 wid = x['wid']
                 version = x['version']
@@ -178,44 +175,40 @@ class PublishRomList(BaseAction):
     '''#查看已经发布的rom列表'''
     @tornado.web.authenticated
     def get(self,modname):
-        if self.primissived():
-            x={
-            'a':self.get_argument("a",""),
-            't':self.get_argument("t",""),
-            'wid':self.get_argument("wid",0)
-            }
-            if (x['a']=='del' and x['t']=="full"):
-                wid = x['wid']
-                model.delete_rom_by_id(wid)
-                self.seeother("/publish/romslist/"+modname)
-            if (x['a']=='edit' and x['t'] =="full"):
-                wid = x['wid']
-                self.seeother("/publish/rom/"+modname+"?a=edit&t=full&wid="+wid)
-            romlists = model.get_roms_by_devicesname(modname,-1)
-            users = model.get_all_users()
-            self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
+        x={
+        'a':self.get_argument("a",""),
+        't':self.get_argument("t",""),
+        'wid':self.get_argument("wid",0)
+        }
+        if (x['a']=='del' and x['t']=="full"):
+            wid = x['wid']
+            model.delete_rom_by_id(wid)
+            self.seeother("/publish/romslist/"+modname)
+        if (x['a']=='edit' and x['t'] =="full"):
+            wid = x['wid']
+            self.seeother("/publish/rom/"+modname+"?a=edit&t=full&wid="+wid)
+        romlists = model.get_roms_by_devicesname(modname,-1)
+        users = model.get_all_users()
+        self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
             
 class UserReport(BaseAction):
     '''#查看后台用户反馈'''
     @tornado.web.authenticated
     def get(self):
-        if self.primissived():
-            x={
-            'a':self.get_argument("a",""),
-            'p':self.get_argument("t",0),
-            'pid':self.get_argument("pid",0)
-            }
-            if (x['a']=="del"):
-                pid = x['pid']
-                model.del_user_report(pid)
-                self.seeother('')
-            pg = int(x['p'])
-            pgcon = 50
-            pages = 1+ model.get_user_report_counts()/pgcon
-            result = model.get_user_report(pg ,pgcon)
-            print(result)
-            print(type(result))
-            self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strdate=utils.strtime)
+        x={
+        'a':self.get_argument("a",""),
+        'p':self.get_argument("t",0),
+        'pid':self.get_argument("pid",0)
+        }
+        if (x['a']=="del"):
+            pid = x['pid']
+            model.del_user_report(pid)
+            self.seeother('')
+        pg = int(x['p'])
+        pgcon = 50
+        pages = 1+ model.get_user_report_counts()/pgcon
+        result = model.get_user_report(pg ,pgcon)
+        self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strdate=utils.strtime)
 
 class PublishNewUser(BaseAction):
     '''管理网站用户'''
@@ -242,37 +235,36 @@ class PublishNewUser(BaseAction):
     
     @tornado.web.authenticated
     def post(self):
-        if self.primissived():
-            x={
-            'a':self.get_argument("a",""),
-            'uname':self.get_argument("uname",""),
-            'urole':self.get_argument("urole","developer"),
-            'upassword':self.get_argument("upassword",""),
-            'upassword2':self.get_argument("upassword2",""),
-            'uavatar':self.request.files.items(),
-            'udescription':self.get_argument("udescription","")
-            }
-            if (x['a']=='add'):
-                uname =x['uname']
-                urole = x['urole']
-                udscpt = x['udescription']
-                upwd1=x['upassword']
-                upwd2=x['upassword2']
-                if (not (upwd1 == upwd2)) or (upwd1==""):
-                    print (upwd1,upwd2)
-                    self.write("密码输入不一致")
-                    return
-                mtime = int(time.time())
-                picname = config.DEFAULT_HEAD
-                if (len(x['uavatar'])>0):
-                    (field, mpic) = x['uavatar'][0]
-                    for picfile in mpic:
-                        picname ="static/images/"+ (picfile["filename"])
-                        #1, 保存新应用的图标
-                        utils.saveBin(picname, picfile["body"])
-                #3, 保存在数据库里
-                model.add_new_user(uname, hashlib.sha256(upwd1).hexdigest(), urole, picname, udscpt, mtime)
-            self.seeother("/publish")
+        x={
+        'a':self.get_argument("a",""),
+        'uname':self.get_argument("uname",""),
+        'urole':self.get_argument("urole","developer"),
+        'upassword':self.get_argument("upassword",""),
+        'upassword2':self.get_argument("upassword2",""),
+        'uavatar':self.request.files.items(),
+        'udescription':self.get_argument("udescription","")
+        }
+        if (x['a']=='add'):
+            uname =x['uname']
+            urole = x['urole']
+            udscpt = x['udescription']
+            upwd1=x['upassword']
+            upwd2=x['upassword2']
+            if (not (upwd1 == upwd2)) or (upwd1==""):
+                print (upwd1,upwd2)
+                self.write("密码输入不一致")
+                return
+            mtime = int(time.time())
+            picname = config.DEFAULT_HEAD
+            if (len(x['uavatar'])>0):
+                (field, mpic) = x['uavatar'][0]
+                for picfile in mpic:
+                    picname ="static/images/"+ (picfile["filename"])
+                    #1, 保存新应用的图标
+                    utils.saveBin(picname, picfile["body"])
+            #3, 保存在数据库里
+            model.add_new_user(uname, hashlib.sha256(upwd1).hexdigest(), urole, picname, udscpt, mtime)
+        self.seeother("/publish")
 
 class Login(BaseAction):
     '''#管理员登录后台'''  
