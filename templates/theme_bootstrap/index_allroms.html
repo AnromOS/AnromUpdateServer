@@ -7,7 +7,7 @@
     {% for post in models %}
     <div class="col-xs-6 col-md-2">
        <a name="devices" href="/allroms/{{ escape(post['m_device']) }}">
-       <img class="img-rounded" src="/{{ escape(post['m_modpicture']) }}"/><br>
+       <img class="img-rounded" height=70px src="/{{ escape(post['m_modpicture']) }}"/><br>
        {{ escape(post['m_modname']) }}
        </a>
     </div>
