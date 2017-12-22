@@ -7,7 +7,9 @@
         <p>用户反馈区有 <bold>{{ usrrpt }}</bold> 条消息</p>
 </div>
 -->
-<p class="text-right"><img class="img-rounded" height=35px src="{{ escape(curusr['u_avatar']) }}"/> {{ escape(curusr['u_name']) }} ( {{ escape(getStatuStr(curusr['u_role'])) }} ) </p>
+<br>
+<p class="text-right"><img class="img-rounded" height=35px src="{{ escape(curusr['u_avatar']) }}"/> <a href ="/publish/users?a=edit&uname={{ escape(curusr['u_name']) }}">{{ escape(curusr['u_name']) }} ( {{ escape(getStatuStr(curusr['u_role'])) }} ) </a></p>
+<br>
 
 <div class="row">
     
@@ -57,8 +59,13 @@
                     <td><img class="img-rounded" height=35px src="{{ escape(users[user]['u_avatar']) }}"/></td>
                     <td>{{ escape(users[user]['u_name']) }}</td>
                     <td>{{ escape(getStatuStr(users[user]['u_role'])) }}</td>
-                    <td><a href="/publish/users?a=edit&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">编辑</a></td>
-                    <td><a href="/publish/users?a=del&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">删除</a></td>
+                    {% if accessAdmin %}
+                        <td><a href="/publish/users?a=edit&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">编辑</a></td>
+                        <td><a href="/publish/users?a=del&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">删除</a></td>
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                    {% end %}
                    </tr>
                    {% end %}
                </tbody>

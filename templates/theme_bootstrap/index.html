@@ -2,11 +2,13 @@
 
 {% block body %}
 <!-- Home -->
+
+<br> 
 <div class="row">  
     
     {% for post in devices %}
-    <div class="col-xs-6 col-md-2">
-       <a name="devices" href="#{{ escape(post['m_device']) }}">
+    <div class="col-xs-6 col-md-1">
+       <a name="devices" href="#{{ escape(post['m_device']) }}" class="btn btn-link" >
        <img class="img-rounded" height=70px src="/{{ escape(post['m_modpicture']) }}"/><br>
        {{ escape(post['m_modname']) }}
        </a>
@@ -14,7 +16,8 @@
     {% end %}   
     
 </div>
- 
+<br>
+
 <div class="row">   
     <div class ="col-sm-12 col-xs-12 col-md-12">
     {% for post in devices %}
@@ -43,7 +46,7 @@
                      <tr>
                         <td>{{ escape(det['version']) }}</td>
                         <td><a href ="{{ escape(det['url']) }}" class="btn btn-link" >{{ escape(det['filename']) }}</a></td>
-                        <td>{{ escape(det['channels']) }}</td>
+                        <td>{{ escape(getStatuStr(det['channels'])) }}</td>
                         <td>{{ escape(strtime(det['issuetime'])) }}</td>
                      </tr>
                  {% end %}

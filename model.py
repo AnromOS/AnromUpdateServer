@@ -50,6 +50,7 @@ def get_devices_byname(mdevice):
 def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     '''保存某个机型的配置'''
     hindex="upserver:tmodel:%s"%mdevice
+    print("saving new product:",mdevice,mmod)
     ## renew index
     redis_db.lrem("upserver:tmodel_index",1,mdevice)
     redis_db.lpush("upserver:tmodel_index",mdevice)
@@ -68,6 +69,7 @@ def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
 def del_device(mdevice):
     '''删除某个机型'''
     hindex="upserver:tmodel:%s"%mdevice
+    print("savning new product:",mdevice)
     redis_db.delete(hindex)
     redis_db.lrem("upserver:tmodel_index",1,mdevice)
 
@@ -105,7 +107,7 @@ def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, si
     if(not redis_db.exists(anindex)):
         itmid=redis_db.incr("upserver:latest:itm")
         anindex="upserver:tanrom:%s"%itmid
-    print("saving new rom:",anindex)
+    print("saving new update:",mdevice,version, anindex)
     ##put item id into the index first 
     redis_db.lrem("upserver:tmodel:%s.items"%mdevice,1,itmid)
     redis_db.lpush("upserver:tmodel:%s.items"%mdevice,itmid)
@@ -146,6 +148,7 @@ def delete_rom_by_id(wid):
     itm = get_rom_by_wid(wid)
     mdevice = itm['mdevice']
     channels= itm['channels']
+    print("deleting update:",mdevice,itm['version'])
     ##delete from index queue,
     redis_db.lrem("upserver:tmodel:%s.items"%mdevice,1,wid)
     ##delete from channel index

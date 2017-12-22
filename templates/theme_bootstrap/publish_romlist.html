@@ -4,7 +4,7 @@
 <h2><strong>应用 {{ escape(name) }} 的所有版本</strong></h2>
 
         <div class="panel panel-default">
-        <div class="panel-heading"><strong>{{ escape(name) }} 已经发布的升级包</strong></div>
+        <div class="panel-heading"><strong>{{ escape(name) }} 已经发布的升级包 <a href="/publish/rom/{{ escape(name) }}" class="btn btn-link">添加新版本升级</a></strong></div>
         <table id="movie-table" class="table table-striped table-hover table-bordered table-condensed">
             <thead>
                 <tr>
@@ -29,7 +29,7 @@
                     <td><a href ="{{ escape(post['url']) }}">{{ escape(post['filename']) }}  ({{ escape(post['size']) }})</a></td>
                     <td>{{ escape(post['md5sum']) }}</td>
                     <td>{{ escape(post['source_incremental']) }} - {{ escape(post['target_incremental']) }}</td>
-                    <td>{{ escape(post['channels']) }}</td>
+                    <td>{{ escape(getStatuStr(post.get('channels',''))) }}</td>
                     <td>{{ escape(getStatuStr(post['status'])) }}</td>
                     {% if post['issue_uname'] in users.keys() %}
                     <td><img class="img-rounded" height=35px src="/{{ escape(users[post['issue_uname']]['u_avatar']) }}"/> {{ escape(post['issue_uname']) }}</td>

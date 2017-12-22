@@ -39,10 +39,14 @@ class base(tornado.web.RequestHandler):
         print "hasPrivilege: token is:",token ," ptoken is:",ptoken
         return token == ptoken
     
-    def isAdmin(self):
+    def accessAdmin(self):
         '''判断当前用户是否有管理员权限'''
         uinfo = model.get_user_by_uname(self.current_user)
         return (uinfo['u_role'] == "admin")
+    
+    def accessSelf(self,uname):
+        '''判断参数用户名是否是自己'''
+        return self.current_user ==  uname
     
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)

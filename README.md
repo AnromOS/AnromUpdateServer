@@ -5,12 +5,17 @@ This project is an implementation of CMS(Content Management System) for Applicat
 ## 准备工作：
 
 1. 安装redis： sudo apt install redis-server
-2. 安装[tornadoweb](https://github.com/tornadoweb/tornado)框架
+2. 安装[tornadoweb](https://github.com/tornadoweb/tornado)框架  pip install tornado
 3. 安装python redis驱动: pip install redis
 
 ## 如何使用：
 
-1. 在config.py中设置文件下载服务器的域名和端口， 自动发布的API key 管理员用户名、密码
+1. 在config.py中必须设置:
+    - 文件下载服务器的域名和端口
+    - 自动发布的API key:AUTOPUB_SECRET
+    - 默认管理员用户名、密码
+    - 数据库的地址端口
+    - COOKIE_SECRET
 2. 安装服务器:
 
 ```
@@ -20,7 +25,7 @@ $python install.py install
 3. 启动服务器:
 
 ```
-$python server.py 10240
+$python server.py
 ```
 
 或者

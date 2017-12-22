@@ -3,7 +3,7 @@
 # web.py  In Memery of Aaron Swartz
 # 2017.12.10: Switched into Tornado
 
-import model,utils
+import model,utils,config
 from action.base import base as BaseAction
 
 class Index(BaseAction):
@@ -22,7 +22,7 @@ class Index(BaseAction):
             devi['m_time'] = post['m_time']
             devi['m_detail']=model.get_roms_by_devicesname(devi['m_device'],5)
             devices.append(devi)
-        self.render("index.html", devices=devices, prefs=prefs, strtime=utils.strtime)
+        self.render("index.html", devices=devices, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
 
 class Allroms(BaseAction):
      def get(self,mdevice):
@@ -31,7 +31,7 @@ class Allroms(BaseAction):
         tmd = model.get_devices_byname(mdevice)
         models = model.get_devices()
         tmd['m_detail']=model.get_roms_by_devicesname(mdevice,-1)
-        self.render("index_allroms.html",models=models, roms=tmd, strtime=utils.strtime)
+        self.render("index_allroms.html",models=models, roms=tmd, strtime=utils.strtime,getStatuStr=config.getStatuStr)
 
 class ErrorPage(BaseAction):
     def get(self):

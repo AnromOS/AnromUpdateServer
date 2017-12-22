@@ -33,7 +33,7 @@ class PublishIndex(BaseAction):
                 devi['m_detail'] = itm
                 break
             devices.append(devi)
-        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr)
+        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr, accessAdmin = self.accessAdmin())
 
 class PublishNewApp(BaseAction):
     '''#发布新的应用'''
@@ -99,7 +99,7 @@ class PublishNewVersion(BaseAction):
         if (x['a']=='edit' and x['t']=='full'):
             wid = x['wid']
             pupgrade = model.get_rom_by_wid(wid)
-        self.render("publish_rom.html",pupgrade=pupgrade,ptitle="添加新条目")
+        self.render("publish_rom.html",pupgrade=pupgrade,ptitle="添加新条目", accessAdmin = self.accessAdmin())
     
     @tornado.web.authenticated
     def post(self,modname):
@@ -155,7 +155,9 @@ class PublishNewVersion(BaseAction):
                             md5sum = utils.GetFileMd5(upFileName)
                 api_level=x["api_level"]
                 #一个条目支持多个标签
-                channels = x["ch1"] + x["ch2"]
+                channels = x['ch1']
+                if self.accessAdmin():
+                    channels = x["ch1"] + x["ch2"]
                 #用于增量升级的选项
                 source_incremental = x['source_incremental']
                 target_incremental=x['target_incremental']
@@ -167,7 +169,7 @@ class PublishNewVersion(BaseAction):
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             if(privileged):
-                return "Post rom ok!."
+                self.write("Post rom ok!.")
             else:
                 self.seeother("/publish/romslist/"+modname)
        
@@ -183,10 +185,13 @@ class PublishRomList(BaseAction):
         if (x['a']=='del' and x['t']=="full"):
             wid = x['wid']
             model.delete_rom_by_id(wid)
+            self.dumpAllProduct2Json()
             self.seeother("/publish/romslist/"+modname)
+            return
         if (x['a']=='edit' and x['t'] =="full"):
             wid = x['wid']
             self.seeother("/publish/rom/"+modname+"?a=edit&t=full&wid="+wid)
+            return
         romlists = model.get_roms_by_devicesname(modname,-1)
         users = model.get_all_users()
         self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
@@ -204,6 +209,7 @@ class UserReport(BaseAction):
             pid = x['pid']
             model.del_user_report(pid)
             self.seeother('')
+            return
         pg = int(x['p'])
         pgcon = 50
         pages = 1+ model.get_user_report_counts()/pgcon
@@ -212,6 +218,7 @@ class UserReport(BaseAction):
 
 class PublishNewUser(BaseAction):
     '''管理网站用户'''
+    
     @tornado.web.authenticated
     def get(self):
         x ={
@@ -221,16 +228,23 @@ class PublishNewUser(BaseAction):
         tmd = None
         title = "添加用户"
         if (x['a']=='del'):
-            if (self.current_user == x['uname']):
-                self.write("注意，你不能删除自己")
+            if self.accessSelf(x['uname']) or (not self.accessAdmin()):
+                ##1,不能删除自己, 2 非管理员不能删除别人
+                self.write("Permission denied!")
                 return
-            else:
-                model.del_user(x['uname'])
+            model.del_user(x['uname'])
             self.seeother("/publish")
             return
         elif (x['a']=='edit'):
+            if (not self.accessAdmin()) and (not self.accessSelf(x['uname'])) :
+                ##1,只能编辑自己, 2 非管理员不能编辑别人
+                self.write("Permission denied!")
+                return
             tmd = model.get_user_by_uname(x['uname'])
             title = "编辑用户信息"
+        elif not self.accessAdmin():
+            self.write("Permission denied!")
+            return
         self.render("publish_user.html",pupdate=tmd, ptitle=title,getStatuStr=config.getStatuStr)
     
     @tornado.web.authenticated
@@ -241,9 +255,14 @@ class PublishNewUser(BaseAction):
         'urole':self.get_argument("urole","developer"),
         'upassword':self.get_argument("upassword",""),
         'upassword2':self.get_argument("upassword2",""),
+        'upicname':self.get_argument("upicname",""),
         'uavatar':self.request.files.items(),
         'udescription':self.get_argument("udescription","")
         }
+        if not (self.accessSelf(x['uname']) or self.accessAdmin()):
+            ##不是自己操作或者不是管理员则返回
+            self.write("Permission denied!")
+            return
         if (x['a']=='add'):
             uname =x['uname']
             urole = x['urole']
@@ -255,7 +274,9 @@ class PublishNewUser(BaseAction):
                 self.write("密码输入不一致")
                 return
             mtime = int(time.time())
-            picname = config.DEFAULT_HEAD
+            picname = x['upicname']
+            if (picname==''):
+                picname = config.DEFAULT_HEAD
             if (len(x['uavatar'])>0):
                 (field, mpic) = x['uavatar'][0]
                 for picfile in mpic:

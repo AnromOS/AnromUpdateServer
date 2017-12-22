@@ -40,7 +40,7 @@ handlers = [
     # Make url ending with or without '/' going to the same class
     (r'/(.*)/',                   action.cms.redirect), 
 ]
-define("port", default=8080, help="run on the given port", type=int)
+define("port", default=int(config.netpref['SERVER_PORT']), help="run on the given port", type=int)
 class Application(tornado.web.Application):
     def __init__(self):
         settings = dict(
@@ -52,6 +52,7 @@ class Application(tornado.web.Application):
             login_url="/404",#no need to show any login url.
             default_handler_class=action.cms.ErrorPage,
             debug=False,
+            static_hash_cache=False,
         )
         super(Application, self).__init__(handlers, **settings)
 

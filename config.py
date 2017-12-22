@@ -39,6 +39,7 @@ netpref['CHANNELS']="[nightly][release]"
 sDics={
 "[nightly]":"测试版",
 "[release]":"发布版",
+"[nightly][release]":"测试版、发布版",
 "nightly":"测试版",
 "release":"发布版",
 "0":"强制升级未开启",

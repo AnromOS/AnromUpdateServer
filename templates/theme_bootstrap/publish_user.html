@@ -21,12 +21,21 @@
           
           <div class="form-group">
             <label for="channels">用户类型（若不选，则默认是开发者）:  </label><br>
-            <div class="radio-inline">
-              <label><input type="radio" name="urole" id="admin" value="admin"/>{{ getStatuStr('admin') }}</label>
-            </div>
-            <div class="radio-inline">
-              <label><input type="radio" name="urole" id="developer" value="developer"/>{{ getStatuStr('developer') }}</label>
-            </div>
+            {% if (pupdate!=None) and (pupdate['u_role']=='admin') %}
+                <div class="radio-inline">
+                  <label><input type="radio" name="urole" id="admin" value="admin" checked="true"/>{{ getStatuStr('admin') }}</label>
+                </div>
+                <div class="radio-inline">
+                  <label><input type="radio" name="urole" id="developer" value="developer" />{{ getStatuStr('developer') }}</label>
+                </div>
+            {% else %}
+                <div class="radio-inline">
+                  <label><input type="radio" name="urole" id="admin" value="admin"/>{{ getStatuStr('admin') }}</label>
+                </div>
+                <div class="radio-inline">
+                  <label><input type="radio" name="urole" id="developer" value="developer" checked="true"/>{{ getStatuStr('developer') }}</label>
+                </div>
+            {% end %}
           </div>
           
           <div class="form-group">
@@ -73,8 +82,15 @@
 
           </div>
           <div class="form-group">
-            <label for="uavatar">上传头像</label>
+            <label for="uavatar">上传头像 {% if (pupdate!=None) %} <img class="img-rounded" height=35px src="/{{ escape(pupdate['u_avatar']) }}"/> {% end %}</label>
             <input type="file" name="uavatar" id="uavatar"></input>
+          </div>
+          <div class="form-group">
+            <input type="text" name="upicname" id="upicname" class="hidden"
+            {% if (pupdate!=None) %}
+                value="{{ escape(pupdate['u_avatar']) }}"
+            {% end %}
+            ></input>
           </div>
           {% module xsrf_form_html() %}
         <input  class="btn btn-primary" type="submit" value="完成"/>
