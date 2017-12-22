@@ -49,4 +49,4 @@ sDics={
 "developer":"开发者"
 }
 def getStatuStr(SKey):
-    return sDics[SKey]
+    return sDics.get(SKey,SKey)

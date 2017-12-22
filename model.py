@@ -225,7 +225,7 @@ def installmain():
     for k in config.netpref.keys():
         save_pref(k,config.netpref[k])
     ##添加一个管理员
-    add_new_user(config.ADMIN_USERNAME,config.ADMIN_HASHPWD,"admin",config.DEFAULT_HEAD,"超级管理员","1115891406")
+    add_new_user(config.ADMIN_USERNAME,config.ADMIN_HASHPWD,"admin",config.DEFAULT_HEAD,"超级管理员","1515891406")
     ##测试用户提交数据
     redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
     ##测试添加产品线

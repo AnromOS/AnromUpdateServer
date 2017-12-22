@@ -136,7 +136,7 @@
             {% if (pupgrade!=None) %}
                 value="{{ escape(pupgrade['source_incremental']) }}" 
             {% else %}
-                value=""
+                value="0"
             {% end %}
             class="form-control" placeholder="源版本增量标识,用于增量升级包，可以留空">
           </div>
@@ -146,7 +146,7 @@
             {% if (pupgrade!=None) %}
                 value="{{ escape(pupgrade['target_incremental']) }}" 
             {% else %}
-                value=""
+                value="0"
             {% end %}
             class="form-control" placeholder="目的版本增量标识,用于增量升级包，可以留空">
           </div>

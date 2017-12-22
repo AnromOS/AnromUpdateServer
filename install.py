@@ -2,7 +2,7 @@
 #coding=utf-8
 ## 安装和初始化网站的数据库
 
-import sys,model
+import sys,model,model_old
 
 def main():
     print '''useage: \n ----"install.py install" to initiate the databases \r\n ----"install.py upgrade" to upgrade the databases \r\nAfter that, run "python server.py 18080" to start web server \r\n 
@@ -12,7 +12,7 @@ def main():
             model.installmain()
             exit()
         elif (sys.argv[1] == "upgrade"):
-            model.upgradeDB()
+            model_old.upgradeDB()
             exit()
 
 if __name__ =='__main__':
