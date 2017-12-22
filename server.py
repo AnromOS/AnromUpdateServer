@@ -17,7 +17,7 @@ import action.cms
 import action.admin
 import action.api
 
-import os
+import os,sys
 
 ### Url mappings
 handlers = [
@@ -40,7 +40,6 @@ handlers = [
     # Make url ending with or without '/' going to the same class
     (r'/(.*)/',                   action.cms.redirect), 
 ]
-define("port", default=int(config.netpref['SERVER_PORT']), help="run on the given port", type=int)
 class Application(tornado.web.Application):
     def __init__(self):
         settings = dict(
@@ -63,7 +62,13 @@ class EntryModule(tornado.web.UIModule):
 def main():
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    if len(sys.argv)==2:
+        http_server.listen(sys.argv[1])
+    elif len(sys.argv)>=3:
+        http_server.listen(sys.argv[2],address=sys.argv[1])
+    else:
+        print("To run this server: \npython server.py 8080 \npython server.py 127.0.0.1 8080")
+        exit()
     tornado.ioloop.IOLoop.current().start()
 
 
