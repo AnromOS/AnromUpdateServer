@@ -35,6 +35,7 @@ handlers = [
     (r'/publish/rom/([A-Za-z0-9_\-\.]*?)', action.admin.PublishNewVersion), #for web 发布更新版本
     (r'/publish/userreport',      action.admin.UserReport), #for web 
     (r'/publish/users',      action.admin.PublishNewUser), #for web 
+    (r'/publish/audit',      action.admin.Audit), #for web 
     (r'/publish/quit',            action.admin.Quit), #for web
     (r'/404',                   action.cms.ErrorPage), 
     # Make url ending with or without '/' going to the same class

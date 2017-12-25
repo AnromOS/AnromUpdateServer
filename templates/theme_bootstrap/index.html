@@ -1,4 +1,4 @@
-{% extends "base_index.html" %}
+{% extends "index_base.html" %}
 
 {% block body %}
 <!-- Home -->
@@ -6,20 +6,18 @@
 <br> 
 <div class="row">  
     
-    {% for post in devices %}
-    <div class="col-xs-6 col-md-1">
-       <a name="devices" href="#{{ escape(post['m_device']) }}" class="btn btn-link" >
-       <img class="img-rounded" height=70px src="/{{ escape(post['m_modpicture']) }}"/><br>
-       {{ escape(post['m_modname']) }}
-       </a>
+    <div class="col-xs-12 col-sm-3 col-md-2">
+      <ul class="nav nav-sidebar">
+      {% for post in devices %}
+      <li> <a name="devices" href="#{{ escape(post['m_device']) }}" class="btn btn-link" >
+       <img class="img-rounded" height=20px src="/{{ escape(post['m_modpicture']) }}"/>
+       {{ escape(post['m_modname']) }}</a>
+       </li>
+       {% end %}   
+      </ul>
     </div>
-    {% end %}   
     
-</div>
-<br>
-
-<div class="row">   
-    <div class ="col-sm-12 col-xs-12 col-md-12">
+    <div class ="col-xs-12 col-sm-9 col-md-10">
     {% for post in devices %}
         <div class="panel panel-info">
         <div class="panel-heading"><a name="{{ escape(post['m_device']) }}" href="#devices">应用: {{ escape(post['m_modname']) }}</a> </div>

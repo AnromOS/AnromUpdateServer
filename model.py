@@ -69,7 +69,7 @@ def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
 def del_device(mdevice):
     '''删除某个机型'''
     hindex="upserver:tmodel:%s"%mdevice
-    print("savning new product:",mdevice)
+    print("deleting product:",mdevice)
     redis_db.delete(hindex)
     redis_db.lrem("upserver:tmodel_index",1,mdevice)
 

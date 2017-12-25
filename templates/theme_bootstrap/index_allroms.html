@@ -1,29 +1,36 @@
-{% extends "base_index.html" %}
+{% extends "index_base.html" %}
 
 {% block body %}
 <br>
 <div class="row">  
     
-    {% for post in models %}
-    <div class="col-xs-6 col-md-1">
-       <a name="devices" href="/allroms/{{ escape(post['m_device']) }}" class="btn btn-link">
-       <img class="img-rounded" height=70px src="/{{ escape(post['m_modpicture']) }}"/><br>
+    <div class="col-xs-12 col-sm-3 col-md-2">
+    <ul class="nav nav-sidebar">
+        {% for post in models %}
+       <li><a name="devices" href="/allroms/{{ escape(post['m_device']) }}" class="btn btn-link">
+       <img class="img-rounded" height=20px src="/{{ escape(post['m_modpicture']) }}"/>
        {{ escape(post['m_modname']) }}
-       </a>
+       </a></li>
+       {% end %} 
+    </ur>
     </div>
-    {% end %}   
     
-</div>
-<br>
-
-<div class="row">    
-    <div class ="col-sm-12 col-xs-12 col-md-12">
+    <div class ="col-xs-12 col-sm-9  col-md-10">
         <div class="panel panel-info">
         <div class="panel-heading"><a name="{{ escape(roms['m_device']) }}" href="#devices">应用: {{ escape(roms['m_modname']) }}</a></div>
+            <table class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+            <tbody><tr>
+                  <td width=150px ><img class="img-rounded" height=140px src="/{{ escape(roms['m_modpicture']) }}"></td>
+                  <td><strong>{{ escape(roms['m_device']) }}</strong></td>
+                  <td><p>{{ escape(roms['m_moddescription']) }}</p></td>
+                  <td> {{ escape(strtime(roms['m_time'])) }}</td>
+                 </tr>
+            </tbody>
+            </table>
+            
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                 <thead>
                 <tr>
-                  <th> </th>
                   <th> 版本</th>
                   <th> 下载地址</th>
                   <th> 变更日志</th>
@@ -33,15 +40,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                 <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/{{ escape(roms['m_modpicture']) }}"></td>
-                  <td><strong>{{ escape(roms['m_device']) }}</strong></td>
-                  <td><p>{{ escape(roms['m_moddescription']) }}</p></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td> {{ escape(strtime(roms['m_time'])) }}</td>
-                 </tr>
                  {% for det in roms['m_detail'] %}
                      <tr>
                         <td>{{ escape(det['version']) }}</td>

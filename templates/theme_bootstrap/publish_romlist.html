@@ -37,8 +37,8 @@
                     <td><img class="img-rounded" height=35px src="/static/images/default_head.png"/> {{ escape(post['issue_uname']) }}</td> 
                     {% end %}
                     <td>{{ escape(strdate(post['issuetime'])) }}</td>
-                    <td><a class="text-left" href="?a=edit&wid={{ escape(post['id']) }}&t=full">编辑</a> 
-                    <td><a class="text-right" href="?a=del&wid={{ escape(post['id']) }}&t=full" >删除</a> </td>
+                    <td><a class="text-left" href="/publish/rom/{{ escape(name) }}?a=edit&wid={{ escape(post['id']) }}&t=full">编辑</a> 
+                    <td><a class="text-right" href="/publish/rom/{{ escape(name) }}?a=del&wid={{ escape(post['id']) }}&t=full" >删除</a> </td>
                 </tr>
             {% end %}    
             </tbody>

@@ -11,24 +11,18 @@
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     
-    <style>
-        #menu {
-            width: 200px;
-            float: right;
-        }
-    </style>
 </head>
 
 <body>    
 
 <!-- Home -->
 <div class="container-fluid">
-        <div class="" >
-                    <ul class="nav nav-tabs nav-justified">
+        <nav class="navbar navbar-inverse navbar-default">
+                    <ul class="nav navbar-nav navbar-left">
                     <li><a href="/">网站首页</a></li>
                     <li><a href="{{ escape(loginpoint) }}">登陆</a></li>
                     </ul> <!-- /navbar -->
-        </div>
+        </nav>
     <br>
     <br>
     <div class="row">
@@ -53,7 +47,7 @@
                 </div>
                 {% module xsrf_form_html() %}
                 
-                <input class="btn btn-primary" value="登陆" type="submit">
+                <input class="btn btn-primary btn-block" value="登陆" type="submit">
                 <div class="btn btn-link" >没有帐号？请联系管理员添加帐号</div>
             </form>  
         </div>

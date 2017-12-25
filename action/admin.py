@@ -99,6 +99,12 @@ class PublishNewVersion(BaseAction):
         if (x['a']=='edit' and x['t']=='full'):
             wid = x['wid']
             pupgrade = model.get_rom_by_wid(wid)
+        if (x['a']=='del' and x['t']=="full"):
+            wid = x['wid']
+            model.delete_rom_by_id(wid)
+            self.dumpAllProduct2Json()
+            self.seeother("/publish/romslist/"+modname)
+            return
         self.render("publish_rom.html",pupgrade=pupgrade,ptitle="添加新条目", accessAdmin = self.accessAdmin())
     
     @tornado.web.authenticated
@@ -177,21 +183,6 @@ class PublishRomList(BaseAction):
     '''#查看已经发布的rom列表'''
     @tornado.web.authenticated
     def get(self,modname):
-        x={
-        'a':self.get_argument("a",""),
-        't':self.get_argument("t",""),
-        'wid':self.get_argument("wid",0)
-        }
-        if (x['a']=='del' and x['t']=="full"):
-            wid = x['wid']
-            model.delete_rom_by_id(wid)
-            self.dumpAllProduct2Json()
-            self.seeother("/publish/romslist/"+modname)
-            return
-        if (x['a']=='edit' and x['t'] =="full"):
-            wid = x['wid']
-            self.seeother("/publish/rom/"+modname+"?a=edit&t=full&wid="+wid)
-            return
         romlists = model.get_roms_by_devicesname(modname,-1)
         users = model.get_all_users()
         self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
@@ -286,6 +277,19 @@ class PublishNewUser(BaseAction):
             #3, 保存在数据库里
             model.add_new_user(uname, hashlib.sha256(upwd1).hexdigest(), urole, picname, udscpt, mtime)
         self.seeother("/publish")
+
+class Audit(BaseAction):
+    '''管理审计日志'''
+    @tornado.web.authenticated
+    def get(self):
+        if not self.accessAdmin():
+            self.write("Permission Denied.")
+            return
+        x = {'a':self.get_argument('a',''),
+        'p':self.get_argument('p',''),
+        'psz':self.get_argument('psz','')}
+        self.write("建设中")
+        
 
 class Login(BaseAction):
     '''#管理员登录后台'''  
