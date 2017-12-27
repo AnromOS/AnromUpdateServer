@@ -80,7 +80,7 @@ def del_device(deviceid,mdevice):
 ### 发布升级包
 def get_all_roms_by_modelid(modelid):
     '''获取某个机型id对应的rom'''
-    result= dba.select('t_anrom',where ='mod_id = $modelid', order='issuetime desc', vars=locals())
+    result= dba.select('t_anrom',where ='mod_id = $modelid', order='issuetime', vars=locals())
     return result
     
 def get_top5_roms_by_modelid(modelid):
