@@ -1,13 +1,13 @@
 {% extends "publish_base.html" %}
 
 {% block body %}
-<h2><strong>{{ escape(ptitle) }}</strong></h2>
-<p>这个表单只是发布一个下载链接。升级文件可以用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
-<div class="column">
+
+<div class="container">
 <div class ="col-sm-12 col-xs-12 col-md-12" style="word-break:break-all; word-wrap:break-all;">
     <div class="panel panel-primary">
-    <div class="panel-heading">发布完整升级包</div>
+    <div class="panel-heading"><strong>{{ escape(ptitle) }}</strong> 发布完整升级包</div>
     <div class="panel-body">
+        <p>这个表单只是发布一个下载链接。升级文件可以用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
         <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
           <div class="form-group">
             <input class="hidden" name="wid" id="wid" 

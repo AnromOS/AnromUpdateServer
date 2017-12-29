@@ -1,0 +1,28 @@
+{% extends "publish_base.html" %}
+
+{% block body %}
+<div class="container">
+<div class="row">
+<div class ="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+    <div class="panel panel-primary">
+    <div class="panel-heading"><strong> {{ escape(ptitle) }} <strong></div>
+        <div class="panel-body">
+              <pre>{{ escape(tcontent) }} </pre>
+        </div>
+    </div>
+</div>
+
+ <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+        <form action="?a=cmd" method="post" class="form" role="form"  enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="uname">command</label>
+            <input type="text" name="cmd" id="cmd" class="form-control" placeholder="i.e: pwd" value="" >
+          </div>
+          {% module xsrf_form_html() %}
+          <input class="btn btn-primary btn-block" value="run" type="submit">
+        </form>                
+ </div>
+
+</div>
+</div>
+{% end %}

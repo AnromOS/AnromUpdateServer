@@ -288,8 +288,27 @@ class Audit(BaseAction):
         x = {'a':self.get_argument('a',''),
         'p':self.get_argument('p',''),
         'psz':self.get_argument('psz','')}
-        self.write("建设中")
-        
+        pages = 0
+        self.render("publish_audit.html", items=[], pages=pages, ptitle="管理审计日志", strdate=utils.strtime)
+
+class WebShell(BaseAction):
+    '''shell for server'''
+    @tornado.web.authenticated
+    def get(self):
+        if not self.accessAdmin():
+            self.write("Permission Denied.")
+            return
+        content="You can run any linux command."
+        self.render("publish_shell.html",tcontent=content,ptitle="Shell")
+    
+    @tornado.web.authenticated
+    def post(self):
+        if not self.accessAdmin():
+            self.write("Permission Denied.")
+            return
+        x={'a':self.get_argument('a',''), 'cmd':self.get_argument('cmd','')}
+        content=utils.run(x['cmd'])
+        self.render("publish_shell.html",tcontent=content,ptitle="Shell")
 
 class Login(BaseAction):
     '''#管理员登录后台'''  

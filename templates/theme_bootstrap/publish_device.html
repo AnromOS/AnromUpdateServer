@@ -1,10 +1,10 @@
 {% extends "publish_base.html" %}
 
 {% block body %}
-<h2><strong>{{ escape(ptitle) }}</strong></h2>
 
+<div class="container">
 <div class="panel panel-primary">
-    <div class="panel-heading">添加一个新的应用</div>
+    <div class="panel-heading"><strong>{{ escape(ptitle) }}</strong> 添加一个新的应用</div>
     <div class="panel-body">
       <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           <div class="form-group">
@@ -68,5 +68,6 @@
         <input  class="btn btn-primary" type="submit" value="完成"/>
         </form>
       </div>
+</div>
 </div>
 {% end %}

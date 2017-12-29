@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #coding=utf-8
 #
+import subprocess
 import os,time
 import urllib,urllib2
 import hashlib
@@ -54,6 +55,15 @@ def createDirs(path):
     else:
         print(path+'already exist')
         return False
+
+def run(command):
+    if not command:
+        raise Exception("command is invalid")
+    else:
+        p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p.wait()
+        out, err = p.communicate()
+        return out
 
 def sha1(value):
     return hashlib.sha1(value).hexdigest()

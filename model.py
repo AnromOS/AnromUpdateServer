@@ -195,10 +195,25 @@ def get_user_report(pg, pagesize):
     p = pagesize*(pg)
     return redis_db.lrange("upserver:ureport",p,p+pagesize)
     
-def del_user_report(pid):
-    '''查看用户反馈'''
-    return redis_db.ltrim("upserver:ureport",0,-1)
-     
+def del_user_report():
+    '''删除用户反馈'''
+    return redis_db.delete("upserver:ureport")
+
+#### 用户操作日志
+def get_audit_log_counts():
+    return redis_db.llen("upserver:audit")
+
+def post_audit_log(ftag, fcontent,ftime):
+    result = redis_db.rpush("upserver:audit",json.dumps({"ftag":ftag,"mcontent":fcontent, "mtime":ftime}))
+    return result
+
+def get_audit_log(pg, pagesize):
+    p = pagesize*(pg)
+    return redis_db.lrange("upserver:audit",p,p+pagesize)
+    
+def del_audit_log():
+    return redis_db.delete("upserver:audit")
+    
 ### preference
 pref_cache ={}
 def save_pref(name,content):
