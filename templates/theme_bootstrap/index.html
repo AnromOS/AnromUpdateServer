@@ -10,7 +10,7 @@
       <ul class="nav nav-sidebar">
       {% for post in devices %}
       <li> <a name="devices" href="#{{ escape(post['m_device']) }}" class="btn btn-link" >
-       <img class="img-rounded" height=20px src="/{{ escape(post['m_modpicture']) }}"/>
+       <img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/>
        {{ escape(post['m_modname']) }}</a>
        </li>
        {% end %}   
@@ -34,7 +34,7 @@
                 </thead>
                 <tbody>
                  <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="/{{ escape(post['m_modpicture']) }}"/></td>
+                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="{{ escape(post['m_modpicture']) }}"/></td>
                   <td><strong>{{ escape(post['m_device']) }}</strong></td>
                   <td>{{ escape(post['m_moddescription']) }}</td>
                   <td></td>
