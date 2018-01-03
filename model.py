@@ -187,13 +187,17 @@ def get_user_report_counts():
 
 def post_user_report(fprint, fcontent,ftime):
     '''提交用户反馈'''
-    result = redis_db.rpush("upserver:ureport",json.dumps({"fingerprint":fprint,"mcontent":fcontent, "mtime":ftime}))
+    result = redis_db.lpush("upserver:ureport",json.dumps({"fingerprint":fprint,"mcontent":fcontent, "mtime":ftime}))
     return result
 
 def get_user_report(pg, pagesize):
     '''查看用户反馈'''
     p = pagesize*(pg)
-    return redis_db.lrange("upserver:ureport",p,p+pagesize)
+    result = redis_db.lrange("upserver:ureport",p,p+pagesize)
+    items=[]
+    for itm in result:
+        items.append(json.loads(itm))
+    return items
     
 def del_user_report():
     '''删除用户反馈'''
@@ -204,12 +208,16 @@ def get_audit_log_counts():
     return redis_db.llen("upserver:audit")
 
 def post_audit_log(ftag, fcontent,ftime):
-    result = redis_db.rpush("upserver:audit",json.dumps({"ftag":ftag,"mcontent":fcontent, "mtime":ftime}))
+    result = redis_db.lpush("upserver:audit",json.dumps({"ftag":ftag,"mcontent":fcontent, "mtime":ftime}))
     return result
 
 def get_audit_log(pg, pagesize):
     p = pagesize*(pg)
-    return redis_db.lrange("upserver:audit",p,p+pagesize)
+    items_r = redis_db.lrange("upserver:audit",p,p+pagesize)
+    items=[]
+    for itm in items_r:
+        items.append(json.loads(itm))
+    return items
     
 def del_audit_log():
     return redis_db.delete("upserver:audit")
@@ -242,7 +250,7 @@ def installmain():
     ##添加一个管理员
     add_new_user(config.ADMIN_USERNAME,config.ADMIN_HASHPWD,"admin",config.DEFAULT_HEAD,"超级管理员","1515891406")
     ##测试用户提交数据
-    redis_db.rpush("upserver:ureport",{"fingerprint":"test_finger_print","mcontent":"测试的用户提交数据", "mtime":"1015891406"})
+    post_user_report("test_finger_print","测试的用户提交数据", 1015891406)
     ##测试添加产品线
     pName = "testProduct"
     save_device(pName, "测试产品" ,"static/images/appdefault.png", "这是用来测试的产品数据" ,1115891406, config.ADMIN_USERNAME)

@@ -48,6 +48,7 @@ class PublishNewApp(BaseAction):
         if (x['a']=='del'):
             mdevice =x['mdevice']
             model.del_device(mdevice)
+            self.logW(u"删除产品线:%s"%(mdevice))
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             self.seeother("/publish")
@@ -82,6 +83,7 @@ class PublishNewApp(BaseAction):
             utils.createDirs("static/downloads/"+mdevice)
             #3, 保存在数据库里
             model.save_device(mdevice, mname, picname, mdscpt, mtime, self.current_user)
+            self.logI(u"保存发布产品线信息:%s:%s"%(mdevice, mname))
         #管理员更改了数据，把产品数据导出成json文件
         self.dumpAllProduct2Json()
         self.seeother("/publish")
@@ -102,6 +104,7 @@ class PublishNewVersion(BaseAction):
         if (x['a']=='del' and x['t']=="full"):
             wid = x['wid']
             model.delete_rom_by_id(wid)
+            self.logW(u"删除版本信息:%s:%s"%(modname, wid))
             self.dumpAllProduct2Json()
             self.seeother("/publish/romslist/"+modname)
             return
@@ -172,6 +175,7 @@ class PublishNewVersion(BaseAction):
                 issuetime = int(time.time())
                 m_time = issuetime
                 model.save_rom_new(wid,modname, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, self.current_user,issuetime, m_time)
+                self.logI(u"保存发布版本信息:%s:%s"%(modname, version))
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             if(privileged):
@@ -193,19 +197,15 @@ class UserReport(BaseAction):
     def get(self):
         x={
         'a':self.get_argument("a",""),
-        'p':self.get_argument("t",0),
-        'pid':self.get_argument("pid",0)
+        'p':self.get_argument("t",0)
         }
         if (x['a']=="del"):
-            pid = x['pid']
-            model.del_user_report(pid)
-            self.seeother('')
-            return
+            model.del_user_report()
         pg = int(x['p'])
         pgcon = 50
         pages = 1+ model.get_user_report_counts()/pgcon
         result = model.get_user_report(pg ,pgcon)
-        self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strdate=utils.strtime)
+        self.render("publish_ureport.html", ureports=result, pages=pages, ptitle="后台用户反馈", strtime=utils.strtime)
 
 class PublishNewUser(BaseAction):
     '''管理网站用户'''
@@ -223,6 +223,7 @@ class PublishNewUser(BaseAction):
                 ##1,不能删除自己, 2 非管理员不能删除别人
                 self.write("Permission denied!")
                 return
+            self.logW(u"删除开发者信息:%s"%(x['uname']))
             model.del_user(x['uname'])
             self.seeother("/publish")
             return
@@ -275,6 +276,7 @@ class PublishNewUser(BaseAction):
                     #1, 保存新应用的图标
                     utils.saveBin(picname, picfile["body"])
             #3, 保存在数据库里
+            self.logI(u"保存开发者信息:%s:%s"%(uname,urole))
             model.add_new_user(uname, hashlib.sha256(upwd1).hexdigest(), urole, picname, udscpt, mtime)
         self.seeother("/publish")
 
@@ -286,10 +288,15 @@ class Audit(BaseAction):
             self.write("Permission Denied.")
             return
         x = {'a':self.get_argument('a',''),
-        'p':self.get_argument('p',''),
-        'psz':self.get_argument('psz','')}
-        pages = 0
-        self.render("publish_audit.html", items=[], pages=pages, ptitle="管理审计日志", strdate=utils.strtime)
+        'p':self.get_argument('p',0),
+        'psz':self.get_argument('psz',50)}
+        if x['a']=='del':
+            model.del_audit_log()
+        pg = int(x['p'])
+        pgcon = int(x['psz'])
+        pages = 1+ model.get_audit_log_counts()/pgcon
+        items = model.get_audit_log(pg, pgcon)
+        self.render("publish_audit.html", items=items, pages=pages, ptitle="管理审计日志", strtime=utils.strtime)
 
 class WebShell(BaseAction):
     '''shell for server'''
@@ -307,6 +314,7 @@ class WebShell(BaseAction):
             self.write("Permission Denied.")
             return
         x={'a':self.get_argument('a',''), 'cmd':self.get_argument('cmd','')}
+        self.logW(u"执行命令:%s"%x['cmd'])
         content=utils.run(x['cmd'])
         self.render("publish_shell.html",tcontent=content,ptitle="Shell")
 
@@ -316,6 +324,7 @@ class Login(BaseAction):
     def get(self):
         """ View single post """
         if self.get_current_user():
+            self.logI(u"登陆成功.")
             self.seeother('/publish')
         else:
             self.render("login.html",loginpoint=config.ADMIN_LOGIN)
@@ -326,9 +335,11 @@ class Login(BaseAction):
         pword = self.get_argument("pword",'')
         if (model.login_post(uname,pword)):
             #return "login success"
-            self.set_secure_cookie("uname", uname, expires_days=2)
+            self.logI(u"%s:登陆成功."%uname)
+            self.set_secure_cookie("uname", uname, expires_days=1)
             self.seeother('/publish')
         else:
+            self.logE(u"%s:登陆失败."%uname)
             self.clear_cookie(uname)
             self.seeother(config.ADMIN_LOGIN)
             

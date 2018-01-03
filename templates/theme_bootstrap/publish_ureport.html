@@ -12,16 +12,16 @@
                 <th>设备特征</th>
                 <th>反馈内容</th>
                 <th>时间</th>
-                <th>操作</th>
+                <th><a href="?a=del" class="btn btn-link">删除所有</a></th>
                 </tr>
             </thead>
             <tbody>
             {% for post in ureports %}
                 <tr>
-                <!--
-                <td><a href="?a=del&pid={{ escape(post) }}" class="btn btn-link">删除</a></td>
-                -->
-                <td>{{ escape(post) }}</td>
+                <td>{{ escape(post['fingerprint']) }}</td>
+                <td>{{ escape(post['mcontent']) }}</td>
+                <td>{{ escape(strtime(post['mtime'])) }}</td>
+                <td></td>
                 </tr>
             {% end %}
             

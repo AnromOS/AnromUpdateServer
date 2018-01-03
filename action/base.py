@@ -48,6 +48,18 @@ class base(tornado.web.RequestHandler):
         '''判断参数用户名是否是自己'''
         return self.current_user ==  uname
     
+    def logI(self, fcontent):
+        ftag="INFO"
+        model.post_audit_log(ftag, str(self.current_user)+u":"+fcontent,int(time.time()) )
+    
+    def logW(self, fcontent):
+        ftag="WARNING"
+        model.post_audit_log(ftag, str(self.current_user)+u":"+fcontent,int(time.time()) )
+    
+    def logE(self, fcontent):
+        ftag="ERROR"
+        model.post_audit_log(ftag, str(self.current_user)+u":"+fcontent,int(time.time()) )
+    
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 

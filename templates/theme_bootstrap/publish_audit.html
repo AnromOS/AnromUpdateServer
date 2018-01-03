@@ -18,7 +18,10 @@
             <tbody>
             {% for post in items %}
                 <tr>
-                <td>{{ escape(post) }}</td>
+                <td>{{ escape(strtime(post['mtime'])) }}</td>
+                <td>{{ escape(post['ftag']) }}</td>
+                <td>{{ escape(post['mcontent']) }}</td>
+                <td></td>
                 </tr>
             {% end %}
             

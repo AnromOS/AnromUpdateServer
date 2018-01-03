@@ -7,14 +7,17 @@
 <div class="row">  
     
     <div class="col-xs-12 col-sm-3 col-md-2">
-      <ul class="nav nav-sidebar">
-      {% for post in devices %}
-      <li> <a name="devices" href="#{{ escape(post['m_device']) }}" class="btn btn-link" >
-       <img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/>
-       {{ escape(post['m_modname']) }}</a>
-       </li>
-       {% end %}   
-      </ul>
+        <table class="table" >
+        <tbody>
+          {% for post in devices %}
+            <tr>
+                <td><img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/></td>
+                <td><a name="devices" href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
+            </tr>
+          {% end %}  
+        </tbody>
+        </table>
+     
     </div>
     
     <div class ="col-xs-12 col-sm-9 col-md-10">
