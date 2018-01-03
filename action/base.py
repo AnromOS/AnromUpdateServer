@@ -24,7 +24,9 @@ class base(tornado.web.RequestHandler):
         user_id =  self.get_secure_cookie("uname")
         if not user_id:
             return None
-        return user_id
+        if(self.isValidUser(user_id)):
+            return user_id
+        else: return None
     
     def countPrivilege(self):
         '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
@@ -48,17 +50,31 @@ class base(tornado.web.RequestHandler):
         '''判断参数用户名是否是自己'''
         return self.current_user ==  uname
     
+    def isValidUser(self, uname):
+        '''本地存在此用户'''
+        uinfo = model.get_user_by_uname(uname)
+        return not(uinfo == None)
+        
     def logI(self, fcontent):
         ftag="INFO"
-        model.post_audit_log(ftag, str(self.current_user)+u":"+fcontent,int(time.time()) )
+        x_real_ip = self.request.headers.get("X-Real-IP")
+        remote_ip = x_real_ip or self.request.remote_ip
+        uname = self.current_user or ""
+        model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
     
     def logW(self, fcontent):
         ftag="WARNING"
-        model.post_audit_log(ftag, str(self.current_user)+u":"+fcontent,int(time.time()) )
+        x_real_ip = self.request.headers.get("X-Real-IP")
+        remote_ip = x_real_ip or self.request.remote_ip
+        uname = self.current_user or ""
+        model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
     
     def logE(self, fcontent):
         ftag="ERROR"
-        model.post_audit_log(ftag, str(self.current_user)+u":"+fcontent,int(time.time()) )
+        x_real_ip = self.request.headers.get("X-Real-IP")
+        remote_ip = x_real_ip or self.request.remote_ip
+        uname = self.current_user or ""
+        model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
     
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)

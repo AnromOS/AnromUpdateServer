@@ -48,7 +48,7 @@ class Application(tornado.web.Application):
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Entry": EntryModule},
             xsrf_cookies=True,
-            cookie_secret="bc4c516d9ab23c22c65ea2483aae5ba34c907f46f6d8dae11ece24004f486330",
+            cookie_secret=config.COOKIE_SECRET,
             login_url="/404",#no need to show any login url.
             default_handler_class=action.cms.ErrorPage,
             debug=False,

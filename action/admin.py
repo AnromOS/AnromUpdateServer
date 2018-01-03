@@ -262,7 +262,6 @@ class PublishNewUser(BaseAction):
             upwd1=x['upassword']
             upwd2=x['upassword2']
             if (not (upwd1 == upwd2)) or (upwd1==""):
-                print (upwd1,upwd2)
                 self.write("密码输入不一致")
                 return
             mtime = int(time.time())
@@ -336,7 +335,7 @@ class Login(BaseAction):
         if (model.login_post(uname,pword)):
             #return "login success"
             self.logI(u"%s:登陆成功."%uname)
-            self.set_secure_cookie("uname", uname, expires_days=1)
+            self.set_secure_cookie("uname", uname, expires_days=None, expires=time.time()+config.COOKIE_EXPIRE )
             self.seeother('/publish')
         else:
             self.logE(u"%s:登陆失败."%uname)

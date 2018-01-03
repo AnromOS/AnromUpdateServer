@@ -17,7 +17,6 @@ def get_preferences():
     
 def login_post(username,password):
     '''验证网站管理员登录'''
-    print("user login:",username)
     user = get_user_by_uname(username)
     if (user is None):
         return False
@@ -256,7 +255,7 @@ def installmain():
     save_device(pName, "测试产品" ,"static/images/appdefault.png", "这是用来测试的产品数据" ,1115891406, config.ADMIN_USERNAME)
     
     ##测试添加条目
-    itmid = save_rom_new(0, pName, '1.0.1','1001', '1,改变了世界 2,拯救了未来', 'test.deb', 'http://example.com/test.deb', 1024, '63d475e6b67ebcb959224a1587f28214', 0, '[nightly]', '0', '0', '', '0',config.ADMIN_USERNAME, 0, 0)
+    itmid = save_rom_new(0, pName, '1.0.1','1001', '1,改变了世界 2,拯救了未来3,这是条测试数据，修改或删除随便', 'test.deb', 'http://example.com/test.deb', 1024, '63d475e6b67ebcb959224a1587f28214', 0, '[nightly]', '0', '0', '', '0',config.ADMIN_USERNAME, 0, 0)
     print('save main info into redis ok')
 
 def upgradeDB():
