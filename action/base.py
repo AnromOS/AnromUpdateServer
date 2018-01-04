@@ -56,21 +56,15 @@ class base(tornado.web.RequestHandler):
         return not(uinfo == None)
         
     def logI(self, fcontent):
-        ftag="INFO"
-        x_real_ip = self.request.headers.get("X-Real-IP")
-        remote_ip = x_real_ip or self.request.remote_ip
-        uname = self.current_user or ""
-        model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
+        self.log("INFO",fcontent)
     
     def logW(self, fcontent):
-        ftag="WARNING"
-        x_real_ip = self.request.headers.get("X-Real-IP")
-        remote_ip = x_real_ip or self.request.remote_ip
-        uname = self.current_user or ""
-        model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
+        self.log("WARNING",fcontent)
     
     def logE(self, fcontent):
-        ftag="ERROR"
+        self.log("ERROR",fcontent)
+    
+    def log(self, ftag, fcontent):
         x_real_ip = self.request.headers.get("X-Real-IP")
         remote_ip = x_real_ip or self.request.remote_ip
         uname = self.current_user or ""
