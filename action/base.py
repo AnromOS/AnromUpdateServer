@@ -66,7 +66,8 @@ class base(tornado.web.RequestHandler):
     
     def log(self, ftag, fcontent):
         x_real_ip = self.request.headers.get("X-Real-IP")
-        remote_ip = x_real_ip or self.request.remote_ip
+        x_forwarded_ip = self.request.headers.get("X-Forwarded-For")
+        remote_ip = x_real_ip or x_forwarded_ip or self.request.remote_ip
         uname = self.current_user or ""
         model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
     
