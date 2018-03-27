@@ -34,12 +34,12 @@
                     <tr>
                       <td><img class="img-rounded" height=35px src="{{ escape(post['m_modpicture']) }}"/></td>
                       <td>{{ escape(post['m_modname']) }} (<strong>{{ escape(post['m_device']) }}</strong>)</td>
-                      <td><a href="/publish/romslist/{{ escape(post['m_device']) }}" class="btn btn-link"> 点击查看 ({{ post['m_count'] }})</a> </td>
+                      <td><a href="/publish/romslist/{{ escape(post['m_device']) }}" > 点击查看 ({{ post['m_count'] }})</a> </td>
                       <td>{{ escape(post['m_detail']['version']) }}</td>
                       <td>{{ escape(strtime(post['m_time'])) }}</td>
-                      <td><a href="/publish/rom/{{ escape(post['m_device']) }}" class="btn btn-link">添加</a></td>
-                      <td><a href="/publish/device?a=edit&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">编辑</a></td>
-                      <td><a href="/publish/device?a=del&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">删除</a></td>
+                      <td><a href="/publish/rom/{{ escape(post['m_device']) }}" >添加</a></td>
+                      <td><a href="/publish/device?a=edit&mdevice={{ escape(post['m_device']) }}" >编辑</a></td>
+                      <td><a href="/publish/device?a=del&mdevice={{ escape(post['m_device']) }}" >删除</a></td>
                     </tr>
                 {% end %}
 

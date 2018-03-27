@@ -20,7 +20,7 @@ Ancode 安全快速|下一代互联网
           {% for post in models %}
             <tr>
                 <td><img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/></td>
-                <td><a name="devices" href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
+                <td><a name="devices" href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
             </tr>
           {% end %}  
         </tbody>
@@ -32,12 +32,12 @@ Ancode 安全快速|下一代互联网
     {% for post in models %}
       <div class="media">
           <div class="media-left media-middle">
-                <a href="/allroms/{{ escape(post['m_device']) }}" target="_blank">
+                <a name="{{ escape(post['m_device']) }}" href="#devices">
                   <img class="media-object img-rounded" height=96px width=96px src="{{ escape(post['m_modpicture']) }}" alt="...">
                 </a>
             </div>
           <div class="media-body">
-              <a href="/allroms/{{ escape(post['m_device']) }}" target="_blank"><h4 class="media-heading"> {{ escape(post['m_modname']) }}</h4></a>
+              <a href="/allroms/{{ escape(post['m_device']) }}" ><h4 class="media-heading"> {{ escape(post['m_modname']) }}</h4></a>
               <div class="column hidden-xs"><p>{{ escape(post['m_moddescription']) }}</p></div>
               <p><small> {{ escape(strtime(post['m_time'])) }}</small></p>
           </div>
