@@ -37,9 +37,9 @@
                       <td><a href="/publish/romslist/{{ escape(post['m_device']) }}" class="btn btn-link"> 点击查看 ({{ post['m_count'] }})</a> </td>
                       <td>{{ escape(post['m_detail']['version']) }}</td>
                       <td>{{ escape(strtime(post['m_time'])) }}</td>
-                      <td><a href="/publish/rom/{{ escape(post['m_device']) }}" class="btn btn-link">添加新版本升级</a></td>
-                      <td><a href="/publish/device?a=edit&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">编辑应用信息</a></td>
-                      <td><a href="/publish/device?a=del&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">删除该应用</a></td>
+                      <td><a href="/publish/rom/{{ escape(post['m_device']) }}" class="btn btn-link">添加</a></td>
+                      <td><a href="/publish/device?a=edit&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">编辑</a></td>
+                      <td><a href="/publish/device?a=del&mdevice={{ escape(post['m_device']) }}" class="btn btn-link">删除</a></td>
                     </tr>
                 {% end %}
 
@@ -60,8 +60,8 @@
                     <td>{{ escape(users[user]['u_name']) }}</td>
                     <td>{{ escape(getStatuStr(users[user]['u_role'])) }}</td>
                     {% if accessAdmin %}
-                        <td><a href="/publish/users?a=edit&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">编辑</a></td>
-                        <td><a href="/publish/users?a=del&uname={{ escape(users[user]['u_name']) }}" class="btn btn-link">删除</a></td>
+                        <td><a href="/publish/users?a=edit&uname={{ escape(users[user]['u_name']) }}" >编辑</a></td>
+                        <td><a href="/publish/users?a=del&uname={{ escape(users[user]['u_name']) }}" >删除</a></td>
                     {% else %}
                         <td></td>
                         <td></td>

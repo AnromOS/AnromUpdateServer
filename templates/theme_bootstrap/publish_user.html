@@ -8,14 +8,8 @@
       <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           
           <div class="form-group">
-            <label for="uname">开发者ID(在页面上显示) </label>
-            <input type="text" name="uname" id="uname" class="form-control" placeholder="用户的ID"
-            {% if (pupdate!=None) %}
-                value="{{ escape(pupdate['u_name']) }}" 
-            {% else %}
-                value=""
-            {% end %}
-            >
+            <label for="uname">开发者ID </label>
+            <input type="text" name="uname" id="uname" class="form-control" placeholder="用户的ID" {% if (pupdate!=None) %} value="{{ escape(pupdate['u_name']) }}"{% else %} value="" {% end %}/>
           </div>
           
           <div class="form-group">
@@ -49,48 +43,15 @@
           
           <div class="form-group">
             <label for="udescription">简介</label>
-            <textarea type="text" name="udescription" id="udescription" rows=3 class="form-control" placeholder="用一段文字描述这个用户">
-{% if (pupdate!=None) %}
-    {{ escape(pupdate['u_description']) }}
-{% end %}
-</textarea>
-    <!--<script type="text/javascript" src="/static/editor/tinyeditor.js"></script>
-                <link rel="stylesheet" href="/static/editor/style.css" />
-                <script type="text/javascript">
-                    var instance=new TINY.editor.edit('editor',{
-                        id:'mdescription',
-                        width:740,
-                        height:275,
-                        cssclass:'contentls',
-                        controlclass:'tecontrol',
-                        rowclass:'teheader',
-                        dividerclass:'tedivider',
-                        controls:['bold','italic','underline','strikethrough','|','subscript','superscript','|', 'orderedlist','unorderedlist','|','outdent','indent','|','leftalign',
-                            'centeralign','rightalign','blockjustify','|','unformat','|','undo','redo','print','n',
-                            'font','size','style','forecolor','backcolor','|','image','swf','media','upload','|','hr','link','unlink','|','cut','copy','paste'],
-                        footer:true,
-                        fonts:['楷体','宋体','黑体','Verdana','Arial','Georgia'],
-                        xhtml:true,
-                        uploadexc:"",
-                        bodyid:'editor',
-                        footerclass:'tefooter',
-                        toggle:{text:'源码',activetext:'视图',cssclass:'toggle'},
-                        resize:{cssclass:'resize'}
-                    });
-                </script>-->
-
+            <textarea type="text" name="udescription" id="udescription" rows=3 class="form-control" placeholder="用一段文字描述这个用户">{% if (pupdate!=None) %} {{ escape(pupdate['u_description']) }}{% end %}</textarea>
           </div>
           <div class="form-group">
-            <label for="uavatar">上传头像 {% if (pupdate!=None) %} <img class="img-rounded" height=35px src="/{{ escape(pupdate['u_avatar']) }}"/> {% end %}</label>
-            <input type="file" name="uavatar" id="uavatar"></input>
+            <label for="uavatar">上传头像 {% if (pupdate!=None) %} <img class="img-rounded" height=35px src="{{ escape(pupdate['u_avatar']) }}"/> {% end %}</label>
+            <input type="file" name="uavatar" id="uavatar"/>
           </div>
-          <div class="form-group">
-            <input type="text" name="upicname" id="upicname" class="hidden"
-            {% if (pupdate!=None) %}
-                value="{{ escape(pupdate['u_avatar']) }}"
-            {% end %}
-            ></input>
-          </div>
+          {% if (pupdate!=None) %}
+                <input type="text" name="upicname" id="upicname" class="hidden" value="{{ escape(pupdate['u_avatar']) }}">
+          {% end %}
           {% module xsrf_form_html() %}
         <input  class="btn btn-primary" type="submit" value="完成"/>
         </form>

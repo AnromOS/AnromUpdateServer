@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #coding=utf-8
 import hashlib,os
 
@@ -18,9 +18,10 @@ netpref['REDIS_PASSWORD']=None
 ADMIN_LOGIN="/yourloginpath"
 ADMIN_USERNAME="youradminname"
 ADMIN_PWD="youradminpwd"
-ADMIN_HASHPWD=hashlib.sha256(ADMIN_PWD).hexdigest()
+ADMIN_HASHPWD=hashlib.sha256(ADMIN_PWD.encode()).hexdigest()
 
-DEFAULT_HEAD="static/images/default_head.png"
+DEFAULT_HEAD="/static/images/default_head.png"
+DEFAULT_APPCAPTION="/static/images/appdefault.png"
 
 #自动发布设置
 #put your secret here.

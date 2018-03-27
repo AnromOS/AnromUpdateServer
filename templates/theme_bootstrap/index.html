@@ -1,34 +1,51 @@
 {% extends "index_base.html" %}
 
-{% block body %}
-<!-- Home -->
+{% block pagetitle %}
+Ancode 安全快速|下一代互联网
+{% end %}
 
-<br> 
-<div class="row">  
-    
-    <div class="col-xs-12 col-sm-3 col-md-2">
-        <table class="table" >
+{% block pageheader %}
+<p><strong>Ancode </strong><small>安全快速|下一代互联网</small></p>
+{% end %}
+
+{% block pagenavbar %}
+    {% for post in models %}
+    <li><a href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>
+    {% end %}  
+{% end %}
+
+{% block pagesidebar %} 
+  <table class="table" >
         <tbody>
-          {% for post in devices %}
+          {% for post in models %}
             <tr>
                 <td><img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/></td>
-                <td><a name="devices" href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
+                <td><a name="devices" href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
             </tr>
           {% end %}  
         </tbody>
-        </table>
-     
-    </div>
-    
-    <div class ="col-xs-12 col-sm-9 col-md-10">
-    {% for post in devices %}
-        <div class="panel panel-info">
-        <div class="panel-heading"><a name="{{ escape(post['m_device']) }}" href="#devices">应用: {{ escape(post['m_modname']) }}</a> </div>
-            
+  </table>
+
+{% end %}
+ 
+{% block pagebody %}
+    {% for post in models %}
+      <div class="media">
+          <div class="media-left media-middle">
+                <a href="/allroms/{{ escape(post['m_device']) }}" target="_blank">
+                  <img class="media-object img-rounded" height=96px width=96px src="{{ escape(post['m_modpicture']) }}" alt="...">
+                </a>
+            </div>
+          <div class="media-body">
+              <a href="/allroms/{{ escape(post['m_device']) }}" target="_blank"><h4 class="media-heading"> {{ escape(post['m_modname']) }}</h4></a>
+              <div class="column hidden-xs"><p>{{ escape(post['m_moddescription']) }}</p></div>
+              <p><small> {{ escape(strtime(post['m_time'])) }}</small></p>
+          </div>
+      </div>
+
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                 <thead>
                 <tr>
-                  <th> </th>
                   <th> 版本</th>
                   <th> 下载地址</th>
                   <th> 通道</th>
@@ -36,27 +53,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                 <tr>
-                  <td width=150px rowspan=30 ><img class="img-rounded" height=140px src="{{ escape(post['m_modpicture']) }}"/></td>
-                  <td><strong>{{ escape(post['m_device']) }}</strong></td>
-                  <td>{{ escape(post['m_moddescription']) }}</td>
-                  <td></td>
-                  <td> {{ escape(strtime(post['m_time'])) }}</td>
-                 </tr>
                  {% for det in post['m_detail'] %}
                      <tr>
                         <td>{{ escape(det['version']) }}</td>
-                        <td><a href ="{{ escape(det['url']) }}" class="btn btn-link" >{{ escape(det['filename']) }}</a></td>
+                        <td><a href ="{{ escape(det['url']) }}" >{{ escape(det['filename']) }}</a></td>
                         <td>{{ escape(getStatuStr(det['channels'])) }}</td>
                         <td>{{ escape(strtime(det['issuetime'])) }}</td>
                      </tr>
                  {% end %}
                 </tbody>
             </table>
-            
             <p class="text-right"><a href="/allroms/{{ escape(post['m_device']) }}">更多历史版本...</a></p>
-        </div>
     {% end %}
-    </div>
-</div>
 {% end %}

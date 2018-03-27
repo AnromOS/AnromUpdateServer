@@ -1,60 +1,62 @@
 {% extends "index_base.html" %}
 
-{% block body %}
-<br>
-<div class="row">  
-    
-    <div class="col-xs-12 col-sm-3 col-md-2">
-    <table class="table" >
+{% block pagetitle %}
+Ancode 安全快速|下一代互联网
+{% end %}
+
+{% block pageheader %}
+<p><strong>Ancode </strong><small>安全快速|下一代互联网</small></p>
+{% end %}
+
+{% block pagenavbar %}
+    {% for post in models %}
+    <li><a href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>
+    {% end %}  
+{% end %}
+
+{% block pagesidebar %} 
+  <table class="table" >
         <tbody>
           {% for post in models %}
             <tr>
-                <td><img class="img-rounded" height=20px src="/{{ escape(post['m_modpicture']) }}"/></td>
+                <td><img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/></td>
                 <td><a name="devices" href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
             </tr>
           {% end %}  
         </tbody>
-    </table>
-    </div>
-    
-    <div class ="col-xs-12 col-sm-9  col-md-10">
-        <div class="panel panel-info">
-        <div class="panel-heading"><a name="{{ escape(roms['m_device']) }}" href="#devices">应用: {{ escape(roms['m_modname']) }}</a></div>
-            <table class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
-            <tbody><tr>
-                  <td width=150px ><img class="img-rounded" height=140px src="/{{ escape(roms['m_modpicture']) }}"></td>
-                  <td><strong>{{ escape(roms['m_device']) }}</strong></td>
-                  <td><p>{{ escape(roms['m_moddescription']) }}</p></td>
-                  <td> {{ escape(strtime(roms['m_time'])) }}</td>
-                 </tr>
-            </tbody>
-            </table>
+  </table>
+
+{% end %}
+
+
+{% block pagebody %}
+  <div><h2 class="page-header"><img class="img-rounded" height=48px width=48px src="{{ escape(roms['m_modpicture']) }}" alt="..."> {{ escape(roms['m_modname']) }}</h2>
+    <p>{{ escape(roms['m_moddescription']) }}</p>
+    <p><small> {{ escape(strtime(roms['m_time'])) }}</small></p>
+  </div>
             
-            <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
-                <thead>
-                <tr>
-                  <th> 版本</th>
-                  <th> 下载地址</th>
-                  <th> 变更日志</th>
-                  <th> md5</th>
-                  <th> 通道</th>
-                  <th> 发布时间 </th>
-                </tr>
-                </thead>
-                <tbody>
-                 {% for det in roms['m_detail'] %}
-                     <tr>
-                        <td>{{ escape(det['version']) }}</td>
-                        <td><a href ="{{ escape(det['url']) }}" class="btn btn-link" >{{ escape(det['filename']) }} ( {{ escape(det['size']) }} )</a></td>
-                        <td>{{ escape(det['changelog']) }}</td>
-                        <td>{{ escape(det['md5sum']) }}</td>
-                        <td>{{ escape(getStatuStr(det['channels'])) }}</td>
-                        <td>{{ escape(strtime(det['issuetime'])) }}</td>
-                     </tr>
-                  {% end %}   
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+  <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
+    <thead>
+    <tr>
+      <th> 版本</th>
+      <th> 下载地址</th>
+      <th> 变更日志</th>
+      <th> md5</th>
+      <th> 通道</th>
+      <th> 发布时间 </th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for det in roms['m_detail'] %}
+      <tr>
+      <td>{{ escape(det['version']) }}</td>
+      <td><a href ="{{ escape(det['url']) }}">{{ escape(det['filename']) }} ( {{ escape(det['size']) }} )</a></td>
+      <td>{{ escape(det['changelog']) }}</td>
+      <td>{{ escape(det['md5sum']) }}</td>
+      <td>{{ escape(getStatuStr(det['channels'])) }}</td>
+      <td>{{ escape(strtime(det['issuetime'])) }}</td>
+      </tr>
+    {% end %}   
+    </tbody>
+  </table>
 {% end %}

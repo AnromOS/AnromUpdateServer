@@ -3,37 +3,73 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    <title>Ancode|安全、隐私、快速|下一代互联网</title>
-    {% block head %}{% end %}
+    <title>{% block pagetitle %}{% end %}</title>
+    {% block metadata %}{% end %}
     <link rel="icon" type="image/png" href="/static/favicon.ico">
-    <script src="/static/jquery-1.12.4.min.js"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-    
 </head>
 <body>    
-   
-<!-- Home -->
-<div class="container">
-        <div class="page-header"> <h1>Ancode <small>Focus on privacy and security.</small></h1> {% block pageheader %}{% end %} </div>
-        <ul class="nav nav-tabs ">
-            <li><a href="/"> 首页 </a></li>
-            <li><a href="#devices"> 下载 </a></li>
-            <li><a href="#about"> 关于我们</a></li>
-        </ul><!-- /navbar -->
 
-    <div class="container" data-ajax="false">
-    <!-- page -->
-    {% block body %}{% end %}
+<!-- Home -->
+<div class="hidden-sm hidden-md hidden-lg">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid" >
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">{% block pageheader %} {% end %}</a> 
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar" aria-expanded="false" aria-controls="bs-navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="bs-navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            {% block pagenavbar %}{% end %}
+        </ul>
+        </div>
+    </div>
+  </nav>
+</div>
+
+<div class="container" data-ajax="false">
+    <div class="page-header hidden-xs"> 
+    <a class="button" href="/">{% block pageheader %} {% end %}</a>
+    </div>
+  <div class="row">  
+    
+    <div class="col-xs-12 col-sm-3 col-md-3">
+        <div class="column hidden-xs"> 
+        {% block pagesidebar %}{% end %}
+        <br>
+        {% block pagefriendlinks %}{% end %}
+        </div>
     </div>
     
-    <!-- footer -->
-    <div class="well well-lg">
-    <a name="about">We are devoted to privacy and security.</a>
+    <div class ="col-xs-12 col-sm-9 col-md-9">
+    {% block pagebody %}{% end %}
+    <br>
+    {% block pagerelatedposts %}{% end %}
     </div>
+    
+  </div>
+  <br>
+
 </div>
-{% block bottom %}{% end %}
+
+<footer id="footer">
+    <div class="container">
+        <div class="text-center">
+          <a href="#about">We are devoted to privacy and security.</a>
+        </div>
+        <br>
+    </div>
+</footer>
+
+<script src="/static/jquery-1.12.4.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
 </body>
 </html>

@@ -32,7 +32,7 @@
                     <td>{{ escape(getStatuStr(post.get('channels',''))) }}</td>
                     <td>{{ escape(getStatuStr(post['status'])) }}</td>
                     {% if post['issue_uname'] in users.keys() %}
-                    <td><img class="img-rounded" height=35px src="/{{ escape(users[post['issue_uname']]['u_avatar']) }}"/> {{ escape(post['issue_uname']) }}</td>
+                    <td><img class="img-rounded" height=35px src="{{ escape(users[post['issue_uname']]['u_avatar']) }}"/> {{ escape(post['issue_uname']) }}</td>
                     {% else %}
                     <td><img class="img-rounded" height=35px src="/static/images/default_head.png"/> {{ escape(post['issue_uname']) }}</td> 
                     {% end %}

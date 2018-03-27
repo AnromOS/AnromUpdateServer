@@ -1,11 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #coding=utf-8
 # web.py In Memery of Aaron Swartz
 # 2017.12.10: Switched into Tornado
 
 import tornado.web
 import model,config,utils
-import hashlib,json,time,base64,urllib2
+import json,time,base64
+import urllib.request,urllib.error,urllib.parse
 import re
 import os
 
@@ -15,7 +16,6 @@ class base(tornado.web.RequestHandler):
     t_globals = {
         'strdate':utils.strtime,
         'inttime':utils.inttime,
-        'urlquote':utils.urllib2.quote,
         'abs2rev':utils.abs2rev,
         'getStatuStr':config.getStatuStr
     }
@@ -32,14 +32,25 @@ class base(tornado.web.RequestHandler):
         '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
         secret = config.AUTOPUB_SECRET
         salt = time.strftime("%Y-%m-%d %H:00",time.localtime(time.time()))
-        ptoken = hashlib.sha256(secret+salt).hexdigest()
+        ptoken = utils.sha256(secret+salt)
         print("hasPrivilege: ptoken is:",ptoken)
         return ptoken
         
     def hasPrivilege(self,ptoken):
         token = self.countPrivilege()
-        print "hasPrivilege: token is:",token ," ptoken is:",ptoken
+        print("hasPrivilege: token is:"+ token + " ptoken is:"+ ptoken)
         return token == ptoken
+    
+    def login_post(self, username,password):
+        '''验证网站管理员登录'''
+        user = model.get_user_by_uname(username)
+        if (user is None):
+            return False
+        usr = user["u_name"]
+        pwd = user["u_password"]
+        j1 = (username == usr)
+        j2 = (pwd ==  utils.sha256(password))
+        return j1 and j2
     
     def accessAdmin(self):
         '''判断当前用户是否有管理员权限'''
@@ -48,13 +59,18 @@ class base(tornado.web.RequestHandler):
     
     def accessSelf(self,uname):
         '''判断参数用户名是否是自己'''
-        return self.current_user ==  uname
+        curuname = self.current_user.decode()
+        return curuname ==  uname
     
     def isValidUser(self, uname):
         '''本地存在此用户'''
         uinfo = model.get_user_by_uname(uname)
         return not(uinfo == None)
-        
+    
+    def permissionDenied(self):
+        self.write("Permission denied!")
+        return
+       
     def logI(self, fcontent):
         self.log("INFO",fcontent)
     
@@ -68,8 +84,8 @@ class base(tornado.web.RequestHandler):
         x_real_ip = self.request.headers.get("X-Real-IP")
         x_forwarded_ip = self.request.headers.get("X-Forwarded-For")
         remote_ip = x_real_ip or x_forwarded_ip or self.request.remote_ip
-        uname = self.current_user or ""
-        model.post_audit_log(ftag, remote_ip+U": "+str(uname)+u":"+fcontent,int(time.time()) )
+        uname = self.current_user or b""
+        model.post_audit_log(ftag, remote_ip+": "+uname.decode()+":"+fcontent,int(time.time()) )
     
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
@@ -117,6 +133,14 @@ class base(tornado.web.RequestHandler):
                 devbody.append(temp)
             devi['m_detail']= devbody
             products.append(devi)
+        '''
+        for post in models:
+            post['id'] = post['m_device']
+            if (channels==r'all'):
+                post['m_detail']=model.get_roms_by_devicesname(post['m_device'],-1)
+            else:
+                post['m_detail']=model.get_available_roms_by_modelid(post['m_device'], channels)
+        '''
         body['id']=None
         body['result']=products
         body['error']=None

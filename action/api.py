@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #coding=utf-8
 # web.py In Memery of Aaron Swartz
 # 2017.12.10: Switched into Tornado
@@ -26,7 +26,7 @@ class API(BaseAction):
             channels = req['params']['channels']
             source_incremental = req['params']['source_incremental']
             if (method == 'get_all_builds' and device != '' and len(channels)>0 and source_incremental != ''):
-                print 'recieve a valid Client request :',method,device,channels,source_incremental
+                print('recieve a valid Client request :',method,device,channels,source_incremental)
                 mods =model.get_devices_byname(device)
                 if(channels[0]==u"nightly"):
                     channels="nightly"
@@ -53,11 +53,11 @@ class API(BaseAction):
                         temp["extra"] = x['extra']
                         body.append(temp)
             else:
-                print 'recieve a INVALID Client request,pass:',method,device,channels,source_incremental
+                print('recieve a INVALID Client request,pass:',method,device,channels,source_incremental)
         api['id']=None
         api['result']=body
         api['error']=None
-        print api
+        print(api)
         result = json.dumps(api)
         return result
         
@@ -68,7 +68,7 @@ class API_DELTA(BaseAction):
         rawjson = x.readline()
         api={}
         if(rawjson !=None):
-            print "receive delta upgrade:" ,rawjson
+            print("receive delta upgrade:" ,rawjson)
             mod_id =0
             req = json.loads(rawjson)
             device = req['device']
@@ -77,7 +77,7 @@ class API_DELTA(BaseAction):
             mods =model.get_devices_byname(device)
             for x in mods:
                 mod_id = x['mod_id']
-            print 'mod_id',mod_id
+            print('mod_id',mod_id)
             ava_delta = model.get_available_delta_rom(mod_id,source_inc,target_inc)
             for x in ava_delta:
                 api["date_created_unix"]=0
@@ -85,7 +85,7 @@ class API_DELTA(BaseAction):
                 api["download_url"] = x['url']
                 api["md5sum"] = x["md5sum"]
                 api["version"] = x["target_incremental"]
-        print api
+        print(api)
         result = json.dumps(api)
         return result
 
@@ -115,7 +115,7 @@ class API_APPUP(BaseAction):
         webinput= web.input(source_version="")
         source_version = webinput['source_version']
         if (method == 'upgrade' and device != '' and channels!='' and source_version != ''):
-            print 'recieve a valid Client request :',method,device,channels,source_version
+            print('recieve a valid Client request :',method,device,channels,source_version)
             mods =model.get_devices_byname(device)
             for x in mods: 
                 mod_id = x['mod_id']
@@ -144,10 +144,10 @@ class API_APPUP(BaseAction):
                     temp["extra"] = x['extra']
                     body.append(temp)
         else:
-            print 'recieve a INVALID Client request,pass:',method,device,channels,source_version
+            print('recieve a INVALID Client request,pass:',method,device,channels,source_version)
         api['id']=device
         api['result']=body
         api['error']=None
-        print api
+        print(api)
         result = json.dumps(api,ensure_ascii=False)
         return result.encode('utf-8')

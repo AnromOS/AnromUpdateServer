@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #coding=utf-8
 import time,datetime,hashlib,json,re
 import redis
@@ -6,25 +6,9 @@ import config
 
 #1.本应用所有的key以upserver:开头
 #2.
-redis_db = redis.StrictRedis(host=config.netpref['REDIS_HOST'], port=config.netpref['REDIS_PORT'], db=config.netpref['REDIS_DB'], password=config.netpref['REDIS_PASSWORD'])
+redis_db = redis.StrictRedis(host=config.netpref['REDIS_HOST'], port=config.netpref['REDIS_PORT'], db=config.netpref['REDIS_DB'], password=config.netpref['REDIS_PASSWORD'],decode_responses=True)
 
 chanPatten= re.compile('\[.*?\]')
-
-## for web admin
-def get_preferences():
-    '''获取网站的所有配置字段'''
-    return redis_db.hgetall("upserver:pref")
-    
-def login_post(username,password):
-    '''验证网站管理员登录'''
-    user = get_user_by_uname(username)
-    if (user is None):
-        return False
-    usr = user["u_name"]
-    pwd = user["u_password"]
-    j1 = (username == usr)
-    j2 = (pwd ==  hashlib.sha256(password).hexdigest())
-    return j1 and j2
   
 #### 发布机型管理  
 def get_devices():
@@ -63,6 +47,8 @@ def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     "m_time":mtime
     }
     redis_db.hmset(hindex,mdetail)
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
     return mdevice
 
 def del_device(mdevice):
@@ -71,6 +57,8 @@ def del_device(mdevice):
     print("deleting product:",mdevice)
     redis_db.delete(hindex)
     redis_db.lrem("upserver:tmodel_index",1,mdevice)
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
 
 ### 发布升级条目管理
 def get_roms_by_devicesname(mdevice,topcount):
@@ -139,6 +127,8 @@ def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, si
     'm_time':m_time
     }
     redis_db.hmset(anindex,mdetail)
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
     return itmid
         
 def delete_rom_by_id(wid):
@@ -154,6 +144,8 @@ def delete_rom_by_id(wid):
     chans = chanPatten.findall(config.netpref['CHANNELS'])
     for chan in chans:
         redis_db.lrem("upserver:tmodel:%s.%s"%(mdevice,chan),1,wid)
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
     ##delete from items
     return redis_db.delete(anindex)
 
@@ -174,10 +166,14 @@ def get_user_by_uname(uname):
 def add_new_user(uname, upasswd, urole, uavatar, udescription, utime):
     print("saving user:",uname)
     redis_db.hset("upserver:users",uname,json.dumps({"u_name":uname,"u_password":upasswd,"u_role":urole, "u_avatar":uavatar,"u_description":udescription,"u_time":utime}))
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
 
 def del_user(uname):
     print("deleting user:",uname)
     redis_db.hdel("upserver:users",uname)
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
 
 #### 用户反馈的web管理
 def get_user_report_counts():
@@ -200,6 +196,8 @@ def get_user_report(pg, pagesize):
     
 def del_user_report():
     '''删除用户反馈'''
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
     return redis_db.delete("upserver:ureport")
 
 #### 用户操作日志
@@ -219,10 +217,17 @@ def get_audit_log(pg, pagesize):
     return items
     
 def del_audit_log():
+    ##DB changed, so we purge the global cache. 
+    purge_Cache()
     return redis_db.delete("upserver:audit")
     
 ### preference
 pref_cache ={}
+## for web admin
+def get_preferences():
+    '''获取网站的所有配置字段'''
+    return redis_db.hgetall("upserver:pref")
+
 def save_pref(name,content):
     redis_db.hset("upserver:pref",name,content)
     pref_cache[name]=content
@@ -239,6 +244,21 @@ def get_pref(name):
     except IndexError:
         return None
 
+###全局缓存
+def get_Cache(cachename, result):
+    pname = 'upserver:cache:'
+    if(redis_db.hexists(pname,cachename)):
+        return redis_db.hget(pname, cachename)
+    else: return result
+
+def set_Cache(cachename, cachevalue):
+    pname = 'upserver:cache:'
+    redis_db.hset(pname, cachename, cachevalue)
+
+def purge_Cache():
+    pname = 'upserver:cache:'
+    redis_db.delete(pname)
+
 ### database scheme.
 DB_VERSION=1
 def installmain():
@@ -252,7 +272,7 @@ def installmain():
     post_user_report("test_finger_print","测试的用户提交数据", 1015891406)
     ##测试添加产品线
     pName = "testProduct"
-    save_device(pName, "测试产品" ,"static/images/appdefault.png", "这是用来测试的产品数据" ,1115891406, config.ADMIN_USERNAME)
+    save_device(pName, "测试产品" ,config.DEFAULT_APPCAPTION, "这是用来测试的产品数据" ,1115891406, config.ADMIN_USERNAME)
     
     ##测试添加条目
     itmid = save_rom_new(0, pName, '1.0.1','1001', '1,改变了世界 2,拯救了未来3,这是条测试数据，修改或删除随便', 'test.deb', 'http://example.com/test.deb', 1024, '63d475e6b67ebcb959224a1587f28214', 0, '[nightly]', '0', '0', '', '0',config.ADMIN_USERNAME, 0, 0)
@@ -260,18 +280,3 @@ def installmain():
 
 def upgradeDB():
     print(config.DB_PATH_PUBLISH,' db upgrade ok')
-        
-
-class WebCache:
-    '''缓存web页面的类，减少数据库访问，用来提高访问不太经常改变的内容的速度'''
-    mcache = {}
-    cleartime =int(time.time())
-    def get(self,keyword):
-        now = int(time.time())
-        if ((now - self.cleartime)>(24*3600)):
-            self.mcache.clear()#clear the cache every 24 hours
-            self.cleartime= int(time.time())
-        return self.mcache.get(keyword)
-        
-    def put(self,keyword,content):
-        self.mcache[keyword]=content

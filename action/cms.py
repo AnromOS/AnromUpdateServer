@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #coding=utf-8
 # web.py  In Memery of Aaron Swartz
 # 2017.12.10: Switched into Tornado
@@ -9,29 +9,42 @@ from action.base import base as BaseAction
 class Index(BaseAction):
     def get(self):
         """ Show page """
-        #self.session.kill()
+        ##lookup Cache
+        cachename="Index"
+        result = model.get_Cache(cachename, None)
+        if(result):
+            self.write(result)
+            return
+        # Real page
         models = model.get_devices()
         prefs = model.get_preferences()
-        devices =[]
         for post in models:
-            devi={}
-            devi['m_device'] = post['m_device']
-            devi['m_modname'] = post['m_modname']
-            devi['m_modpicture'] = post['m_modpicture']
-            devi['m_moddescription'] = post['m_moddescription']
-            devi['m_time'] = post['m_time']
-            devi['m_detail']=model.get_roms_by_devicesname(devi['m_device'],5)
-            devices.append(devi)
-        self.render("index.html", devices=devices, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
+            post['m_detail']=model.get_roms_by_devicesname(post['m_device'],5)
+        result  = self.render_string("index.html", models=models, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
+        self.write(result)
+        ## Put result into cache.
+        model.set_Cache(cachename, result)
+        return
 
 class Allroms(BaseAction):
      def get(self,mdevice):
         """ Show single page """
-        #web.ctx.session.kill()
+        ##lookup Cache
+        cachename="Allroms_"+mdevice
+        result = model.get_Cache(cachename, None)
+        if(result):
+            self.write(result)
+            return
+        # Real page
         tmd = model.get_devices_byname(mdevice)
         models = model.get_devices()
+        prefs = model.get_preferences()
         tmd['m_detail']=model.get_roms_by_devicesname(mdevice,-1)
-        self.render("index_allroms.html",models=models, roms=tmd, strtime=utils.strtime,getStatuStr=config.getStatuStr)
+        result  = self.render_string("index_allroms.html",models=models, roms=tmd, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
+        self.write(result)
+        ## Put result into cache.
+        model.set_Cache(cachename, result)
+        return
 
 class ErrorPage(BaseAction):
     def get(self):
