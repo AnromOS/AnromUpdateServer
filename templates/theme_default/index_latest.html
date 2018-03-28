@@ -1,0 +1,53 @@
+{% extends "index_base.html" %}
+
+{% block pagetitle %}
+{{ escape(prefs.get("site_name","")) }} . {{ escape(prefs.get("site_info","")) }}
+{% end %}
+
+{% block pageheader %}
+<p><strong>{{ escape(prefs.get("site_name","")) }} </strong><small>{{ escape(prefs.get("site_info","")) }}</small></p>
+{% end %}
+
+{% block pagenavbar %}
+    {% for post in models %}
+    <li><a href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>
+    {% end %}  
+{% end %}
+
+{% block pagesidebar %} 
+  <table class="table" >
+        <tbody>
+          {% for post in models %}
+            <tr>
+                <td><img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/></td>
+                <td><a name="devices" href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
+            </tr>
+          {% end %}  
+        </tbody>
+  </table>
+
+{% end %}
+ 
+{% block pagebody %}
+  {% for post in models %}
+    {% if post.get('m_pub_ipv4','0') == '1' %}
+    <div class="media">
+      <div class="media-left media-middle">
+        <a name="{{ escape(post['m_device']) }}" href="#devices">
+          <img class="media-object img-rounded" height=72px width=72px src="{{ escape(post['m_modpicture']) }}" alt="...">
+        </a>
+      </div>
+      {% for det in post['m_detail'] %}
+      <div class="media-body">
+        <a href="{{ escape(det['url']) }}" target="_blank"><h4 class="media-heading"> {{ escape(post['m_modname']) }} </h4></a>
+        <div class="column hidden-xs">
+          <p>MD5: {{ escape(det['md5sum']) }}</p>
+          <p><small>{{ escape(det['version']) }}</small> . <small> {{ escape(strtime(det['issuetime'])) }}</small></p>
+        </div>
+      </div>
+      {% end %}
+
+    </div>
+    {% end %}
+  {% end %}
+{% end %}

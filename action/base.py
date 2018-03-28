@@ -93,6 +93,27 @@ class base(tornado.web.RequestHandler):
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 
+    def dumpLatestReleaseSymbols(self):
+        '''dump all released symbol files. only released version. '''
+        models = model.get_devices()
+        prefs = model.get_preferences()
+        for post in models:
+            if(post.get('m_pub_ipv4','0') != '1'):
+                continue
+            post['m_detail']=model.get_available_roms_by_modelid(post['m_device'],"release")
+            #1. rewrie the url, 2. create the softlink for latest downloadfile.
+            for detail in post['m_detail']:
+                i_realName = detail.get('filename','')
+                i_path = 'static/downloads/'+ post['m_device'] +'/'
+                fcut =  detail.get('filename','').split('.')
+                if(len(fcut)<=0):continue
+                f_apx = fcut[-1]
+                detail['filename'] = post['m_device']+'.latest.'+f_apx
+                detail['url']= prefs.get('site_domain_ipv4','')+ "/" + i_path + detail['filename']
+                # create softlink
+                print('dumping symbol link:'+ i_path + detail['filename'])
+                utils. createSymbol(config.ROOT_PATH + i_path + i_realName, config.ROOT_PATH + i_path + detail['filename'])
+
     def dump2Json(self, channels):
         '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''
         print("Dumping products data to latest_%s.json...."%channels)
@@ -154,3 +175,4 @@ class base(tornado.web.RequestHandler):
         self.dump2Json(r"release")
         self.dump2Json(r"nightly")
         self.dump2Json(r"all")
+        self.dumpLatestReleaseSymbols()

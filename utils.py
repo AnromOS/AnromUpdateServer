@@ -67,6 +67,11 @@ def run(command):
         out, err = p.communicate()
         return out
 
+def createSymbol(path1, path2):
+    if os.path.exists(path2):
+        os.remove(path2)
+    os.symlink(path1, path2)
+
 def sha1(value):
     return hashlib.sha1(value.encode()).hexdigest()
 

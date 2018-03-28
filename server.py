@@ -23,6 +23,7 @@ import os,sys
 handlers = [
     ##for web view
     ('/',                action.cms.Index),
+    ('/latest',                action.cms.Latest), #/latest
     ('/allroms/([A-Za-z0-9_\-\.]*?)',   action.cms.Allroms), #/allroms/[devicename]
     ('/api',             action.api.API), #for client API
     ('/api/v1/build/get_delta',  action.api.API_DELTA), #for delta client API
