@@ -1,11 +1,11 @@
 {% extends "index_base.html" %}
 
 {% block pagetitle %}
-Ancode 安全快速|下一代互联网
+{{ escape(prefs.get("site_name","")) }} . {{ escape(prefs.get("site_info","")) }}
 {% end %}
 
 {% block pageheader %}
-<p><strong>Ancode </strong><small>安全快速|下一代互联网</small></p>
+<p><strong>{{ escape(prefs.get("site_name","")) }} </strong><small>{{ escape(prefs.get("site_info","")) }} </small></p>
 {% end %}
 
 {% block pagenavbar %}
@@ -59,4 +59,8 @@ Ancode 安全快速|下一代互联网
     {% end %}   
     </tbody>
   </table>
+{% end %}
+
+{% block pagefriendlinks %}
+{% raw prefs.get("site_outlink","") %}
 {% end %}

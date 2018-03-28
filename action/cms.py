@@ -6,7 +6,11 @@
 import model,utils,config
 from action.base import base as BaseAction
 
-class Index(BaseAction):
+class CMSBase(BaseAction):
+    def get_template_path(self):
+        return config.DEFAULT_FRONT_THEME
+
+class Index(CMSBase):
     def get(self):
         """ Show page """
         ##lookup Cache
@@ -26,7 +30,7 @@ class Index(BaseAction):
         model.set_Cache(cachename, result)
         return
 
-class Allroms(BaseAction):
+class Allroms(CMSBase):
      def get(self,mdevice):
         """ Show single page """
         ##lookup Cache

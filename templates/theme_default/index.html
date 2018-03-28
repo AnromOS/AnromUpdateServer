@@ -1,11 +1,11 @@
 {% extends "index_base.html" %}
 
 {% block pagetitle %}
-Ancode 安全快速|下一代互联网
+{{ escape(prefs.get("site_name","")) }} . {{ escape(prefs.get("site_info","")) }}
 {% end %}
 
 {% block pageheader %}
-<p><strong>Ancode </strong><small>安全快速|下一代互联网</small></p>
+<p><strong>{{ escape(prefs.get("site_name","")) }} </strong><small>{{ escape(prefs.get("site_info","")) }}</small></p>
 {% end %}
 
 {% block pagenavbar %}
@@ -30,17 +30,10 @@ Ancode 安全快速|下一代互联网
  
 {% block pagebody %}
     {% for post in models %}
-      <div class="media">
-          <div class="media-left media-middle">
-                <a name="{{ escape(post['m_device']) }}" href="#devices">
-                  <img class="media-object img-rounded" height=96px width=96px src="{{ escape(post['m_modpicture']) }}" alt="...">
-                </a>
-            </div>
-          <div class="media-body">
-              <a href="/allroms/{{ escape(post['m_device']) }}" ><h4 class="media-heading"> {{ escape(post['m_modname']) }}</h4></a>
-              <div class="column hidden-xs"><p>{{ escape(post['m_moddescription']) }}</p></div>
-              <p><small> {{ escape(strtime(post['m_time'])) }}</small></p>
-          </div>
+      <div>
+        <a name="{{ escape(post['m_device']) }}" href="/allroms/{{ escape(post['m_device']) }}">
+          <h4 class="page-header"> <img class="img-rounded" height=42px width=42px src="{{ escape(post['m_modpicture']) }}" alt="..."> {{ escape(post['m_modname']) }}</h4>
+        </a>
       </div>
 
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
@@ -65,4 +58,8 @@ Ancode 安全快速|下一代互联网
             </table>
             <p class="text-right"><a href="/allroms/{{ escape(post['m_device']) }}">更多历史版本...</a></p>
     {% end %}
+{% end %}
+
+{% block pagefriendlinks %}
+{% raw prefs.get("site_outlink","") %}
 {% end %}

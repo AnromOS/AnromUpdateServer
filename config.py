@@ -32,6 +32,9 @@ COOKIE_SECRET="bc4c516d9ab23c22c65ea2483aae5ba34c907f46f6d8dae11ece24004f486330"
 ##设置cookie的超时时间，默认半个小时。
 COOKIE_EXPIRE=1800
 
+##前台主题设置
+DEFAULT_FRONT_THEME="templates/theme_default"
+
 #ROOT path
 ROOT_PATH=os.getcwd()+'/'
 

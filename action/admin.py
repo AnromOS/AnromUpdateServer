@@ -18,22 +18,14 @@ class PublishIndex(BaseAction):
         usrrpt = model.get_user_report_counts()
         users = model.get_all_users()
         curusr = model.get_user_by_uname(self.current_user)
-        devices =[]
         for post in models:
-            devi={}
-            devi['m_device'] = post['m_device']
-            devi['m_modname'] = post['m_modname']
-            devi['m_modpicture'] = post['m_modpicture']
-            devi['m_moddescription'] = post['m_moddescription']
-            devi['m_time'] = int(post['m_time'])
-            devi['m_count'] = model.get_devices_counts_byname(devi['m_device'])
-            devi['m_detail'] = {'version':""}
-            mdtop = model.get_roms_by_devicesname(devi['m_device'],5)
+            post['m_count'] = model.get_devices_counts_byname(post['m_device'])
+            post['m_detail'] = {'version':""}
+            mdtop = model.get_roms_by_devicesname(post['m_device'],5)
             for itm in mdtop:
-                devi['m_detail'] = itm
+                post['m_detail'] = itm
                 break
-            devices.append(devi)
-        self.render("publish_index.html", models=devices,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr, accessAdmin = self.accessAdmin())
+        self.render("publish_index.html", models=models,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr, accessAdmin = self.accessAdmin())
 
 class PublishNewApp(BaseAction):
     '''#发布新的应用'''
@@ -66,6 +58,7 @@ class PublishNewApp(BaseAction):
             mname = self.get_argument("mname","")
             mdscpt = self.get_argument("mdescription","")
             mupfiles = list(self.request.files.items())
+            m_pub_ipv4 = self.get_argument("m_pub_ipv4",0)
             mtime = int(time.time())
             picname =config.DEFAULT_APPCAPTION
             #2, 保存标题图和封面图
@@ -77,7 +70,7 @@ class PublishNewApp(BaseAction):
             #2, 为上传的增加保存目录，请确保这里有权限操作
             utils.createDirs("static/downloads/"+mdevice)
             #3, 保存在数据库里
-            model.save_device(mdevice, mname, picname, mdscpt, mtime, self.current_user)
+            model.save_device(mdevice, mname, picname, mdscpt, mtime, self.current_user,m_pub_ipv4)
             self.logI(u"保存发布产品线信息:%s:%s"%(mdevice, mname))
         #管理员更改了数据，把产品数据导出成json文件
         self.dumpAllProduct2Json()
@@ -170,6 +163,37 @@ class PublishRomList(BaseAction):
         users = model.get_all_users()
         self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
             
+class Settings(BaseAction):
+    '''管理网站的设置信息'''
+    @tornado.web.authenticated
+    def get(self):
+        if not self.accessAdmin():
+            self.permissionDenied()
+            return
+        prefs = model.get_preferences()
+        self.render("publish_settings.html", prefs=prefs, ptitle ="网站设置")
+    
+    @tornado.web.authenticated    
+    def post(self):
+        if not self.accessAdmin():
+            self.permissionDenied()
+            return
+        a = self.get_argument("a","")
+        if (not a=="add"): return
+        site_name = self.get_argument("site_name","")
+        site_info = self.get_argument("site_info","")
+        site_domain_ipv4 = self.get_argument("site_domain_ipv4","")
+        site_outlink = self.get_argument("site_outlink","")
+        
+        model.save_pref("site_name",site_name)
+        model.save_pref("site_info",site_info)
+        model.save_pref("site_domain_ipv4",site_domain_ipv4)
+        model.save_pref("site_outlink",site_outlink)
+        ##清除缓存页面 
+        model.purge_Cache()
+        self.logW("更改了网站配置.")
+        self.seeother("/publish")
+
 class UserReport(BaseAction):
     '''#查看后台用户反馈'''
     @tornado.web.authenticated

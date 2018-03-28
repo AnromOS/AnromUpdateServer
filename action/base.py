@@ -28,6 +28,9 @@ class base(tornado.web.RequestHandler):
             return user_id
         else: return None
     
+    def get_template_path(self):
+        return "templates/backend"
+    
     def countPrivilege(self):
         '''根据预置的秘密计算一个时间相关的随机数，每分钟变一次，用来发布ROM的时候做验证。'''
         secret = config.AUTOPUB_SECRET

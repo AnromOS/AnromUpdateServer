@@ -23,6 +23,14 @@
             <label for="mpicture">上传应用图标</label>
             <input type="file" name="mpicture" id="mpicture"></input>
           </div>
+
+          <div class="form-group">
+            <label for="m_pub_ipv4">发布版对外可见（默认对外不可见）:  </label><br>
+            <div class="radio-inline">
+              <label><input type="checkbox" name="m_pub_ipv4" id="m_pub_ipv4" value="1" {% if (pupdate!=None) and (pupdate.get('m_pub_ipv4','0')=='1') %} checked="true" {% end %}/> 对外可见 </label>
+            </div>
+          </div>
+
           {% module xsrf_form_html() %}
         <input  class="btn btn-primary" type="submit" value="完成"/>
         </form>

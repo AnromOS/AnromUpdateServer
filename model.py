@@ -30,7 +30,7 @@ def get_devices_byname(mdevice):
     result = redis_db.hgetall(hindex)
     return result
    
-def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
+def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser, mpubV4=1):
     '''保存某个机型的配置'''
     hindex="upserver:tmodel:%s"%mdevice
     print("saving new product:",mdevice,mmod)
@@ -44,7 +44,8 @@ def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser):
     "m_modpicture":mpic,
     "m_moddescription":mdescpt,
     "m_issue_uname":muser,
-    "m_time":mtime
+    "m_time":mtime,
+    "m_pub_ipv4":mpubV4
     }
     redis_db.hmset(hindex,mdetail)
     ##DB changed, so we purge the global cache. 
