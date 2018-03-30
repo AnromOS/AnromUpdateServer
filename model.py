@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 #coding=utf-8
+'''Middle layer of database and API.'''
 import time,datetime,hashlib,json,re
 import redis
 import config
 
-#1.本应用所有的key以upserver:开头
-#2.
+'''
+1.本应用所有的key以upserver:开头
+2. decode_responses=True
+'''
 redis_db = redis.StrictRedis(host=config.netpref['REDIS_HOST'], port=config.netpref['REDIS_PORT'], db=config.netpref['REDIS_DB'], password=config.netpref['REDIS_PASSWORD'],decode_responses=True)
 
 chanPatten= re.compile('\[.*?\]')
@@ -152,6 +155,7 @@ def delete_rom_by_id(wid):
 
 #### 网站用户管理
 def get_all_users():
+    '''return a dict of all users'''
     uinfos = redis_db.hgetall("upserver:users")
     result = {}
     for uname in uinfos.keys():
@@ -203,6 +207,7 @@ def del_user_report():
 
 #### 用户操作日志
 def get_audit_log_counts():
+    '''return how many logs'''
     return redis_db.llen("upserver:audit")
 
 def post_audit_log(ftag, fcontent,ftime):
@@ -218,12 +223,14 @@ def get_audit_log(pg, pagesize):
     return items
     
 def del_audit_log():
+    '''Delete all audit logs'''
     ##DB changed, so we purge the global cache. 
     purge_Cache()
     return redis_db.delete("upserver:audit")
     
 ### preference
 pref_cache ={}
+
 ## for web admin
 def get_preferences():
     '''获取网站的所有配置字段'''
@@ -246,6 +253,7 @@ def get_pref(name):
         return None
 
 ###全局缓存
+
 def get_Cache(cachename, result):
     pname = 'upserver:cache:'
     if(redis_db.hexists(pname,cachename)):
@@ -257,6 +265,7 @@ def set_Cache(cachename, cachevalue):
     redis_db.hset(pname, cachename, cachevalue)
 
 def purge_Cache():
+    '''Delete all cached data.'''
     pname = 'upserver:cache:'
     redis_db.delete(pname)
 

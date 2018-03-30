@@ -18,11 +18,13 @@
   <table class="table" >
         <tbody>
           {% for post in models %}
+            {% if post.get('m_pub_ipv4','0') == '1' %}
             <tr>
                 <td><img class="img-rounded" height=20px src="{{ escape(post['m_modpicture']) }}"/></td>
                 <td><a name="devices" href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></td>
             </tr>
-          {% end %}  
+            {% end %}
+          {% end %}
         </tbody>
   </table>
 
