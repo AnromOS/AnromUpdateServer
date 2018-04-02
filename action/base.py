@@ -126,10 +126,11 @@ class base(tornado.web.RequestHandler):
         tloader = tornado.template.Loader(config.DEFAULT_FRONT_THEME)
         result  = tloader.load("index_latest.html").generate(models=models, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
         utils.saveBin(exportRoot+'index.html',result)
-        # copy rest static files
+        # copy the rest of static files
         utils.cp_r(config.ROOT_PATH + 'static/bootstrap', exportRoot +'static/bootstrap')
         utils.cp_r(config.ROOT_PATH + 'static/images', exportRoot +'static/images')
         utils.cp(config.ROOT_PATH + 'static/jquery-1.12.4.min.js', exportRoot +'static/jquery-1.12.4.min.js')
+        utils.cp(config.ROOT_PATH + 'static/favicon.ico', exportRoot +'static/favicon.ico')
 
     def dump2Json(self, channels):
         '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''
