@@ -4,11 +4,11 @@
 # 2017.12.10: Switched into Tornado
 
 import tornado.web
+import tornado.template
 import model,config,utils
 import json,time,base64
 import urllib.request,urllib.error,urllib.parse
 import re
-import os
 
 class base(tornado.web.RequestHandler):
 
@@ -94,9 +94,17 @@ class base(tornado.web.RequestHandler):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 
     def dumpLatestReleaseSymbols(self):
-        '''dump all released symbol files. only released version. '''
+        '''Follow these rules:
+        1. Export all newest release version into ONE standalone HTML file. 
+        2. Copy all newest relaesed file into standalone folder.
+        3. Administrator could copy this folder to anywhere he wanted to.
+         '''
         models = model.get_devices()
         prefs = model.get_preferences()
+        exportRoot= prefs.get('site_export_path','/tmp/export/')
+        # create exported path
+        utils.createDirs(exportRoot)
+        # start export
         for post in models:
             if(post.get('m_pub_ipv4','0') != '1'):
                 continue
@@ -109,10 +117,19 @@ class base(tornado.web.RequestHandler):
                 if(len(fcut)<=0):continue
                 f_apx = fcut[-1]
                 detail['filename'] = post['m_device']+'.latest.'+f_apx
-                detail['url']= prefs.get('site_domain_ipv4','')+ "/" + i_path + detail['filename']
+                # detail['url']= prefs.get('site_domain_ipv4','')+ "/" + detail['filename']
+                detail['url']= "/" + detail['filename']
                 # create softlink
                 print('dumping symbol link:'+ i_path + detail['filename'])
-                utils. createSymbol(config.ROOT_PATH + i_path + i_realName, config.ROOT_PATH + i_path + detail['filename'])
+                utils.cp(config.ROOT_PATH + i_path + i_realName, exportRoot + detail['filename'])
+        # render to standalone html.
+        tloader = tornado.template.Loader(config.DEFAULT_FRONT_THEME)
+        result  = tloader.load("index_latest.html").generate(models=models, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
+        utils.saveBin(exportRoot+'index.html',result)
+        # copy rest static files
+        utils.cp_r(config.ROOT_PATH + 'static/bootstrap', exportRoot +'static/bootstrap')
+        utils.cp_r(config.ROOT_PATH + 'static/images', exportRoot +'static/images')
+        utils.cp(config.ROOT_PATH + 'static/jquery-1.12.4.min.js', exportRoot +'static/jquery-1.12.4.min.js')
 
     def dump2Json(self, channels):
         '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''

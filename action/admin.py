@@ -184,11 +184,14 @@ class Settings(BaseAction):
         site_info = self.get_argument("site_info","")
         site_domain_ipv4 = self.get_argument("site_domain_ipv4","")
         site_outlink = self.get_argument("site_outlink","")
+        site_export_path = self.get_argument("site_export_path","")
         
         model.save_pref("site_name",site_name)
         model.save_pref("site_info",site_info)
         model.save_pref("site_domain_ipv4",site_domain_ipv4)
         model.save_pref("site_outlink",site_outlink)
+        model.save_pref("site_export_path",site_export_path)
+        
         ##清除缓存页面 
         model.purge_Cache()
         self.logW("更改了网站配置.")

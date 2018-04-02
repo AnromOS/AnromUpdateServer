@@ -2,7 +2,7 @@
 #coding=utf-8
 #
 import subprocess
-import os,time,random
+import os,time,random,shutil
 import urllib.request, urllib.parse, urllib.error,urllib.request,urllib.error,urllib.parse
 import hashlib
 import markdown
@@ -71,6 +71,18 @@ def createSymbol(path1, path2):
     if os.path.exists(path2):
         os.remove(path2)
     os.symlink(path1, path2)
+
+def cp(src,dest):
+    print("copying file:" + src +" " + dest)
+    if os.path.exists(dest):
+        os.remove(dest)
+    shutil.copy(src,dest)
+
+def cp_r(src,dest):
+    print("copying folder:" + src +" " + dest)
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    shutil.copytree(src,dest)
 
 def sha1(value):
     return hashlib.sha1(value.encode()).hexdigest()

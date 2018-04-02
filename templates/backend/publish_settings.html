@@ -10,19 +10,24 @@
     <form action="?a=add" method="post" class="form" role="form" enctype="multipart/form-data">
           <!-- 网站设置 start -->
           <div class="form-group">
-            
+            <h4 class = "page-header">一般设置</h4>
             <label for="site_name">网站名称(site_name)</label>
             <input type="text" name="site_name" id="site_name" value="{{ escape(prefs.get('site_name','')) }}" class="form-control" placeholder="啥？">
             
             <label for="site_info">网站介绍(site_info)</label>
             <input type="text" name="site_info" id="site_info" value="{{ escape(prefs.get('site_info','')) }}" class="form-control" placeholder="如何描述呢">
             
-            <label for="site_domain_ipv4">网站IPv4 domain(site_domain_ipv4)</label>
-            <textarea type="text" name="site_domain_ipv4" id="site_domain_ipv4"  class="form-control" rows="1" placeholder="i.e https://example.mixun.org" >{{ prefs.get('site_domain_ipv4','') }}</textarea>
-            
             <label for="site_outlink">外部链接(可以插入任意html代码)</label>
             <textarea type="text" name="site_outlink" id="site_outlink"  class="form-control" rows="5" placeholder="<ul><li>a</li></ul>" >{{ prefs.get('site_outlink','') }}</textarea>
-           </div> 
+           
+            <h4 class = "page-header">导出设置</h4>
+            <label for="site_domain_ipv4">网站IPv4 domain(site_domain_ipv4)</label>
+            <textarea type="text" name="site_domain_ipv4" id="site_domain_ipv4"  class="form-control" rows="1" placeholder="i.e https://example.mixun.org" >{{ prefs.get('site_domain_ipv4','') }}</textarea>
+
+            <label for="site_export_path">发布页面导出路径(site_export_path)</label>
+            <textarea type="text" name="site_export_path" id="site_export_path"  class="form-control" rows="1" placeholder="i.e /tmp/export/" >{{ prefs.get('site_export_path','') }}</textarea>
+           </div>          
+
            <!-- 网站设置 end -->
         {% module xsrf_form_html() %}  
         <input  class="btn btn-primary" type="submit" value="完成"/>
