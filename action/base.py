@@ -104,6 +104,7 @@ class base(tornado.web.RequestHandler):
         exportRoot= prefs.get('site_export_path','/tmp/export/')
         # create exported path
         utils.createDirs(exportRoot)
+        self.logI("导出最新下载页面:%s"%(exportRoot))
         # start export
         for post in models:
             if(post.get('m_pub_ipv4','0') != '1'):
@@ -140,6 +141,7 @@ class base(tornado.web.RequestHandler):
         body={}
         products=[]
         dumpfilename = r'static/downloads/latest_'+channels+'.json'
+        self.logI("导出json:%s"%(dumpfilename))
         for post in models:
             devi={}
             devi['id'] = post['m_device']

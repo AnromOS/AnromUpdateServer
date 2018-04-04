@@ -20,8 +20,10 @@
             <textarea type="text" name="mdescription" id="mdescription" rows=3 class="form-control" placeholder="用一段文字描述这个产品">{% if (pupdate!=None) %} {{ escape(pupdate['m_moddescription']) }} {% end %}</textarea>
           </div>
           <div class="form-group">
-            <label for="mpicture">上传应用图标</label>
+            <label for="mpicture">上传应用图标 {% if pupdate %} <img class="img-rounded" height=35px src="{{ escape(pupdate['m_modpicture']) }}"/> {% end %}</label>
             <input type="file" name="mpicture" id="mpicture"></input>
+             <!-- 避免每次都上传图片 -->
+            {% if pupdate %} <input type="text" name="mpicturename" id="mpicturename" class="hidden" value="{{ escape(pupdate['m_modpicture']) }}" > {% end %}
           </div>
 
           <div class="form-group">

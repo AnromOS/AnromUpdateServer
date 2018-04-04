@@ -58,9 +58,9 @@ class PublishNewApp(BaseAction):
             mname = self.get_argument("mname","")
             mdscpt = self.get_argument("mdescription","")
             mupfiles = list(self.request.files.items())
+            picname = self.get_argument("mpicturename",config.DEFAULT_APPCAPTION)
             m_pub_ipv4 = self.get_argument("m_pub_ipv4",'0')
             mtime = int(time.time())
-            picname =config.DEFAULT_APPCAPTION
             #2, 保存标题图和封面图
             for (field, mpic) in mupfiles:
                 for picfile in mpic:
