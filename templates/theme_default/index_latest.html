@@ -10,7 +10,7 @@
 
 {% block pagenavbar %}
     {% for post in models %}
-    <li><a href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>
+    {% if post.get('m_pub_ipv4','0') == '1' %}<li><a href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>{% end %}
     {% end %}  
 {% end %}
 
