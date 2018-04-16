@@ -114,9 +114,11 @@ class base(tornado.web.RequestHandler):
             for detail in post['m_detail']:
                 i_realName = detail.get('filename','')
                 i_path = 'static/downloads/'+ post['m_device'] +'/'
-                fcut =  detail.get('filename','').split('.')
+                fcut =  i_realName.split('.')
                 if(len(fcut)<=0):continue
                 f_apx = fcut[-1]
+                if(i_realName.lower().endswith('.tar.gz')):
+                    f_apx = 'tar.gz'
                 detail['filename'] = post['m_device']+'.latest.'+f_apx
                 # detail['url']= prefs.get('site_domain_ipv4','')+ "/" + detail['filename']
                 detail['url']= "/" + detail['filename']

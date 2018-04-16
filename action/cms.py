@@ -48,9 +48,11 @@ class Latest(CMSBase):
             for detail in post['m_detail']:
                 i_realName = detail.get('filename','')
                 i_path = 'static/downloads/'+ post['m_device'] +'/'
-                fcut =  detail.get('filename','').split('.')
+                fcut =  i_realName.split('.')
                 if(len(fcut)<=0):continue
                 f_apx = fcut[-1]
+                if(i_realName.lower().endswith('.tar.gz')):
+                    f_apx = 'tar.gz'
                 detail['filename'] = post['m_device']+'.latest.'+f_apx
                 detail['url']= prefs.get('site_domain_ipv4','')+ "/" + i_path + detail['filename']
         result  = self.render_string("index_latest.html", models=models, prefs=prefs, strtime=utils.strtime,getStatuStr=config.getStatuStr)
