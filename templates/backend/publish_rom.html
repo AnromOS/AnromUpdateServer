@@ -26,11 +26,11 @@
           <div class="form-group">
             <label for="channels">版本通道（若不选通道，则对外不可见）:  </label><br>
             <div class="radio-inline">
-              <label><input type="checkbox" name="ch1" id="nightly" value="[nightly]"/>内部版（nightly）  </label>
+              <label><input type="checkbox" name="ch1" id="nightly" value="[nightly]" {% if (pupgrade!=None and pupgrade['channels'].find('nightly')>=0) %} checked {% end %} />内部版（nightly）  </label>
             </div>
             {% if accessAdmin %}
                 <div class="radio-inline">
-                  <label><input type="checkbox" name="ch2" id="release" value="[release]"/>正式版（release）</label>
+                  <label><input type="checkbox" name="ch2" id="release" value="[release]" {% if (pupgrade!=None and pupgrade['channels'].find('release')>=0) %} checked {% end %} />正式版（release）</label>
                 </div>
             {% end %}
           </div>
@@ -54,7 +54,7 @@
           <div class="form-group">
             <label for="status">自定义特性:  </label>
             <div class="radio-inline">
-              <label><input type="radio" name="status" id="status" value="1" />开启强制升级 </label>
+              <label><input type="checkbox" name="status" id="status" value="1" {% if (pupgrade!=None and pupgrade['status']=='1') %} checked {% end %}/>开启强制升级 </label>
             </div>
           </div>
           
