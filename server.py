@@ -33,6 +33,7 @@ handlers = [
     ('/publish',                 action.admin.PublishIndex),# for web 
     ('/publish/device',          action.admin.PublishNewApp), #for web 发布新的应用
     ('/publish/romslist/([A-Za-z0-9_\-\.]*?)',    action.admin.PublishRomList), #for web
+    ('/publish/romslistfiles/([A-Za-z0-9_\-\.]*?)',    action.admin.PublishRomListFiles), #for web
     ('/publish/rom/([A-Za-z0-9_\-\.]*?)', action.admin.PublishNewVersion), #for web 发布更新版本
     ('/publish/settings',      action.admin.Settings),
     ('/publish/userreport',      action.admin.UserReport), #for web 

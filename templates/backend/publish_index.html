@@ -22,6 +22,7 @@
                   <th></th>
                   <th>应用(ID) </th>
                   <th>已发布版本(数量)</th>
+                  <th>管理上传文件</th>
                   <th>最新版本</th>
                   <th>发布时间</th>
                   <th>操作 </th>
@@ -35,6 +36,7 @@
                       <td><img class="img-rounded" height=35px src="{{ escape(post['m_modpicture']) }}"/></td>
                       <td>{{ escape(post['m_modname']) }} (<strong>{{ escape(post['m_device']) }}</strong>)</td>
                       <td><a href="/publish/romslist/{{ escape(post['m_device']) }}" > 点击查看 ({{ post['m_count'] }})</a> </td>
+                      <td><a href="/publish/romslistfiles/{{ escape(post['m_device']) }}" > 查看文件</a> </td>
                       <td>{{ escape(post['m_detail']['version']) }}</td>
                       <td>{{ escape(strtime(post['m_time'])) }}</td>
                       <td><a href="/publish/rom/{{ escape(post['m_device']) }}" >添加</a></td>
@@ -80,7 +82,6 @@
     <div class="col-sm-12 col-xs-12 col-md-8">
         <div class="panel panel-primary">
             <div class="panel-heading">服务器配置</div>
-            <div class="panel-body" > </div>
             <table id="movie-table" class="table table-striped" style="word-break:break-all; word-wrap:break-all;">
                <tbody>
                    <tr>
@@ -124,6 +125,15 @@
                </tbody>
             </table>
             
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-xs-12 col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">服务器空间</div>
+            <div class="panel-body" > 
+            <pre class="codehilite"><code>{{ netpref['diskuseage'] }}</code></pre>
+            </div>
         </div>
     </div>
     

@@ -36,7 +36,7 @@
           </div>
           
           <div class="form-group">
-            <label for="muploadedfile">上传文件到本站所在服务器（若选择上传文件则不必填写url, size, md5sum字段）</label>
+            <label for="muploadedfile">上传文件到本站所在服务器,最大110MB（若选择上传文件则不必填写url, size, md5sum字段）</label>
             <input type="file" name="muploadedfile" id="muploadedfile"/>
           </div>
           
@@ -54,7 +54,7 @@
           <div class="form-group">
             <label for="status">自定义特性:  </label>
             <div class="radio-inline">
-              <label><input type="checkbox" name="status" id="status" value="1" {% if (pupgrade!=None and pupgrade['status']=='1') %} checked {% end %}/>开启强制升级 </label>
+              <label><input type="checkbox" name="status" id="status" value="1" {% if (pupgrade!=None and pupgrade['status']=='1') %} checked {% end %}/>开启强制升级(status) </label>
             </div>
           </div>
           

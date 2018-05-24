@@ -25,7 +25,9 @@ class PublishIndex(BaseAction):
             for itm in mdtop:
                 post['m_detail'] = itm
                 break
-        self.render("publish_index.html", models=models,  prefs=prefs, netpref=config.netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr, accessAdmin = self.accessAdmin())
+        netpref=config.netpref
+        netpref['diskuseage'] = utils.run('df -h')
+        self.render("publish_index.html", models=models,  prefs=prefs, netpref=netpref, usrrpt=usrrpt,users=users,curusr=curusr, strtime=utils.strtime, getStatuStr=config.getStatuStr, accessAdmin = self.accessAdmin())
 
 class PublishNewApp(BaseAction):
     '''#发布新的应用'''
@@ -162,6 +164,28 @@ class PublishRomList(BaseAction):
         romlists = model.get_roms_by_devicesname(modname,-1)
         users = model.get_all_users()
         self.render("publish_romlist.html", netpref=config.netpref, name=modname, roms=romlists,users=users,  ptitle ="已经发布的更新列表", strdate=utils.strtime, getStatuStr=config.getStatuStr)
+
+class PublishRomListFiles(BaseAction):
+    '''#上传的文件统一管理'''
+    @tornado.web.authenticated
+    def get(self,modname):
+        a = self.get_argument("a","")
+        f = self.get_argument('f','')
+        if (a=='del'):
+            fname = "static/downloads/" + modname + '/'+ f
+            utils.run('rm -f '+ fname)
+            self.logW("删除文件:%s:%s"%(modname, fname))
+        f1 = str(utils.run('ls -l '+ "static/downloads/" + modname))
+        filelist = []
+        f2 = f1.split('\\n')
+        for finfo in f2:
+            f3 = {}
+            f3['info'] = finfo
+            f3['filename'] = finfo.split(' ')[-1]
+            filelist.append(f3)
+        users = model.get_all_users()
+        self.render("publish_romlistfiles.html", netpref=config.netpref, name=modname, filelist=filelist,users=users,  ptitle ="统一管理上传的文件", strdate=utils.strtime, getStatuStr=config.getStatuStr)
+
             
 class Settings(BaseAction):
     '''管理网站的设置信息'''
