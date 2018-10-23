@@ -135,6 +135,18 @@ class base(tornado.web.RequestHandler):
         utils.cp(config.ROOT_PATH + 'static/jquery-1.12.4.min.js', exportRoot +'static/jquery-1.12.4.min.js')
         utils.cp(config.ROOT_PATH + 'static/favicon.ico', exportRoot +'static/favicon.ico')
 
+    def dumpVersion2Json(self, modname,  wid):
+        _info = model.get_rom_by_wid(wid)
+        result ={}
+        if(_info):
+            _vid = _info['version']
+            _dumpfilename = 'static/downloads/'+modname+'/uinfo_'+ _vid +'.json'
+            result = json.dumps(_info,ensure_ascii=False)
+            utils.saveBin(_dumpfilename,result)
+            self.logI("导出json:%s"%(_dumpfilename))
+            print('Dumping products..:',wid, _dumpfilename)
+        return result
+
     def dump2Json(self, channels):
         '''把所有的数据库中的数据输出到json文件, channels 可以写 release, nightly, all'''
         print("Dumping products data to latest_%s.json...."%channels)

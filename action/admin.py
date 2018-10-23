@@ -148,8 +148,9 @@ class PublishNewVersion(BaseAction):
                 extra = self.get_argument("extra","")
                 issuetime = int(time.time())
                 m_time = issuetime
-                model.save_rom_new(wid,modname, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, self.current_user,issuetime, m_time)
+                wid = model.save_rom_new(wid,modname, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, self.current_user,issuetime, m_time)
                 self.logI(u"保存发布版本信息:%s:%s"%(modname, version))
+                self.dumpVersion2Json(modname, wid)
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             if(privileged):
