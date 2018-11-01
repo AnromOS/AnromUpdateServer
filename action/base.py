@@ -132,7 +132,8 @@ class base(tornado.web.RequestHandler):
         # copy the rest of static files
         utils.cp_r(config.ROOT_PATH + 'static/bootstrap', exportRoot +'static/bootstrap')
         utils.cp_r(config.ROOT_PATH + 'static/images', exportRoot +'static/images')
-        utils.cp(config.ROOT_PATH + 'static/jquery-1.12.4.min.js', exportRoot +'static/jquery-1.12.4.min.js')
+        utils.cp_r(config.ROOT_PATH + 'static/jquery', exportRoot +'static/jquery')
+        utils.cp(config.ROOT_PATH + 'static/main.css', exportRoot +'static/main.css')
         utils.cp(config.ROOT_PATH + 'static/favicon.ico', exportRoot +'static/favicon.ico')
 
     def dumpVersion2Json(self, modname,  wid):

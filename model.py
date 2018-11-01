@@ -255,18 +255,18 @@ def get_pref(name):
 ###全局缓存
 
 def get_Cache(cachename, result):
-    pname = 'upserver:cache:'
+    pname = 'upserver:cache'
     if(redis_db.hexists(pname,cachename)):
         return redis_db.hget(pname, cachename)
     else: return result
 
 def set_Cache(cachename, cachevalue):
-    pname = 'upserver:cache:'
+    pname = 'upserver:cache'
     redis_db.hset(pname, cachename, cachevalue)
 
 def purge_Cache():
     '''Delete all cached data.'''
-    pname = 'upserver:cache:'
+    pname = 'upserver:cache'
     redis_db.delete(pname)
 
 ### database scheme.

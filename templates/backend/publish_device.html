@@ -3,9 +3,9 @@
 {% block body %}
 
 <div class="container">
-<div class="panel panel-primary">
-    <div class="panel-heading"><strong>{{ escape(ptitle) }}</strong> 添加一个新的应用</div>
-    <div class="panel-body">
+<div class="card">
+    <div class="card-header"><strong>{{ escape(ptitle) }}</strong> 添加一个新的应用</div>
+    <div class="card-body">
       <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           <div class="form-group">
             <label for="mdevice">应用ID(应用的唯一标识，不可重复，只能写英文或数字或 下划线_ 横- 点.) </label>
@@ -23,7 +23,7 @@
             <label for="mpicture">上传应用图标 {% if pupdate %} <img class="img-rounded" height=35px src="{{ escape(pupdate['m_modpicture']) }}"/> {% end %}</label>
             <input type="file" name="mpicture" id="mpicture"></input>
              <!-- 避免每次都上传图片 -->
-            {% if pupdate %} <input type="text" name="mpicturename" id="mpicturename" class="hidden" value="{{ escape(pupdate['m_modpicture']) }}" > {% end %}
+            {% if pupdate %} <input type="text" name="mpicturename" id="mpicturename" class="invisible" value="{{ escape(pupdate['m_modpicture']) }}" > {% end %}
           </div>
 
           <div class="form-group">

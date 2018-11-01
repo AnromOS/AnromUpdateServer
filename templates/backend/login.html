@@ -2,39 +2,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1 minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
     <title>管理员登陆</title>
     <link rel="icon" type="image/png" href="/static/favicon.ico">
-    <script src="/static/jquery-1.12.4.min.js"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-    
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="/static/main.css">
 </head>
 
 <body>    
 
 <!-- Home -->
-
-        <nav class="navbar navbar-inverse navbar-default">
-        <div class="container">
-                    <ul class="nav navbar-nav navbar-left">
-                    <li><a href="/">网站首页</a></li>
-                    <li><a href="{{ escape(loginpoint) }}">登陆</a></li>
-                    </ul> <!-- /navbar -->
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav mr-auto">
+                <li class ="nav-item "><a href="/" target="_blank" class="nav-link" >网站首页</a></li>
+                <li class ="nav-item active"><a href="{{ escape(loginpoint) }}" class="nav-link" >登陆</a></li>
+            </ul> <!-- /navbar -->
         </div>
-        </nav>
-    <br>
-    <br>
-    <div class="container">
-    <div class="row">
-      <div class="col-sm-12 col-xs-12 col-sm-3"></div>
-      
-      <div class="col-sm-12 col-xs-12 col-sm-6">
-        <div class="panel panel-info ">
-        <div class="panel-heading">用户登录</div>
-        <div class="panel-body">
+    </nav>
+</div>
+
+    <div class="row mt-3">
+      <div class="col-0 col-sm-0 col-md-0 col-lg-3 col-xl-3"></div>
+      <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+        <div class="card ">
+        <div class="card-header">用户登录</div>
+        <div class="card-body">
+            <div class="card-title">Login</div>
             <form action="{{ escape(loginpoint) }}" method="post"   role="form">
                 <div class="form-group">
                     <label for="uname" class="sr-only">
@@ -58,7 +58,10 @@
     </div>
     </div>
     
-
+    <script src="/static/jquery/jquery.slim.min.js"></script>
+    <script src="/static/jquery/popper.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
 
 </body>
 </html>

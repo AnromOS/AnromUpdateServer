@@ -3,8 +3,8 @@
 {% block body %}
 <h2><strong>应用 {{ escape(name) }} 的所有版本</strong></h2>
 
-        <div class="panel panel-default">
-        <div class="panel-heading"><strong>{{ escape(name) }} 已经发布的升级包 <a href="/publish/rom/{{ escape(name) }}" class="btn btn-link">添加新版本升级</a></strong></div>
+        <div class="card">
+        <div class="card-header"><strong>{{ escape(name) }} 已经发布的升级包 <a href="/publish/rom/{{ escape(name) }}" class="btn btn-link">添加新版本升级</a></strong></div>
         <table id="movie-table" class="table table-striped table-hover table-bordered table-condensed">
             <thead>
                 <tr>
@@ -17,7 +17,6 @@
                     <th>自定义特性</th>
                     <th>发布者</th>
                     <th>发布时间:</th>
-                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -37,8 +36,8 @@
                     <td><img class="img-rounded" height=35px src="/static/images/default_head.png"/> {{ escape(post['issue_uname']) }}</td> 
                     {% end %}
                     <td>{{ escape(strdate(post['issuetime'])) }}</td>
-                    <td><a class="text-left" href="/publish/rom/{{ escape(name) }}?a=edit&wid={{ escape(post['id']) }}&t=full">编辑</a> 
-                    <td><a class="text-right" href="/publish/rom/{{ escape(name) }}?a=del&wid={{ escape(post['id']) }}&t=full" >删除</a> </td>
+                    <td><a class="text-left btn" href="/publish/rom/{{ escape(name) }}?a=edit&wid={{ escape(post['id']) }}&t=full">编辑</a> 
+                    <td><a class="text-right btn" href="/publish/rom/{{ escape(name) }}?a=del&wid={{ escape(post['id']) }}&t=full" >删除</a> </td>
                 </tr>
             {% end %}    
             </tbody>

@@ -10,7 +10,7 @@
 
 {% block pagenavbar %}
     {% for post in models %}
-    <li><a href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>
+    <li class="nav-item"><a class="nav-link" href="/allroms/{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>
     {% end %}  
 {% end %}
 
@@ -30,7 +30,7 @@
 
 
 {% block pagebody %}
-  <div><h2 class="page-header"><img class="img-rounded" height=48px width=48px src="{{ escape(roms['m_modpicture']) }}" alt="..."> {{ escape(roms['m_modname']) }}</h2>
+  <div><h4 class="page-header"><img class="img-rounded" height=48px width=48px src="{{ escape(roms['m_modpicture']) }}" alt="..."> {{ escape(roms['m_modname']) }}</h4>
     <p>{{ escape(roms['m_moddescription']) }}</p>
     <p><small> {{ escape(strtime(roms['m_time'])) }}</small></p>
   </div>

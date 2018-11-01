@@ -4,13 +4,13 @@
 
 <div class="container">
 <div class ="col-sm-12 col-xs-12 col-md-12" style="word-break:break-all; word-wrap:break-all;">
-    <div class="panel panel-primary">
-    <div class="panel-heading"><strong>{{ escape(ptitle) }}</strong> 发布完整升级包</div>
-    <div class="panel-body">
+    <div class="card">
+    <div class="card-header"><strong>{{ escape(ptitle) }}</strong> 发布完整升级包</div>
+    <div class="card-body">
         <p>这个表单只是发布一个下载链接。升级文件可以用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
         <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
           <div class="form-group">
-            <input class="hidden" name="wid" id="wid" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['id']) }}"  {% else %} value="" {% end %}/>
+            <input type="hidden" class="invisible" name="wid" id="wid" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['id']) }}"  {% else %} value="" {% end %}/>
             <label for="version">版本(version)</label>
             <input type="text" name="version" id="version" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['version']) }}" {% else %} value="" {% end %} class="form-control" placeholder="软件版本号"/>
             
@@ -59,7 +59,7 @@
           </div>
           
           <div class="form-group">
-            <input class="hidden" name="wid" id="incremental" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['id']) }}" {% else %} value="" {% end %}>
+            <input class="invisible" name="wid" id="incremental" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['id']) }}" {% else %} value="" {% end %}><br>
             <label for="source_incremental">源版本增量标识(source_incremental) </label>
             <input type="text" name="source_incremental" id="source_incremental" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['source_incremental']) }}" {% else %} value="0" {% end %}
             class="form-control" placeholder="源版本增量标识,用于增量升级包，可以留空">

@@ -1,0 +1,153 @@
+/*bootstrap样式重写*/
+@charset "utf-8";
+
+html {
+	-moz-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	font-size: 100%
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: "cheltenham";
+	color: #333;
+	background-color: #fff
+}
+
+blockquote {
+	margin-top: 30px;
+	margin-right: 30px;
+	margin-bottom: 30px;
+	margin-left: 30px
+}
+
+strong,b {
+	font-weight: 700
+}
+
+form {
+	margin: 0
+}
+
+h1 {
+	font-size: 24px;
+	font-size: 1.5rem;
+	line-height: 26px;
+	line-height: 1.625rem;
+	font-weight: 700;
+	font-style: normal;
+	font-family: "cheltenham-normal-700",georgia,"times new roman",times,serif
+}
+
+h2 {
+	font-size: 20px;
+	font-size: 1.25rem;
+	line-height: 22px;
+	line-height: 1.375rem;
+	font-weight: 700;
+	font-style: normal;
+	font-family: "cheltenham-normal-700",georgia,"times new roman",times,serif
+}
+
+h3 {
+	font-size: 15px;
+	font-size: 0.9375rem;
+	line-height: 17px;
+	line-height: 1.0625rem;
+	font-weight: 700;
+	font-style: normal;
+	font-family: "cheltenham-normal-700",georgia,"times new roman",times,serif
+}
+
+h4 {
+	font-size: 14px;
+	font-size: 0.875rem;
+	line-height: 16px;
+	line-height: 1rem;
+	font-weight: 700;
+	font-style: normal;
+	font-family: "cheltenham-normal-700",georgia,"times new roman",times,serif
+}
+
+h5,h6 {
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 15px;
+	line-height: 0.9375rem;
+	font-weight: 700;
+	font-style: normal;
+	font-family: "cheltenham-normal-700",georgia,"times new roman",times,serif
+}
+
+h6 {
+	font-weight: 400
+}
+
+h1,h2,h3,h4,h5,h6 {
+	margin: 0
+}
+
+p,ul,ol,dl,dd {
+	margin: 0 0 1em 0
+}
+
+p,li,dt,dd {
+	font-size: 16px;
+	font-size: 1rem;
+	line-height: 23px;
+	line-height: 1.4375rem;
+	font-weight: 400;
+	font-style: normal;
+	font-family: georgia,"times new roman",times,serif
+}
+
+ul {
+	list-style: none;
+	padding-left: 0
+}
+
+.multi-line-list li {
+	margin-bottom: 1em
+}
+
+a:link {
+	text-decoration: none;
+	color: #326891
+}
+
+a:visited {
+	color: #326891
+}
+
+a:hover {
+	text-decoration: underline;
+	outline: 0
+}
+
+a:focus {
+	outline: thin dotted #333;
+	outline: 5px auto -webkit-focus-ring-color;
+	outline-offset: -2px
+}
+
+.caption,figcaption,.credit {
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 16px;
+	line-height: 1rem;
+	font-weight: 400;
+	font-style: normal;
+	font-family: "nyt-cheltenham-sh",georgia,"times new roman",times,serif
+}
+
+
+h1,h2,h3,h4,h5,h6 {
+	margin: 0
+}
+
+a,a:link,a:visited {
+	color: #000;
+	text-decoration: none
+}

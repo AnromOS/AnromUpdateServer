@@ -2,43 +2,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
     <title>应用发布管理平台</title>
     {% block head %}{% end %}
     <link rel="icon" type="image/png" href="/static/favicon.ico">
-    <script src="/static/jquery-1.12.4.min.js"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-theme.min.css">
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-    
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>    
    
 <!-- Home -->
 <div>
-    <nav class="navbar navbar-inverse navbar-default">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid" >
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">应用发布管理</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="/"  target="_blank"> 网站首页 </a></li>
-            <li><a href="/latest"  target="_blank"> 最新下载页面 </a></li>
-            <li><a href="/publish"> 后台首页 </a></li>
-            <li><a href="/publish/device"> 添加新应用</a></li>
-            <li><a href="/publish/users"> 添加开发者</a></li>
-            <li><a href="/publish/settings"> 网站设置</a></li>
-            <li><a href="/publish/userreport"> 用户反馈</a></li>
-            <li><a href="/publish/audit"> 审计日志</a></li>
-            <li><a href="/publish/quit"> 退出</a></li>
+        <a class="navbar-brand" href="/publish">应用发布管理</a> 
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarMain" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="/"  target="_blank"> 网站首页 </a></li>
+            <li class="nav-item"><a class="nav-link" href="/latest"  target="_blank"> 最新下载页面 </a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish"> 后台首页 </a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish/device"> 添加新应用</a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish/users"> 添加开发者</a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish/settings"> 网站设置</a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish/userreport"> 用户反馈</a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish/audit"> 审计日志</a></li>
+            <li class="nav-item"><a class="nav-link" href="/publish/quit"> 退出</a></li>
         </ul><!-- /navbar -->
         </div>
     </div>
@@ -50,5 +43,9 @@
     </div>
 </div>
 {% block bottom %}{% end %}
+    <script src="/static/jquery/jquery.slim.min.js"></script>
+    <script src="/static/jquery/popper.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

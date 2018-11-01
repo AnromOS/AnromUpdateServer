@@ -10,7 +10,7 @@
 
 {% block pagenavbar %}
     {% for post in models %}
-    {% if post.get('m_pub_ipv4','0') == '1' %}<li><a href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>{% end %}
+    {% if post.get('m_pub_ipv4','0') == '1' %}<li class="nav-item"><a class="nav-link" href="#{{ escape(post['m_device']) }}" >{{ escape(post['m_modname']) }}</a></li>{% end %}
     {% end %}  
 {% end %}
 
@@ -41,10 +41,10 @@
       </div>
       {% for det in post['m_detail'] %}
       <div class="media-body">
-        <a href="{{ escape(det['url']) }}" target="_blank"><h4 class="media-heading"> {{ escape(post['m_modname']) }} </h4></a>
-        <div class="column hidden-xs">
-          <p>MD5: {{ escape(det['md5sum']) }}</p>
-          <p><small>{{ escape(det['version']) }}</small> . <small> {{ escape(strtime(det['issuetime'])) }}</small></p>
+        <a href="{{ escape(det['url']) }}" target="_blank"><h4> {{ escape(post['m_modname']) }} </h4></a>
+        <div class="column d-block">
+          <div>MD5: {{ escape(det['md5sum']) }}</div>
+          <span></span>><small>{{ escape(det['version']) }}</small> . <small> {{ escape(strtime(det['issuetime'])) }}</small></span>
         </div>
       </div>
       {% end %}

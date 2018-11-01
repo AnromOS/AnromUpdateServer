@@ -2,14 +2,14 @@
 
 {% block body %}
 <div class="container">
-<div class="panel panel-primary">
-    <div class="panel-heading"><strong>{{ escape(ptitle) }}</strong> 添加一个新的开发者</div>
-    <div class="panel-body">
+<div class="card">
+    <div class="card-header"><strong>{{ escape(ptitle) }}</strong> 添加一个新的开发者</div>
+    <div class="card-body">
       <form action="?a=add" method="post" class="form" role="form"  enctype="multipart/form-data">
           
           <div class="form-group">
             <label for="uname">开发者ID </label>
-            <input type="text" name="uname" id="uname" class="form-control" placeholder="用户的ID" {% if (pupdate!=None) %} value="{{ escape(pupdate['u_name']) }}"{% else %} value="" {% end %}/>
+            <input type="text" name="uname" id="uname"  placeholder="用户的ID" {% if (pupdate!=None) %} value="{{ escape(pupdate['u_name']) }}" class="invisible form-control"{% else %} value="" class="form-control" {% end %}/>
           </div>
           
           <div class="form-group">
@@ -48,10 +48,10 @@
           <div class="form-group">
             <label for="uavatar">上传头像 {% if (pupdate!=None) %} <img class="img-rounded" height=35px src="{{ escape(pupdate['u_avatar']) }}"/> {% end %}</label>
             <input type="file" name="uavatar" id="uavatar"/>
-          </div>
-          {% if (pupdate!=None) %}
-                <input type="text" name="upicname" id="upicname" class="hidden" value="{{ escape(pupdate['u_avatar']) }}">
+            {% if (pupdate!=None) %}
+                <input type="text" name="upicname" id="upicname" class="invisible" value="{{ escape(pupdate['u_avatar']) }}">
           {% end %}
+          </div>
           {% module xsrf_form_html() %}
         <input  class="btn btn-primary" type="submit" value="完成"/>
         </form>
