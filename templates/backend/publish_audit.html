@@ -1,8 +1,6 @@
 {% extends "publish_base.html" %}
 
 {% block body %}
-<div class="container">
-<div class ="col-sm-12 col-xs-12 col-md-12">
     <div class="card ">
     <div class="card-header"><strong> {{ escape(ptitle) }} <strong></div>
     <div class="card-body">
@@ -32,13 +30,8 @@
     <nav>
       <ul class="pagination">
         {% for pg in range(pages) %}
-        <li><a href="?p={{ pg }}">{{ pg }}</a></li>
+            <li class="page-item" ><a class="page-link" href="?p={{ pg }}">{{ pg }}</a></li>
         {% end %}
-        
       </ul>
     </nav>
-    
-</div>
-
-</div>
 {% end %}

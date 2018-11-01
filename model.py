@@ -91,7 +91,7 @@ def get_available_roms_by_modelid(mdevice,channels):
         result.append(pupgrade)
     return result
    
-def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, issue_uname, issuetime, m_time):
+def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, size, md5sum, status, pub_deb, channels, source_incremental, target_incremental, extra, api_level, issue_uname, issuetime, m_time):
     '''发布新的rom升级包'''  
     itmid=wid
     anindex="upserver:tanrom:%s"%itmid
@@ -121,6 +121,7 @@ def save_rom_new(wid, mdevice, version,versioncode, changelog, filename, url, si
     'md5sum':md5sum,
     'size':size,
     'status':status,
+    'pub_deb':pub_deb,
     'channels':channels,
     'source_incremental':source_incremental,
     'target_incremental':target_incremental,

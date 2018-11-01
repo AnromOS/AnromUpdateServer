@@ -93,6 +93,18 @@ class base(tornado.web.RequestHandler):
     def seeother(self,path):
         self.redirect(config.netpref['SCHEME']+"://"+config.netpref['SERVER_HOST']+":"+config.netpref['SERVER_PORT']+path)
 
+    def pubToDebRepo(self, filename):
+        '''向仓库增加新发布的deb文件:'''
+        '''reprepro --silent --basedir /data/deb.mixun.org/ubuntu/ includedeb xenial 文件路径.deb'''
+        cmd = "reprepro --silent --basedir /data/deb.mixun.org/ubuntu/ includedeb xenial "+ filename
+        print(cmd)
+        try:
+            utils.run(cmd)
+        except Exception as e:
+            self.logE(str(e))
+        finally:
+            pass
+
     def dumpLatestReleaseSymbols(self):
         '''Follow these rules:
         1. Export all newest release version into ONE standalone HTML file. 

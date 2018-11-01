@@ -118,7 +118,9 @@ class PublishNewVersion(BaseAction):
                 size = self.get_argument("size",0)
                 #自定义的状态，从后台传递过来
                 status = self.get_argument("status",0)
+                pub_deb = self.get_argument("pub_deb",0)
                 filename = url.split('/')[-1]
+                upFileName = u'/static/downloads/'+modname+ u'/' + filename
                 muploadedfile = list(self.request.files.items())
                 if (len(muploadedfile)>0):
                     (field, upedF) = muploadedfile[0]
@@ -148,9 +150,12 @@ class PublishNewVersion(BaseAction):
                 extra = self.get_argument("extra","")
                 issuetime = int(time.time())
                 m_time = issuetime
-                wid = model.save_rom_new(wid,modname, version, versioncode, changelog, filename, url, size, md5sum, status, channels, source_incremental, target_incremental, extra, api_level, self.current_user,issuetime, m_time)
+                wid = model.save_rom_new(wid,modname, version, versioncode, changelog, filename, url, size, md5sum, status, pub_deb, channels, source_incremental, target_incremental, extra, api_level, self.current_user,issuetime, m_time)
                 self.logI(u"保存发布版本信息:%s:%s"%(modname, version))
                 self.dumpVersion2Json(modname, wid)
+                if(pub_deb):
+                    self.logI(u"发布到deb仓库(deb.mixun.org):%s:%s"%(modname, version))
+                    self.pubToDebRepo('.'+upFileName)
             #管理员更改了数据，把产品数据导出成json文件
             self.dumpAllProduct2Json()
             if(privileged):

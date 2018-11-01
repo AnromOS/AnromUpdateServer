@@ -2,13 +2,13 @@
 
 {% block body %}
 
-<div class="container">
-<div class ="col-sm-12 col-xs-12 col-md-12" style="word-break:break-all; word-wrap:break-all;">
-    <div class="card">
-    <div class="card-header"><strong>{{ escape(ptitle) }}</strong> 发布完整升级包</div>
-    <div class="card-body">
-        <p>这个表单只是发布一个下载链接。升级文件可以用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
-        <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
+<div class="card">
+  <div class="card-header"><strong>{{ escape(ptitle) }}</strong> 发布完整升级包</div>
+  <div class="card-body">
+    <p>这个表单只是发布一个下载链接。升级文件可以用其他工具上传到下载服务器, 然后将真实文件下载地址填写在表单中</p>
+    <form action="?a=add&t=full" method="post" class="form" role="form" enctype="multipart/form-data">
+      <div class="row">
+      <div class ="col-sm-12 col-xs-12 col-md-6" style="word-break:break-all; word-wrap:break-all;">
           <div class="form-group">
             <input type="hidden" class="invisible" name="wid" id="wid" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['id']) }}"  {% else %} value="" {% end %}/>
             <label for="version">版本(version)</label>
@@ -20,7 +20,7 @@
           </div>
           <div class="form-group">
             <label for="changelog">变更日志(changelog)</label>
-            <textarea type="text" name="changelog" id="changelog"  class="form-control" rows="3" placeholder="发布的日志" >{% if (pupgrade!=None) %} {{ escape(pupgrade['changelog']) }} {% end %}</textarea>
+            <textarea type="text" name="changelog" id="changelog"  class="form-control" rows="8" placeholder="发布的日志" >{% if (pupgrade!=None) %} {{ escape(pupgrade['changelog']) }} {% end %}</textarea>
           </div>
           
           <div class="form-group">
@@ -35,12 +35,12 @@
             {% end %}
           </div>
           
+        </div>
+        <div class ="col-sm-12 col-xs-12 col-md-6">
           <div class="form-group">
             <label for="muploadedfile">上传文件到本站所在服务器,最大110MB（若选择上传文件则不必填写url, size, md5sum字段）</label>
-            <input type="file" name="muploadedfile" id="muploadedfile"/>
-          </div>
-          
-          <div class="form-group">
+            <input type="file" name="muploadedfile" id="muploadedfile"/><hr>
+
             <label for="url">下载地址(url)</label>
             <input type="text" name="url" id="url"  {% if (pupgrade!=None) %} value="{{ escape(pupgrade['url']) }}" {% else %} value=""  {% end %} class="form-control" placeholder="升级文件的下载地址" />
            
@@ -49,23 +49,20 @@
             
             <label for="md5sum">校验和(md5sum)</label>
             <input type="text" name="md5sum" id="md5sum" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['md5sum']) }}" {% else %} value="" {% end %} class="form-control" placeholder="升级文件的md5sum值（若不填写则以上传到服务器的文件为准计算MD5值）"/>
-          </div>
-          
-          <div class="form-group">
-            <label for="status">自定义特性:  </label>
-            <div class="radio-inline">
-              <label><input type="checkbox" name="status" id="status" value="1" {% if (pupgrade!=None and pupgrade['status']=='1') %} checked {% end %}/>开启强制升级(status) </label>
+
+            <div class="mt-2">
+              <label><input type="checkbox" name="pub_deb" id="pub_deb" value="1" {% if (pupgrade!=None and pupgrade.get('pub_deb','0')=='1') %} checked {% end %}/>发布到deb仓库(deb.mixun.org 原网盒子可以通过apt-get升级) </label>
             </div>
           </div>
           
           <div class="form-group">
-            <input class="invisible" name="wid" id="incremental" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['id']) }}" {% else %} value="" {% end %}><br>
+            <div class="radio-inline">
+              <label><input type="checkbox" name="status" id="status" value="1" {% if (pupgrade!=None and pupgrade['status']=='1') %} checked {% end %}/>开启强制升级(status) </label>
+            </div>
             <label for="source_incremental">源版本增量标识(source_incremental) </label>
             <input type="text" name="source_incremental" id="source_incremental" {% if (pupgrade!=None) %} value="{{ escape(pupgrade['source_incremental']) }}" {% else %} value="0" {% end %}
             class="form-control" placeholder="源版本增量标识,用于增量升级包，可以留空">
-          </div>
-          
-          <div class="form-group">
+
             <label for="target_incremental">目的版本增量标识(target_incremental) </label>
             <input type="text" name="target_incremental" id="target_incremental" 
             {% if (pupgrade!=None) %} value="{{ escape(pupgrade['target_incremental']) }}" {% else %} value="0" {% end %} class="form-control" placeholder="目的版本增量标识,用于增量升级包，可以留空">
@@ -76,9 +73,11 @@
             <input type="text" name="extra" id="extra"  {% if (pupgrade!=None) %} value="{{ escape(pupgrade['extra']) }}"  {% else %} value="" {% end %} class="form-control" placeholder="自定义内容，没有则留空"/>
           </div>
         {% module xsrf_form_html() %}  
-        <input  class="btn btn-primary" type="submit" value="完成"/>
-      </form>
+        <input  class="btn btn-primary" type="submit" value="发布"/>
+     
     </div>
     </div>
+  </form>
+  </div>
 </div>
 {% end %}
