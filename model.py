@@ -36,7 +36,7 @@ def get_devices_byname(mdevice):
 def save_device(mdevice, mmod ,mpic, mdescpt ,mtime, muser, mpubV4=1):
     '''保存某个机型的配置'''
     hindex="upserver:tmodel:%s"%mdevice
-    print("saving new product:",mdevice,mmod)
+    #print("saving new product:",mdevice,mmod)
     ## renew index
     redis_db.lrem("upserver:tmodel_index",1,mdevice)
     redis_db.lpush("upserver:tmodel_index",mdevice)
