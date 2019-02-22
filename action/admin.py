@@ -184,7 +184,8 @@ class PublishRomListFiles(BaseAction):
         f1 = str(utils.run('ls -l '+ "static/downloads/" + modname))
         filelist = []
         f2 = f1.split('\\n')
-        for finfo in f2:
+        if(len(f2)<2): return
+        for finfo in f2[1:-1]:
             f3 = {}
             f3['info'] = finfo
             f3['filename'] = finfo.split(' ')[-1]
@@ -300,6 +301,9 @@ class PublishNewUser(BaseAction):
                     picname ="/static/images/"+ (picfile["filename"])
                     #1, 保存新应用的图标
                     utils.saveBin("."+picname, picfile["body"])
+            # 确保只有管理员可以改变用户角色
+            if not self.accessAdmin():
+                urole = "developer"
             #3, 保存在数据库里
             self.logI(u"保存开发者信息:%s:%s"%(uname,urole))
             model.add_new_user(uname, utils.sha256(upwd1), urole, picname, udscpt, mtime)
